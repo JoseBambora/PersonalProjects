@@ -1,6 +1,10 @@
 # Bot Gverreiro
 
-This project was created for a Discord community/server.
+This project was developed specifically for a Discord community/server. Unlike other projects, it addresses a real-world use case and it is being used in real life. 
+
+In this document, I provide an introduction to the project, including its use case. I also detail what the bot does, how it operates, the technologies and libraries used, and the final configuration steps. Additionally, the document includes some future development ideas and important notes.
+
+## Introduction
 
 I am an SC Braga fan, and two years ago, I wanted to join a fan community of this club to stay updated on club news and discuss interesting topics about Braga with other fans.
 
@@ -8,27 +12,52 @@ In this Discord server, there is a channel dedicated to predicting the outcomes 
 
 For this project, I tried to implement as many features as possible, including numerous tests, multithreading, database atomic operations, and more.
 
-## What Does Bot Gverreiro Do?
+## What does Bot Gverreiro do?
 
 **Bot Gverreiro** collects predictions and the final results for each game and announces the users who made correct predictions. Behind the scenes, it maintains a leaderboard and keeps statistics for each season and each user/player.
 
 In addition, the bot automatically opens and closes the channel based on the game schedule and sends reminders about missing items, such as results for specific games.
 
-## How Does Bot Gverreiro Work?
+## How does Bot Gverreiro work?
 
 The bot operates through SlashCommands (/command name). It has a list of these commands, each assigned to a specific task. Some commands are restricted to moderators. These special commands involve operations essential to the bot, such as adding a game to the bot, entering a result for a game, and so on.
 
 Using these SlashCommands, users provide important input to the bot, enabling it to perform tasks automatically.
 
-If you want to see the intricate workings of the bot, don't worry—I have documented all the "hard" parts.
+If you want to see the intricate workings of the bot, don't worry, I have documented all the "hard" parts. 
 
-## Configuration Steps
+If you to have a look at the SlashCommands available, here they are:
 
-In addition to downloading the necessary libraries, you need to create a configuration file to set up the bot. This file is located at [files/config/config.txt] and uses a simple key-value format. Each parameter is explained within the file as an example.
+- Users commands:
 
-## Future Work
+<div align="center">
 
-This project has potential for future growth, for example, with AI integration so that the bot can also make predictions and send event messages (e.g., when a team scores a goal, the bot will send a message to a specific Discord channel). Additionally, more sports/modalities could be added to the bot.
+| Command | Explanation                        |
+|---------|------------------------------------|
+| /bot    | Introductory message               |
+| /delete | Delete user data                   |
+| /help   | Available commands                 |
+| /inst   | Instructions for predictions       |
+| /stats  | User statistics                    |
+| /season | Season statistics                  |
+| /top    | Leaderboard                        |
+
+</div>
+
+- Moderators commands:
+
+<div align="center">
+
+| Command | Explanation                        |
+|---------|------------------------------------|
+| /add    | Add a game                         |
+| /end    | End of season message              |
+| /info   | Bot status                         |
+| /new    | Create a new season                |
+| /remove | Remove a game                      |
+| /win    | Add a result                       |
+
+</div>
 
 ## Technologies
 
@@ -45,7 +74,17 @@ These libraries are included in the [Maven file](pom.xml).
 - [JOOQ 3.19.8](https://github.com/jOOQ/jOOQ): Database queries.
 - [SQLite-JDBC 3.45.3.0](https://github.com/xerial/sqlite-jdbc): SQLite connections.
 
+## Configuration Steps
+
+In addition to downloading the necessary libraries, you need to create a configuration file to set up the bot. This file is located at *files/config/config.txt* and uses a simple key-value format. Each parameter is explained within the file as an example.
+
+
+## Future Work
+
+This project has potential for future growth, for example, with AI integration so that the bot can also make predictions and send event messages (e.g., when a team scores a goal, the bot will send a message to a specific Discord channel). Additionally, more sports/modalities could be added to the bot.
+
 ## Notes
 - Unfortunately, this is not the real version that the bot is using since running the bot 24/7 would incur costs. However, the *no server* version is based on this version.
 - All the code is documented.
 - All features were developed by myself.
+- All the messages/responses are written in portuguese, since SC Braga is a portuguese team.
