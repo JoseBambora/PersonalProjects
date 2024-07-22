@@ -10,6 +10,8 @@ I am an SC Braga fan, and two years ago, I wanted to join a fan community of thi
 
 In this Discord server, there is a channel dedicated to predicting the outcomes of specific games. These games include the male professional football team and some indoor football games. The main goal of this channel is to create a leaderboard, and at the end, the winner receives an award. Managing the process of opening or closing the channel, announcing the winners, updating the leaderboard, and so on, is tedious to do manually. Therefore, I created a Discord bot called **Bot Gverreiro**.
 
+Initially, I created two different versions of this bot, but they were too simple because I had to develop them quickly. This latest version is the one I spent the most time on, and as a result, it is much better than the previous versions.
+
 For this project, I tried to implement as many features as possible, including numerous tests, multithreading, database atomic operations, and more.
 
 ## What does Bot Gverreiro do?
