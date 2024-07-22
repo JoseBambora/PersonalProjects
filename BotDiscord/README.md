@@ -76,7 +76,7 @@ These libraries are included in the [Maven file](pom.xml).
 
 ## Configuration Steps
 
-In addition to downloading the necessary libraries, you need to create a configuration file to set up the bot. This file is located at *files/config/config.txt* and uses a simple key-value format. Each parameter is explained within the file as an example.
+In addition to downloading the necessary libraries, there is a configuration file to set up the bot. This file is located at *files/config/config.txt* and uses a simple key-value format. Each parameter is explained within the file as an example.
 
 
 ## Future Work
