@@ -1,4 +1,3 @@
-import com.jakewharton.fliptables.FlipTable;
 import mocks.MockButtonReaction;
 import mocks.MockMessage;
 import mocks.MockSlashCommand;
@@ -9,6 +8,7 @@ import org.botgverreiro.bot.frontend.BetCommands;
 import org.botgverreiro.bot.listeners.MessageReceiveListener;
 import org.botgverreiro.bot.threads.MyLocks;
 import org.botgverreiro.bot.utils.RateLimiter;
+import org.botgverreiro.bot.utils.TablePrinter;
 import org.botgverreiro.bot.utils.Templates;
 import org.botgverreiro.facade.Facade;
 import org.botgverreiro.model.classes.Game;
@@ -327,7 +327,7 @@ public class TestBot {
         testSeason(mock3, "24/25", "Futsal", 1, 199, 4, 2, 1);
     }
 
-    private void testUserStat(MockSlashCommand mock, String name, int position, int correct, float percentage, String temporada) {
+    private void testUserStat(MockSlashCommand mock, String name, int position, int points, String temporada) {
         assertResultEmbed(
                 mock,
                 "Estatísticas de " + name,
@@ -338,14 +338,13 @@ public class TestBot {
                         new MessageEmbed.Field("Temporada", temporada, true),
                         new MessageEmbed.Field("Posição", position + "º", false),
                         new MessageEmbed.Field("Total de previsões", "2", true),
-                        new MessageEmbed.Field("Total de acertos", Integer.toString(correct), true),
-                        new MessageEmbed.Field("Percentagem", String.format("%.2f%%", percentage), true)
+                        new MessageEmbed.Field("Total de pontos", Integer.toString(points), true)
                 )
         );
     }
 
-    private void testUserStat(MockSlashCommand mock, String name, int position, int correct, float percentage) {
-        testUserStat(mock,name,position,correct,percentage,"Atual");
+    private void testUserStat(MockSlashCommand mock, String name, int position, int correct) {
+        testUserStat(mock, name, position, correct, "Atual");
     }
 
     @Test
@@ -356,16 +355,16 @@ public class TestBot {
         MockSlashCommand mock4 = execCommand("stats", null, "teste9", "teste9");
         MockSlashCommand mock5 = execCommand("stats", null, "teste5", "teste5");
         messageReceiveListener.waitFinish();
-        testUserStat(mock1, "teste2", 3, 0, 0);
-        testUserStat(mock2, "teste25", 3, 0, 0);
-        testUserStat(mock3, "teste1", 2, 1, 50);
-        testUserStat(mock4, "teste9", 2, 1, 50);
-        testUserStat(mock5, "teste5", 1, 2, 100);
+        testUserStat(mock1, "teste2", 3, 2);
+        testUserStat(mock2, "teste25", 3, 2);
+        testUserStat(mock3, "teste1", 2, 4);
+        testUserStat(mock4, "teste9", 2, 4);
+        testUserStat(mock5, "teste5", 1, 6);
     }
 
-    private void assertTopTable(String message, String[][] content, String temporada, String modalidade, List<Button> buttonList, int size) {
+    private void assertTopTable(String message, List<List<String>> content, String temporada, String modalidade, List<Button> buttonList, int size) {
         String compare1 = "A classificação para a época " + (temporada != null ? temporada : "atual") + " e para a modalidade " + modalidade + " é:\n" + "```" +
-                FlipTable.of(new String[]{"", "Nome", "Pontos"}, content) +
+                TablePrinter.formatTable(List.of("", "Nome", "Pontos"), content) +
                 "```";
         Assertions.assertEquals(message, compare1);
         if (size == 1) {
@@ -385,7 +384,7 @@ public class TestBot {
         return mockButtonReaction;
     }
 
-    private void testTop(MockSlashCommand mock, String mention, String temporada, String modalidade, List<String[][]> pages) {
+    private void testTop(MockSlashCommand mock, String mention, String temporada, String modalidade, List<List<List<String>>> pages) {
         String page1 = mock.getResultMessage();
         Assertions.assertTrue(page1.length() <= 2000);
         List<Button> buttonList = mock.getButtons();
@@ -403,82 +402,82 @@ public class TestBot {
         MockSlashCommand mock3 = execCommand("top", Map.of("modalidade", "I"), "teste4", "teste4");
         messageReceiveListener.waitFinish();
         testTop(mock1, "teste2", null, "X", List.of(
-                new String[][]{
-                        {"1", "teste21", "2"},
-                        {"1", "teste5", "2"},
-                        {"2", "teste1", "1"},
-                        {"2", "teste13", "1"},
-                        {"2", "teste16", "1"},
-                        {"2", "teste20", "1"},
-                        {"2", "teste9", "1"},
-                        {"3", "teste10", "0"},
-                        {"3", "teste100", "0"},
-                        {"3", "teste101", "0"},
-                },
-                new String[][]{
-                        {"3", "teste102", "0"},
-                        {"3", "teste103", "0"},
-                        {"3", "teste104", "0"},
-                        {"3", "teste105", "0"},
-                        {"3", "teste106", "0"},
-                        {"3", "teste107", "0"},
-                        {"3", "teste108", "0"},
-                        {"3", "teste109", "0"},
-                        {"3", "teste11", "0"},
-                        {"3", "teste110", "0"}
-                }
+                List.of(
+                        List.of("1", "teste21", "6"),
+                        List.of("1", "teste5", "6"),
+                        List.of("2", "teste1", "4"),
+                        List.of("2", "teste13", "4"),
+                        List.of("2", "teste16", "4"),
+                        List.of("2", "teste20", "4"),
+                        List.of("2", "teste9", "4"),
+                        List.of("3", "teste10", "2"),
+                        List.of("3", "teste100", "2"),
+                        List.of("3", "teste101", "2")
+                ),
+                List.of(
+                        List.of("3", "teste102", "2"),
+                        List.of("3", "teste103", "2"),
+                        List.of("3", "teste104", "2"),
+                        List.of("3", "teste105", "2"),
+                        List.of("3", "teste106", "2"),
+                        List.of("3", "teste107", "2"),
+                        List.of("3", "teste108", "2"),
+                        List.of("3", "teste109", "2"),
+                        List.of("3", "teste11", "2"),
+                        List.of("3", "teste110", "2")
+                )
         ));
         testTop(mock2, "teste3", null, "Futebol", List.of(
-                new String[][]{
-                        {"1", "teste1", "1"},
-                        {"1", "teste13", "1"},
-                        {"1", "teste20", "1"},
-                        {"1", "teste21", "1"},
-                        {"1", "teste5", "1"},
-                        {"2", "teste10", "0"},
-                        {"2", "teste100", "0"},
-                        {"2", "teste101", "0"},
-                        {"2", "teste102", "0"},
-                        {"2", "teste103", "0"}
-                },
-                new String[][]{
-                        {"2", "teste104", "0"},
-                        {"2", "teste105", "0"},
-                        {"2", "teste106", "0"},
-                        {"2", "teste107", "0"},
-                        {"2", "teste108", "0"},
-                        {"2", "teste109", "0"},
-                        {"2", "teste11", "0"},
-                        {"2", "teste110", "0"},
-                        {"2", "teste111", "0"},
-                        {"2", "teste112", "0"}
-                }
+                List.of(
+                        List.of("1", "teste1", "3"),
+                        List.of("1", "teste13", "3"),
+                        List.of("1", "teste20", "3"),
+                        List.of("1", "teste21", "3"),
+                        List.of("1", "teste5", "3"),
+                        List.of("2", "teste10", "1"),
+                        List.of("2", "teste100", "1"),
+                        List.of("2", "teste101", "1"),
+                        List.of("2", "teste102", "1"),
+                        List.of("2", "teste103", "1")
+                ),
+                List.of(
+                        List.of("2", "teste104", "1"),
+                        List.of("2", "teste105", "1"),
+                        List.of("2", "teste106", "1"),
+                        List.of("2", "teste107", "1"),
+                        List.of("2", "teste108", "1"),
+                        List.of("2", "teste109", "1"),
+                        List.of("2", "teste11", "1"),
+                        List.of("2", "teste110", "1"),
+                        List.of("2", "teste111", "1"),
+                        List.of("2", "teste112", "1")
+                )
         ));
         testTop(mock3, "teste4", null, "Futsal", List.of(
-                new String[][]{
-                        {"1", "teste16", "1"},
-                        {"1", "teste21", "1"},
-                        {"1", "teste5", "1"},
-                        {"1", "teste9", "1"},
-                        {"2", "teste1", "0"},
-                        {"2", "teste10", "0"},
-                        {"2", "teste100", "0"},
-                        {"2", "teste101", "0"},
-                        {"2", "teste102", "0"},
-                        {"2", "teste103", "0"},
-                },
-                new String[][]{
-                        {"2", "teste104", "0"},
-                        {"2", "teste105", "0"},
-                        {"2", "teste106", "0"},
-                        {"2", "teste107", "0"},
-                        {"2", "teste108", "0"},
-                        {"2", "teste109", "0"},
-                        {"2", "teste11", "0"},
-                        {"2", "teste110", "0"},
-                        {"2", "teste111", "0"},
-                        {"2", "teste112", "0"}
-                }
+                List.of(
+                        List.of("1", "teste16", "3"),
+                        List.of("1", "teste21", "3"),
+                        List.of("1", "teste5", "3"),
+                        List.of("1", "teste9", "3"),
+                        List.of("2", "teste1", "1"),
+                        List.of("2", "teste10", "1"),
+                        List.of("2", "teste100", "1"),
+                        List.of("2", "teste101", "1"),
+                        List.of("2", "teste102", "1"),
+                        List.of("2", "teste103", "1")
+                ),
+                List.of(
+                        List.of("2", "teste104", "1"),
+                        List.of("2", "teste105", "1"),
+                        List.of("2", "teste106", "1"),
+                        List.of("2", "teste107", "1"),
+                        List.of("2", "teste108", "1"),
+                        List.of("2", "teste109", "1"),
+                        List.of("2", "teste11", "1"),
+                        List.of("2", "teste110", "1"),
+                        List.of("2", "teste111", "1"),
+                        List.of("2", "teste112", "1")
+                )
         ));
     }
 
@@ -491,8 +490,8 @@ public class TestBot {
                 "A temporada **24/25** chegou ao fim. Nesta temporada houve um total de __398__ previsões, sendo que __9__ foram previsões corretas. (taxa de acerto: __2,26%__).\n" +
                 "\n" +
                 "**Vencedores**:\n" +
-                "- teste21 (2 pontos, 2 previsões, __100%__).\n" +
-                "- teste5 (2 pontos, 2 previsões, __100%__).\n" +
+                "- teste21 (6 pontos, 2 previsões).\n" +
+                "- teste5 (6 pontos, 2 previsões).\n" +
                 "\n**Estatísticas da temporada**:\n" +
                 "- Golos marcados: 4.\n" +
                 "- Golos sofridos: 1.\n" +
@@ -506,40 +505,40 @@ public class TestBot {
 
     @Test
     public void test11() {
-        assertCommand("new","Operação 'Nova Temporada' realizada com sucesso.");
+        assertCommand("new", "Operação 'Nova Temporada' realizada com sucesso.");
         assertCommand("stats", "Para a modalidade X, você não tem qualquer registo.");
         assertCommand("top", "Não há classificação para o modo X e temporada atual.");
         assertCommand("win", "Não há jogo para associar o resultado.", Map.of("modalidade", "F", "goloscasa", 3, "golosfora", 0));
 
-        MockSlashCommand mock1 = execCommand("stats", Map.of("temporada","24/25"), "teste2", "teste2");
-        MockSlashCommand mock2 = execCommand("top", Map.of("temporada","24/25"), "teste2", "teste2");
+        MockSlashCommand mock1 = execCommand("stats", Map.of("temporada", "24/25"), "teste2", "teste2");
+        MockSlashCommand mock2 = execCommand("top", Map.of("temporada", "24/25"), "teste2", "teste2");
         messageReceiveListener.waitFinish();
-        testUserStat(mock1, "teste2", 3, 0, 0, "24/25");
+        testUserStat(mock1, "teste2", 3, 2, "24/25");
         testTop(mock2, "teste2", "24/25", "X", List.of(
-                new String[][]{
-                        {"1", "teste21", "2"},
-                        {"1", "teste5", "2"},
-                        {"2", "teste1", "1"},
-                        {"2", "teste13", "1"},
-                        {"2", "teste16", "1"},
-                        {"2", "teste20", "1"},
-                        {"2", "teste9", "1"},
-                        {"3", "teste10", "0"},
-                        {"3", "teste100", "0"},
-                        {"3", "teste101", "0"},
-                },
-                new String[][]{
-                        {"3", "teste102", "0"},
-                        {"3", "teste103", "0"},
-                        {"3", "teste104", "0"},
-                        {"3", "teste105", "0"},
-                        {"3", "teste106", "0"},
-                        {"3", "teste107", "0"},
-                        {"3", "teste108", "0"},
-                        {"3", "teste109", "0"},
-                        {"3", "teste11", "0"},
-                        {"3", "teste110", "0"}
-                }
+                List.of(
+                        List.of("1", "teste21", "6"),
+                        List.of("1", "teste5", "6"),
+                        List.of("2", "teste1", "4"),
+                        List.of("2", "teste13", "4"),
+                        List.of("2", "teste16", "4"),
+                        List.of("2", "teste20", "4"),
+                        List.of("2", "teste9", "4"),
+                        List.of("3", "teste10", "2"),
+                        List.of("3", "teste100", "2"),
+                        List.of("3", "teste101", "2")
+                ),
+                List.of(
+                        List.of("3", "teste102", "2"),
+                        List.of("3", "teste103", "2"),
+                        List.of("3", "teste104", "2"),
+                        List.of("3", "teste105", "2"),
+                        List.of("3", "teste106", "2"),
+                        List.of("3", "teste107", "2"),
+                        List.of("3", "teste108", "2"),
+                        List.of("3", "teste109", "2"),
+                        List.of("3", "teste11", "2"),
+                        List.of("3", "teste110", "2")
+                )
         ));
     }
 

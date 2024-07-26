@@ -88,7 +88,7 @@ public class PositionsRepo {
         return configuration.dsl()
                 .selectFrom(tableName)
                 .where(seasonColumn.eq(season))
-                .orderBy(pointsColumn.desc(), predictionsColumn.asc(), userColumn.asc())
+                .orderBy(pointsColumn.desc(), predictionsColumn.asc(), nameColumn.asc())
                 .fetch()
                 .stream()
                 .map(r -> Converters.toUser(r, userColumn, nameColumn, predictionsColumn, pointsColumn, getPosition(previousPoints, r.get(pointsColumn), index)))
@@ -102,29 +102,12 @@ public class PositionsRepo {
      * @param configuration Database configuration.
      * @param users         Winners users mentions.
      * @param season        Season ID.
+     * @param points        Points to increment.
      */
-    public void incrementPoints(Configuration configuration, List<String> users, String season) {
+    public void incrementPoints(Configuration configuration, Iterable<String> users, String season, int points) {
         for (String user : users) {
             configuration.dsl().update(tableName)
-                    .set(pointsColumn, pointsColumn.plus(1))
-                    .where(seasonColumn.eq(season))
-                    .and(userColumn.eq(user))
-                    .execute();
-        }
-    }
-
-    /**
-     * Similar to <b>incrementPoints</b> method, but instead of incrementing points column, it increments predictions column.
-     * This method is important in order to increment the prediction number for all the users that made predictions to a specific game.
-     *
-     * @param configuration Database configuration.
-     * @param users         Predictors users mentions.
-     * @param season        Season ID.
-     */
-    public void noPoints(Configuration configuration, List<String> users, String season) {
-        for (String user : users) {
-            configuration.dsl()
-                    .update(tableName)
+                    .set(pointsColumn, pointsColumn.plus(points))
                     .set(predictionsColumn, predictionsColumn.plus(1))
                     .where(seasonColumn.eq(season))
                     .and(userColumn.eq(user))

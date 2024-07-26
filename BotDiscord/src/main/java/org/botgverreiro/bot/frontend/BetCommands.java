@@ -55,7 +55,7 @@ public class BetCommands {
     /**
      * Checks if the given command is valid. A command is considered valid if its name corresponds to any of the available commands.
      *
-     * @param command The command to verify.
+     * @param event The command to verify.
      * @return True if the command is valid, false otherwise.
      */
     public boolean hasCommand(SlashCommandInteractionEvent event) {
@@ -127,8 +127,7 @@ public class BetCommands {
                 embed.addField("Temporada", season == null ? "Atual" : season, true);
                 embed.addField("Posição", String.format("%dº", user.getPosition()), false);
                 embed.addField("Total de previsões", Integer.toString(user.getTotalPredictions()), true);
-                embed.addField("Total de acertos", Integer.toString(user.getTotalPoints()), true);
-                embed.addField("Percentagem", String.format("%.2f%%", user.getTotalPredictions() > 0 ? ((float) user.getTotalPoints() / user.getTotalPredictions() * 100) : 0f), true);
+                embed.addField("Total de pontos", Integer.toString(user.getTotalPoints()), true);
                 embed.setFooter("Se pretende apagar estas informações, utilize o comando /delete.");
                 MessageSender.sendEmbed(event, embed);
             } else {
@@ -204,14 +203,13 @@ public class BetCommands {
      * @param u The user to convert.
      * @return An array with the user's position, username (or shortened username, if applicable), and user points.
      * @see User
-     * @see com.jakewharton.fliptables.FlipTable
      */
-    private String[] converter(User u) {
+    private List<String> converter(User u) {
         String name = u.getName().length() > 15 ? u.getName().substring(0, 12) + "..." : u.getName();
-        return new String[]{Integer.toString(u.getPosition()),
+        return List.of(Integer.toString(u.getPosition()),
                 name,
                 Integer.toString(u.getTotalPoints())
-        };
+        );
     }
 
     /**
@@ -221,16 +219,15 @@ public class BetCommands {
      * @param top The table with user classifications.
      * @return The split table.
      * @see User
-     * @see com.jakewharton.fliptables.FlipTable
      */
-    private List<String[][]> getPages(List<User> top) {
+    private List<List<List<String>>> getPages(List<User> top) {
         int pageSize = 10;
         return IntStream.range(0, (top.size() + pageSize - 1) / pageSize)
                 .mapToObj(i -> top.stream()
                         .skip((long) i * pageSize)
                         .limit(pageSize)
                         .map(this::converter)
-                        .toArray(String[][]::new))
+                        .toList())
                 .toList();
     }
 
@@ -265,7 +262,7 @@ public class BetCommands {
             if (top.isEmpty())
                 MessageSender.sendMessage(event, "Não há classificação para o modo " + modeStr + " e temporada " + seasonStr + ".");
             else {
-                InteractionTop interactionTop = new InteractionTop(event.getUser().getAsMention(), new String[]{"", "Nome", "Pontos"}, getPages(top), seasonStr, modeStr);
+                InteractionTop interactionTop = new InteractionTop(event.getUser().getAsMention(), List.of("", "Nome", "Pontos"), getPages(top), seasonStr, modeStr);
                 interactionManager.addAndSendMessage(event, interactionTop);
             }
         }

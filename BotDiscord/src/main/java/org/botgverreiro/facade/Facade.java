@@ -154,7 +154,7 @@ public class Facade {
     private int sortMethod(User u1, User u2) {
         int difPoints = u2.getTotalPoints() - u1.getTotalPoints();
         int difPredictions = u2.getTotalPredictions() - u1.getTotalPredictions();
-        return difPoints != 0 ? difPoints : difPredictions != 0 ? difPredictions : u1.getMention().compareTo(u2.getMention());
+        return difPoints != 0 ? difPoints : difPredictions != 0 ? difPredictions : u1.getName().compareTo(u2.getName());
     }
 
     /**

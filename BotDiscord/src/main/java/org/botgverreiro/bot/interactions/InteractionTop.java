@@ -1,9 +1,9 @@
 package org.botgverreiro.bot.interactions;
 
-import com.jakewharton.fliptables.FlipTable;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import org.botgverreiro.bot.utils.TablePrinter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +15,12 @@ import java.util.List;
  * @version 1.0
  */
 public class InteractionTop extends Interaction {
-    private final String[] headers;
-    private final List<String[][]> pages;
+    private final List<String> headers;
+    private final List<List<List<String>>> pages;
     private final String headerMessage;
     private int page;
 
-    public InteractionTop(String user, String[] headers, List<String[][]> pages, String temporada, String modalidade) {
+    public InteractionTop(String user, List<String> headers, List<List<List<String>>> pages, String temporada, String modalidade) {
         super(user, "/top");
         this.headers = headers;
         this.pages = pages;
@@ -31,9 +31,9 @@ public class InteractionTop extends Interaction {
     public String createMessage(int move) {
         page += move;
         StringBuilder stringBuilder = new StringBuilder(headerMessage);
-        String[][] data = pages.get(page);
+        List<List<String>> data = pages.get(page);
         stringBuilder.append("```");
-        stringBuilder.append(FlipTable.of(headers, data));
+        stringBuilder.append(TablePrinter.formatTable(headers, data));
         stringBuilder.append("```");
         return stringBuilder.toString();
     }

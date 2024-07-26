@@ -126,28 +126,27 @@ public class TestFacade {
 
         facade.classification(Mode.FOOTBALL, null).forEach(u -> {
             if (u.getMention().equals("test1") || u.getMention().equals("test4"))
-                Assertions.assertEquals(u.getTotalPoints(), 2);
+                Assertions.assertEquals(u.getTotalPoints(), 6);
             else
-                Assertions.assertEquals(u.getTotalPoints(), 0);
+                Assertions.assertEquals(u.getTotalPoints(), 2);
         });
         facade.classification(Mode.FOOTBALL, null).forEach(u -> Assertions.assertEquals(u.getTotalPredictions(), 2));
 
         facade.classification(Mode.FUTSAL, null).forEach(u -> {
             if (u.getMention().equals("test1") || u.getMention().equals("test4") || u.getMention().equals("test6"))
-                Assertions.assertEquals(u.getTotalPoints(), 1);
+                Assertions.assertEquals(u.getTotalPoints(), 4);
             else
-                Assertions.assertEquals(u.getTotalPoints(), 0);
+                Assertions.assertEquals(u.getTotalPoints(), 2);
         });
         facade.classification(Mode.FUTSAL, null).forEach(u -> Assertions.assertEquals(u.getTotalPredictions(), 2));
 
         facade.classification(Mode.NONE, null).forEach(u -> {
             if (u.getMention().equals("test1") || u.getMention().equals("test4"))
-                Assertions.assertEquals(u.getTotalPoints(), 3);
+                Assertions.assertEquals(u.getTotalPoints(), 10);
             else if (u.getMention().equals("test6"))
-                Assertions.assertEquals(u.getTotalPoints(), 1);
+                Assertions.assertEquals(u.getTotalPoints(), 6);
             else
-                Assertions.assertEquals(u.getTotalPoints(), 0);
-
+                Assertions.assertEquals(u.getTotalPoints(), 4);
         });
         facade.classification(Mode.NONE, null).forEach(u -> Assertions.assertEquals(u.getTotalPredictions(), 4));
 
@@ -164,19 +163,19 @@ public class TestFacade {
         User user7 = facade.statsUser("test6", Mode.FUTSAL, null);
 
         Assertions.assertEquals(user1.getTotalPredictions(), 2);
-        Assertions.assertEquals(user1.getTotalPoints(), 2);
+        Assertions.assertEquals(user1.getTotalPoints(), 6);
         Assertions.assertEquals(user2.getTotalPredictions(), 4);
-        Assertions.assertEquals(user2.getTotalPoints(), 3);
+        Assertions.assertEquals(user2.getTotalPoints(), 10);
         Assertions.assertEquals(user3.getTotalPredictions(), 2);
-        Assertions.assertEquals(user3.getTotalPoints(), 0);
+        Assertions.assertEquals(user3.getTotalPoints(), 2);
         Assertions.assertEquals(user4.getTotalPredictions(), 4);
-        Assertions.assertEquals(user4.getTotalPoints(), 0);
+        Assertions.assertEquals(user4.getTotalPoints(), 4);
         Assertions.assertEquals(user5.getTotalPredictions(), 2);
-        Assertions.assertEquals(user5.getTotalPoints(), 0);
+        Assertions.assertEquals(user5.getTotalPoints(), 2);
         Assertions.assertEquals(user6.getTotalPredictions(), 4);
-        Assertions.assertEquals(user6.getTotalPoints(), 1);
+        Assertions.assertEquals(user6.getTotalPoints(), 6);
         Assertions.assertEquals(user7.getTotalPredictions(), 2);
-        Assertions.assertEquals(user7.getTotalPoints(), 1);
+        Assertions.assertEquals(user7.getTotalPoints(), 4);
     }
 
     @Test

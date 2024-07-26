@@ -1,13 +1,11 @@
 package org.botgverreiro.bot.utils;
 
-import com.jakewharton.fliptables.FlipTable;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.botgverreiro.model.classes.Game;
 import org.botgverreiro.model.classes.Season;
 import org.botgverreiro.model.classes.User;
 
 import java.awt.*;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -152,24 +150,24 @@ public class Templates {
     }
 
     public static String messageHelp(boolean isMod) {
-        String[] header = {"Comando", "Explicação"};
-        String[][] content = {
-                {"/help", "Comandos disponíveis"},
-                {"/stats", "Estatísticas do utilizador"},
-                {"/season", "Estatísticas de uma temporada"},
-                {"/top", "Tabela classificativa"},
-                {"/inst", "Instruções para prognósticos"},
-                {"/delete", "Apagar dados do utilizador"},
-                {"/bot", "Mensagem introdutória"},
-                {"/add", "Adicionar um jogo"},
-                {"/win", "Adicionar um resultado"},
-                {"/new", "Criar nova temporada"},
-                {"/remove", "Remover um jogo"},
-                {"/info", "Estado do bot"},
-                {"/end", "Mensagem de fim de temporada"}
-        };
-        String[][] finalContent = isMod ? content : Arrays.copyOfRange(content, 0, 6);
-        return title("Lista de comandos") + "```\n" + FlipTable.of(header, finalContent) + "```\n" + Templates.messageHelpArguments(isMod);
+        List<String> header = List.of("Comando", "Explicação");
+        List<List<String>> content = List.of(
+                List.of("/help", "Comandos disponíveis"),
+                List.of("/stats", "Estatísticas do utilizador"),
+                List.of("/season", "Estatísticas de uma temporada"),
+                List.of("/top", "Tabela classificativa"),
+                List.of("/inst", "Instruções para prognósticos"),
+                List.of("/delete", "Apagar dados do utilizador"),
+                List.of("/bot", "Mensagem introdutória"),
+                List.of("/add", "Adicionar um jogo"),
+                List.of("/win", "Adicionar um resultado"),
+                List.of("/new", "Criar nova temporada"),
+                List.of("/remove", "Remover um jogo"),
+                List.of("/info", "Estado do bot"),
+                List.of("/end", "Mensagem de fim de temporada")
+        );
+        List<List<String>> finalContent = isMod ? content : content.subList(0, 6);
+        return title("Lista de comandos") + "```\n" + TablePrinter.formatTable(header, finalContent) + "```\n" + Templates.messageHelpArguments(isMod);
     }
 
     public static String messageInfo(List<Game> nextGames, List<Game> openGames, List<Game> closeGames, List<Game> waitingResult) {
@@ -202,9 +200,7 @@ public class Templates {
                 .append(u.getTotalPoints())
                 .append(" pontos, ")
                 .append(u.getTotalPredictions())
-                .append(" previsões, ")
-                .append(String.format("__%.0f", (float) u.getTotalPoints() / u.getTotalPredictions() * 100))
-                .append("%__).\n"));
+                .append(" previsões).\n"));
         stringBuilder.append("\n**Estatísticas da temporada**:")
                 .append("\n- Golos marcados: ")
                 .append(season.getScored())

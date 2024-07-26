@@ -11,10 +11,8 @@ import org.botgverreiro.model.classes.User;
 import org.jooq.Configuration;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.botgverreiro.dao.utils.Transactions.getData;
 
@@ -155,14 +153,16 @@ public class GameMode {
      * Increments the points for the winners and increments predictions column for all the users that made predictions.
      *
      * @param configuration   Database configuration.
-     * @param predictionUsers List of the users that made predictions.
+     * @param predictionUsers Set of the users that made predictions.
      * @param winnersUsers    Users that predicted correctly.
      * @param season          Season ID.
      * @see PositionsRepo
      */
-    private void incrementPoints(Configuration configuration, List<String> predictionUsers, List<String> winnersUsers, String season) {
-        positionsRepo.noPoints(configuration, predictionUsers, season);
-        positionsRepo.incrementPoints(configuration, winnersUsers, season);
+    private void incrementPoints(Configuration configuration, Set<String> predictionUsers, Set<String> winnersUsers, String season) {
+        Set<String> predictionUsersFilter = new HashSet<>(predictionUsers);
+        predictionUsersFilter.removeIf(winnersUsers::contains);
+        positionsRepo.incrementPoints(configuration, predictionUsersFilter, season, 1);
+        positionsRepo.incrementPoints(configuration, winnersUsers, season, 3);
     }
 
     /**
@@ -187,13 +187,13 @@ public class GameMode {
      * @param awayGoals      Away goals.
      * @return An array with two lists. The first one is a list of the users mentions that made predictions. The second one is users mention that predicted correctly.
      */
-    private List<String>[] getPredictWinners(List<Prediction> predictionList, int homeGoals, int awayGoals) {
-        List<String> predictionUsers = predictionList.stream().map(Prediction::user).toList();
-        List<String> winnersUsers = predictionList.stream()
+    private Set<String>[] getPredictWinners(List<Prediction> predictionList, int homeGoals, int awayGoals) {
+        Set<String> predictionUsers = predictionList.stream().map(Prediction::user).collect(Collectors.toSet());
+        Set<String> winnersUsers = predictionList.stream()
                 .filter(p -> p.isRight(homeGoals, awayGoals))
                 .map(Prediction::user)
-                .toList();
-        return new List[]{predictionUsers, winnersUsers};
+                .collect(Collectors.toSet());
+        return new Set[]{predictionUsers, winnersUsers};
     }
 
     /**
@@ -212,15 +212,15 @@ public class GameMode {
             MyLocks.getInstance().unlockWrite("waitingResults");
             res = getData(dbName, configuration -> {
                 List<Prediction> predictionList = getPredictions(configuration, game.startGame().getDayOfMonth());
-                List<String>[] predictionsWinners = getPredictWinners(predictionList, homeGoals, awayGoals);
-                List<String> predictionUsers = predictionsWinners[0];
-                List<String> winnersUsers = predictionsWinners[1];
+                Set<String>[] predictionsWinners = getPredictWinners(predictionList, homeGoals, awayGoals);
+                Set<String> predictionUsers = predictionsWinners[0];
+                Set<String> winnersUsers = predictionsWinners[1];
                 int scored = game.getScored(homeGoals, awayGoals);
                 int conceded = game.getConceded(homeGoals, awayGoals);
                 int points = scored == conceded ? 1 : scored > conceded ? 3 : 0;
                 String season = updateSeason(configuration, scored, conceded, predictionList.size(), winnersUsers.size(), points);
                 incrementPoints(configuration, predictionUsers, winnersUsers, season);
-                return winnersUsers;
+                return new ArrayList<>(winnersUsers);
             }, null);
         } else
             MyLocks.getInstance().unlockWrite("waitingResults");
