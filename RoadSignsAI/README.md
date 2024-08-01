@@ -28,6 +28,10 @@ The table below summarizes the results from fine-tuning the models. It is eviden
 | Efficient Net| 0.3385        | 0.3631          | 88.64%              | 86.81%        |
 | Mobile Net   | 0.2736        | 0.4961          | 84.39%              | 82.73%        |
 
+# Future Work
+
+Instead of simple road signs classification, I plan to fine-tune some pre-trained models for computer vision task, such as YOLO. With this approach, I aim to develop AI models that can both identify the location of road signs in images and classify them.
+
 # References
 
 1. Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. "Deep Residual Learning for Image Recognition." arXiv, 2015. [https://arxiv.org/abs/1512.03385](https://arxiv.org/abs/1512.03385).
