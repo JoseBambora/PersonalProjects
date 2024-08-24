@@ -27,10 +27,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -58,10 +56,8 @@ public class TestBot {
         MyLocks.getInstance().addTestLocks();
         RateLimiter.setRateLimitedTest();
         facade.newSeason();
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime localDateTime = now.plusMinutes(3).withSecond(0).withNano(0);
-        game1 = Game.buildGameTest(Field.HOME, "SL Benfica", Mode.FOOTBALL, localDateTime);
-        game2 = Game.buildGameTest(Field.AWAY, "Sporting CP", Mode.FUTSAL, localDateTime.plusMinutes(1));
+        game1 = Game.buildGame(Field.HOME, "SL Benfica", Mode.FOOTBALL, LocalDate.now().atTime(23, 58));
+        game2 = Game.buildGame(Field.AWAY, "Sporting CP", Mode.FUTSAL, LocalDate.now().atTime(23, 59));
     }
 
     @AfterAll
@@ -70,7 +66,8 @@ public class TestBot {
         File[] files = directory.toFile().listFiles();
         if (files != null) {
             for (File file : files) {
-                file.delete();
+                if(!file.getName().equals("README.md"))
+                    file.delete();
             }
         }
     }
@@ -160,7 +157,7 @@ public class TestBot {
     @Test
     public void test04() {
         LocalDate localDate = LocalDate.now();
-        Game game = Game.buildGameTest(Field.HOME, "SL Benfica", Mode.FOOTBALL, localDate.atTime(15, 0));
+        Game game = Game.buildGame(Field.HOME, "SL Benfica", Mode.FOOTBALL, localDate.atTime(23, 59));
         assertCommand("add", "Jogo não adicionado. Data não existe.", Map.of(
                 "hora", 15,
                 "minuto", 0,
@@ -171,8 +168,8 @@ public class TestBot {
                 "campo", "C"
         ));
         assertCommand("add", "Operação 'Adicionar Jogo' realizada com sucesso. Jogo " + game + " adicionado.", Map.of(
-                "hora", 15,
-                "minuto", 0,
+                "hora", 23,
+                "minuto", 59,
                 "dia", localDate.getDayOfMonth(),
                 "mes", localDate.getMonthValue(),
                 "adversario", "SL Benfica",
@@ -370,7 +367,7 @@ public class TestBot {
         if (size == 1) {
             Assertions.assertEquals(buttonList.size(), 1);
             Assertions.assertEquals(buttonList.getFirst().getId(), "next");
-        } else {
+        } else if(size == 2){
             Assertions.assertEquals(buttonList.size(), 2);
             Assertions.assertEquals(buttonList.getFirst().getId(), "back");
             Assertions.assertEquals(buttonList.get(1).getId(), "next");
@@ -384,15 +381,19 @@ public class TestBot {
         return mockButtonReaction;
     }
 
-    private void testTop(MockSlashCommand mock, String mention, String temporada, String modalidade, List<List<List<String>>> pages) {
+    private void testTop(MockSlashCommand mock, String mention, String temporada, String modalidade, List<List<List<String>>> pages, boolean buttons) {
         String page1 = mock.getResultMessage();
         Assertions.assertTrue(page1.length() <= 2000);
-        List<Button> buttonList = mock.getButtons();
-        assertTopTable(page1, pages.getFirst(), temporada, modalidade, buttonList, 1);
-        MockButtonReaction mockButtonReaction1 = reactButton("next", mention);
-        assertTopTable(mockButtonReaction1.getMessageSent(), pages.get(1), temporada, modalidade, mockButtonReaction1.getButtons(), 2);
-        MockButtonReaction mockButtonReaction2 = reactButton("back", mention);
-        assertTopTable(mockButtonReaction2.getMessageSent(), pages.getFirst(), temporada, modalidade, mockButtonReaction2.getButtons(), 1);
+        if(buttons) {
+            List<Button> buttonList = mock.getButtons();
+            assertTopTable(page1, pages.getFirst(), temporada, modalidade, buttonList, 1);
+            MockButtonReaction mockButtonReaction1 = reactButton("next", mention);
+            assertTopTable(mockButtonReaction1.getMessageSent(), pages.get(1), temporada, modalidade, mockButtonReaction1.getButtons(), 2);
+            MockButtonReaction mockButtonReaction2 = reactButton("back", mention);
+            assertTopTable(mockButtonReaction2.getMessageSent(), pages.getFirst(), temporada, modalidade, mockButtonReaction2.getButtons(), 1);
+        }
+        else
+            assertTopTable(page1, pages.getFirst(), temporada, modalidade, Collections.emptyList(), 0);
     }
 
     @Test
@@ -426,7 +427,7 @@ public class TestBot {
                         List.of("3", "teste11", "2"),
                         List.of("3", "teste110", "2")
                 )
-        ));
+        ),true);
         testTop(mock2, "teste3", null, "Futebol", List.of(
                 List.of(
                         List.of("1", "teste1", "3"),
@@ -452,7 +453,7 @@ public class TestBot {
                         List.of("2", "teste111", "1"),
                         List.of("2", "teste112", "1")
                 )
-        ));
+        ),true);
         testTop(mock3, "teste4", null, "Futsal", List.of(
                 List.of(
                         List.of("1", "teste16", "3"),
@@ -478,7 +479,7 @@ public class TestBot {
                         List.of("2", "teste111", "1"),
                         List.of("2", "teste112", "1")
                 )
-        ));
+        ),true);
     }
 
     @Test
@@ -486,21 +487,24 @@ public class TestBot {
         MockSlashCommand mock1 = execCommand("end", null);
         messageReceiveListener.waitFinish();
         Assertions.assertEquals(mock1.getResultMessage(), "Operação 'Fim de temporada' realizada com sucesso.");
-        Assertions.assertEquals(mock1.getMessageSent(), "# Fim da temporada 24/25\n" +
-                "A temporada **24/25** chegou ao fim. Nesta temporada houve um total de __398__ previsões, sendo que __9__ foram previsões corretas. (taxa de acerto: __2,26%__).\n" +
-                "\n" +
-                "**Vencedores**:\n" +
-                "- teste21 (6 pontos, 2 previsões).\n" +
-                "- teste5 (6 pontos, 2 previsões).\n" +
-                "\n**Estatísticas da temporada**:\n" +
-                "- Golos marcados: 4.\n" +
-                "- Golos sofridos: 1.\n" +
-                "- Vitórias: 2.\n" +
-                "- Empates: 0.\n" +
-                "- Derrotas: 0.\n" +
-                "\n" +
-                "Muitos parabéns aos vencedores :partying_face: e muito obrigado a todos os participantes.\nAté à próxima temporada **Gverreiros** :saluting_face: :crossed_swords: :red_circle: :white_circle:.\n" +
-                ":notes: Foi no ano 21 :notes:");
+        Assertions.assertEquals(mock1.getMessageSent(), """
+                # Fim da temporada 24/25
+                A temporada **24/25** chegou ao fim. Nesta temporada houve um total de __398__ previsões, sendo que __9__ foram previsões corretas. (taxa de acerto: __2,26%__).
+
+                **Vencedores**:
+                - teste21 (6 pontos, 2 previsões).
+                - teste5 (6 pontos, 2 previsões).
+
+                **Estatísticas da temporada**:
+                - Golos marcados: 4.
+                - Golos sofridos: 1.
+                - Vitórias: 2.
+                - Empates: 0.
+                - Derrotas: 0.
+
+                Muitos parabéns aos vencedores :partying_face: e muito obrigado a todos os participantes.
+                Até à próxima temporada **Gverreiros** :saluting_face: :crossed_swords: :red_circle: :white_circle:.
+                :notes: Foi no ano 21 :notes:""");
     }
 
     @Test
@@ -539,7 +543,7 @@ public class TestBot {
                         List.of("3", "teste11", "2"),
                         List.of("3", "teste110", "2")
                 )
-        ));
+        ),true);
     }
 
     @Test
@@ -626,5 +630,125 @@ public class TestBot {
         MockSlashCommand mock2 = new MockSlashCommand("help", "test", "test", messageReceiveListener, null, true);
         mock2.executeCommandWait();
         Assertions.assertTrue(mock2.getResultMessage().length() <= 2000);
+    }
+
+    @Test
+    public void test16() {
+        MockSlashCommand slashCommand1 = new MockSlashCommand("new", "jose", "jose", messageReceiveListener,  Map.of("lc",1,"le",1,"cl",1), true);
+        slashCommand1.executeCommandWait();
+        Assertions.assertEquals(slashCommand1.getResultMessage(), "Operação 'Nova Temporada' realizada com sucesso.");
+        Assertions.assertEquals(slashCommand1.getMessageSent(), """
+                A nova temporada está prestes a **começar**.
+                
+                Deixa já a tua previsão sobre o que esperas para desta nova temporada, através do comando /bet.
+                As previsões iram fechar daqui aquando o primeiro jogo oficial.
+                
+                **Isto se aplica apenas à modalidade futebol senior**.
+                
+                Se por ventura acertarem algum fator, os pontos recebidos são:
+                
+                - Posição final Liga: 10 pontos
+                - Liga dos Campeões/Liga Europa/Liga Conferência: 20 pontos
+                - Taça da Liga: 5 pontos
+                - Taça de Portugal: 10 pontos
+                """);
+
+        MockSlashCommand slashCommand2 = new MockSlashCommand("bet", "jose", "jose", messageReceiveListener,
+                Map.of(
+                        "pl",1,
+                        "ce","LC",
+                        "cep",1,
+                        "tp", 1,
+                        "tl", 1,
+                        "je", "Roger",
+                        "js", "Roger",
+                        "jd", "Roger",
+                        "jr", "Roger"), true);
+        MockSlashCommand slashCommand3 = new MockSlashCommand("bet", "jose_2", "jose_1", messageReceiveListener,
+                Map.of(
+                        "pl",1,
+                        "ce","LC",
+                        "cep",1,
+                        "tp", 1,
+                        "tl", 1,
+                        "je", "Roger",
+                        "js", "Roger",
+                        "jd", "Roger",
+                        "jr", "Roger"), true);
+        MockSlashCommand slashCommand4 = new MockSlashCommand("bet", "jose", "jose", messageReceiveListener,
+                Map.of(
+                        "pl",1,
+                        "ce","LC",
+                        "cep",2,
+                        "tp", 3,
+                        "tl", 4,
+                        "je", "Roger",
+                        "js", "Roger",
+                        "jd", "Roger",
+                        "jr", "Roger"), true);
+        slashCommand2.executeCommandNoWait();
+        slashCommand3.executeCommandNoWait();
+        messageReceiveListener.waitFinish();
+        slashCommand4.executeCommandWait();
+        Assertions.assertEquals(slashCommand2.getResultMessage(), "Operação 'Previsão Temporada' realizada com sucesso.");
+        Assertions.assertEquals(slashCommand3.getResultMessage(), "Operação 'Previsão Temporada' realizada com sucesso.");
+        Assertions.assertEquals(slashCommand4.getResultMessage(), "Operação 'Previsão Temporada' realizada com sucesso.");
+        facade.closeSeasonsBets();
+
+        MockSlashCommand slashCommand5 = new MockSlashCommand("bet", "jose", "jose", messageReceiveListener,
+                Map.of(
+                        "pl",1,
+                        "ce","LC",
+                        "cep",2,
+                        "tp", 3,
+                        "tl", 4,
+                        "je", "Roger",
+                        "js", "Roger",
+                        "jd", "Roger",
+                        "jr", "Roger"), true);
+        slashCommand5.executeCommandWait();
+        Assertions.assertEquals(slashCommand5.getResultMessage(),"Operação 'Previsão Temporada' falhou. Tente novamente ou contacte o JoséBambora.");
+    }
+
+    @Test
+    public void test17() {
+        MockSlashCommand slashCommand1 = new MockSlashCommand("end", "jose", "jose", messageReceiveListener,
+                Map.of(
+                        "pl",1,
+                        "ce","LC",
+                        "cep",2,
+                        "tp", 3,
+                        "tl", 4), true);
+        slashCommand1.executeCommandWait();
+
+        Assertions.assertEquals(slashCommand1.getResultMessage(), "Operação 'Fim de temporada' realizada com sucesso.");
+        Assertions.assertEquals(slashCommand1.getMessageSent(), """
+                # Fim da temporada 26/27
+                A temporada **26/27** chegou ao fim. Nesta temporada houve um total de __0__ previsões, sendo que __0__ foram previsões corretas. (taxa de acerto: __0,00%__).
+
+                **Vencedores**:
+                - jose (45 pontos, 0 previsões).
+
+                **Estatísticas da temporada**:
+                - Golos marcados: 0.
+                - Golos sofridos: 0.
+                - Vitórias: 0.
+                - Empates: 0.
+                - Derrotas: 0.
+
+                Muitos parabéns aos vencedores :partying_face: e muito obrigado a todos os participantes.
+                Até à próxima temporada **Gverreiros** :saluting_face: :crossed_swords: :red_circle: :white_circle:.
+                :notes: Foi no ano 21 :notes:""");
+
+
+        MockSlashCommand mock1 = execCommand("top", null, "teste2", "teste2");
+        messageReceiveListener.waitFinish();
+        testTop(mock1, "teste2", "atual", "X", List.of(
+                List.of(
+                        List.of("1", "jose", "45"),
+                        List.of("2", "jose_1", "10")
+                )
+        ),false);
+
     }
 }

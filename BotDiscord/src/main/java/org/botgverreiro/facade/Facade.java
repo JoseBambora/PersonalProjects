@@ -4,6 +4,7 @@ import org.botgverreiro.bot.threads.MyLocks;
 import org.botgverreiro.dao.utils.EnvDB;
 import org.botgverreiro.model.classes.Game;
 import org.botgverreiro.model.classes.Season;
+import org.botgverreiro.model.classes.SeasonBet;
 import org.botgverreiro.model.classes.User;
 import org.botgverreiro.model.enums.Mode;
 
@@ -194,7 +195,9 @@ public class Facade {
      * @see GameMode
      */
     public int newSeason() {
-        return gameMode.values().stream().map(GameMode::newSeason).reduce(0, (acc, p) -> acc | p);
+        int res = gameMode.values().stream().map(GameMode::newSeason).reduce(0, (acc, p) -> acc | p);
+        gameMode.get(Mode.FOOTBALL).openSeasonBets();
+        return res;
     }
 
     /**
@@ -327,6 +330,41 @@ public class Facade {
      */
     public List<Game> onGoingGames(LocalDateTime now) {
         return gameMode.values().stream().flatMap(gm -> gm.onGoingGames(now).stream()).sorted(Game::sort).toList();
+    }
+
+    /**
+     * Adds a season bet to football game mode.
+     *
+     * @param seasonBet Season prediction to add.
+     * @return 0 if sucess, 1 otherwise.
+     * @see GameMode
+     */
+    public int addSeasonBet(SeasonBet seasonBet) {
+        return gameMode.get(Mode.FOOTBALL).addSeasonBet(seasonBet);
+    }
+
+    /**
+     * Closes season bets.
+     *
+     * @return 0 if success, 1 otherwise.
+     * @see GameMode
+     */
+    public int closeSeasonsBets() {
+        return gameMode.get(Mode.FOOTBALL).closeSeasonBets();
+    }
+
+    /**
+     * Gets the winners for season predictions.
+     *
+     * @param leaguePos Final league position.
+     * @param euroComp  Europe's competition participated.
+     * @param euroPos   Europe's competition position.
+     * @param cupTPPos  National cup position.
+     * @param cupTLPos  League cup position.
+     * @see GameMode
+     */
+    public void endSeason(int leaguePos, String euroComp, int euroPos, int cupTPPos, int cupTLPos) {
+        gameMode.get(Mode.FOOTBALL).endSeason(leaguePos, euroComp, euroPos, cupTPPos, cupTLPos);
     }
 }
 

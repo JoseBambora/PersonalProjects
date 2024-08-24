@@ -191,7 +191,7 @@ public class Templates {
                 .append("__ previsões, sendo que __")
                 .append(season.getCorrectPredictions())
                 .append("__ foram previsões corretas. (taxa de acerto: ")
-                .append(String.format("__%.2f", (float) season.getCorrectPredictions() / season.getTotalPredictions() * 100))
+                .append(String.format("__%.2f", (float) season.getCorrectPredictions() / (season.getTotalPredictions() != 0 ? season.getTotalPredictions() : 1) * 100))
                 .append("%__).\n\n");
         stringBuilder.append("**Vencedores**:\n");
         winners.forEach(u -> stringBuilder.append("- ")
@@ -231,7 +231,7 @@ public class Templates {
 
                 **Curiosidades:**
                 - Esta é a terceira versão do bot.
-                - Esta versão foi feita em Java, usando o [JDA](https://github.com/discord-jda/JDA). (As duas primeiras versões eram em Python).
+                - Esta versão foi feita em Java, usando o [JDA](https://github.com/discord-jda/JDA).
                 - O Bot está disponível 24 horas todos os dias.
                                 
                 Viva o Sporting clube de Braga!!
@@ -248,5 +248,27 @@ public class Templates {
 
     public static String messageNoPermissions() {
         return "Não tem permissões para executar o comando.";
+    }
+
+    public static String messageSeasonBetsOpen(List<String> europeCompetitions) {
+        return String.format("""
+                A nova temporada está prestes a **começar**.
+                                
+                Deixa já a tua previsão sobre o que esperas para desta nova temporada, através do comando /bet.
+                As previsões iram fechar daqui aquando o primeiro jogo oficial.
+                                
+                **Isto se aplica apenas à modalidade futebol senior**.
+                                
+                Se por ventura acertarem algum fator, os pontos recebidos são:
+                                
+                - Posição final Liga: 10 pontos
+                - %s: 20 pontos
+                - Taça da Liga: 5 pontos
+                - Taça de Portugal: 10 pontos
+                """, europeCompetitions.isEmpty() ? "Competições Europeias (não vai haver)" : String.join("/", europeCompetitions));
+    }
+
+    public static String messageSeasonBetsClose() {
+        return "As previsões para a nova temporada estão fechadas.";
     }
 }
