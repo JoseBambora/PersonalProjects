@@ -1,1 +1,0 @@
-# Folder for database testing files
