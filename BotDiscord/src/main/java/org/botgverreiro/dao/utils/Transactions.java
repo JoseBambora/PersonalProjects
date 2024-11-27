@@ -33,7 +33,7 @@ public class Transactions {
         try (Connection connection = DriverManager.getConnection(db)) {
             DSLContext create = DSL.using(connection, SQLDialect.SQLITE);
             create.transaction(consumer::accept);
-        } catch (SQLException _) {
+        } catch (SQLException e) {
             return 1;
         } finally {
             MyLocks.getInstance().unlockWrite(db);

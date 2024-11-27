@@ -52,13 +52,13 @@ public class TestPositionsRepo {
             List<String> users = generatorUser();
             String season = generatorSeason().getFirst();
             users.forEach(u -> repo.insertUser(configuration, u, "test", season));
-            repo.incrementPoints(configuration, users, season, 3);
+            repo.incrementPoints(configuration, users, season, 3,1);
             Assertions.assertTrue(all(repo.getPositionsSeason(configuration, season).stream().map(User::getMention).map(users::contains).toList()));
-            repo.incrementPoints(configuration, users, season, 3);
+            repo.incrementPoints(configuration, users, season, 3,1);
             Assertions.assertTrue(all(users.stream().map(u -> repo.getPointsUser(configuration, u, season)).map(p -> p == 6).toList()));
             List<String> subList = users.subList(0, 2);
             List<String> rest = users.subList(2, users.size());
-            repo.incrementPoints(configuration, subList, season, 3);
+            repo.incrementPoints(configuration, subList, season, 3,1);
             Assertions.assertTrue(all(subList.stream().map(u -> repo.getPointsUser(configuration, u, season)).map(p -> p == 9).toList()));
             Assertions.assertTrue(all(rest.stream().map(u -> repo.getPointsUser(configuration, u, season)).map(p -> p == 6).toList()));
             Assertions.assertTrue(all(repo.getPositionsSeason(configuration, season).subList(0, 2).stream().map(User::getMention).map(subList::contains).toList()));

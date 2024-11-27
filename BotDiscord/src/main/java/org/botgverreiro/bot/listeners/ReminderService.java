@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.botgverreiro.ParserInfo;
 import org.botgverreiro.bot.frontend.MessageSender;
 import org.botgverreiro.bot.utils.Templates;
 import org.botgverreiro.facade.Facade;
@@ -98,6 +97,8 @@ public class ReminderService extends ListenerAdapter {
         List<Game> openGames = facade.openBets(now);
         System.out.println("Open Bets acordou. Open games: " + openGames);
         if (!openGames.isEmpty()) {
+            if (facade.closeSeasonsBets() == 0)
+                MessageSender.sendMessage(channelBets, Templates.messageSeasonBetsClose());
             changePermissionsWrite(true);
             MessageSender.sendMessage(channelBets, Templates.messageOpenBets(openGames));
             List<LocalDateTime> alarms = getAlarms(openGames, Game::startGame);
@@ -164,8 +165,8 @@ public class ReminderService extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event) {
-        channelBets = event.getJDA().getTextChannelById(ParserInfo.getInstance().getValueString("channelBetsTest"));
-        channelReminder = event.getJDA().getTextChannelById(ParserInfo.getInstance().getValueString("channelReminder"));
+        channelBets = event.getJDA().getTextChannelById(System.getenv("CHANNEL_BETS_TEST"));
+        channelReminder = event.getJDA().getTextChannelById(System.getenv("CHANNEL_REMINDER"));
         if (channelBets != null && channelReminder != null) {
             changePermissionsWrite(false);
             scheduler.scheduleAtFixedRate(this::runDaily, 0, 1, TimeUnit.MINUTES);

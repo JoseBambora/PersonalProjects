@@ -7,6 +7,7 @@ import org.botgverreiro.model.classes.User;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * This is just a class to format the messages that are sent.
@@ -132,39 +133,44 @@ public class Templates {
     }
 
     private static String messageHelpArguments(boolean isMod) {
-        String res = "Argumentos:\n" +
-                "1. **temporada**: Especificar temporada.\n" +
-                "2. **modalidade**: Especificar modalidade.\n";
+        String res = """
+                Argumentos:
+                1. **temporada**: Especificar temporada.
+                2. **modalidade**: Especificar modalidade.
+                """;
         return isMod ? res + messageHelpArgumentsMods() : res;
     }
 
     private static String messageHelpArgumentsMods() {
-        return "3. **hora**: Hora marcada para o jogo\n" +
-                "4. **minuto**: Minutos do jogo\n" +
-                "5. **dia**: Dia do jogo\n" +
-                "6. **mes**: Mês do jogo\n" +
-                "7. **adversário**: Adversário\n" +
-                "8. **goloscasa**: Golos marcados pela equipa da casa\n" +
-                "9. **golosfora**: Golos marcados pela equipa visitante\n" +
-                "9. **index**: Indíce do jogo do adversário\n";
+        return """
+                3. **hora**: Hora marcada para o jogo
+                4. **minuto**: Minutos do jogo
+                5. **dia**: Dia do jogo
+                6. **mes**: Mês do jogo
+                7. **adversário**: Adversário
+                8. **goloscasa**: Golos marcados pela equipa da casa
+                9. **golosfora**: Golos marcados pela equipa visitante
+                9. **index**: Indíce do jogo do adversário
+                """;
     }
 
     public static String messageHelp(boolean isMod) {
         List<String> header = List.of("Comando", "Explicação");
         List<List<String>> content = List.of(
+                List.of("/bot", "Mensagem introdutória"),
+                List.of("/delete", "Apagar dados do utilizador"),
                 List.of("/help", "Comandos disponíveis"),
+                List.of("/inst", "Instruções para prognósticos"),
                 List.of("/stats", "Estatísticas do utilizador"),
                 List.of("/season", "Estatísticas de uma temporada"),
                 List.of("/top", "Tabela classificativa"),
-                List.of("/inst", "Instruções para prognósticos"),
-                List.of("/delete", "Apagar dados do utilizador"),
-                List.of("/bot", "Mensagem introdutória"),
+                List.of("/bet", "Previsão para a temporada"),
                 List.of("/add", "Adicionar um jogo"),
-                List.of("/win", "Adicionar um resultado"),
+                List.of("/end", "Mensagem de fim de temporada"),
+                List.of("/info", "Estado do bot"),
                 List.of("/new", "Criar nova temporada"),
                 List.of("/remove", "Remover um jogo"),
-                List.of("/info", "Estado do bot"),
-                List.of("/end", "Mensagem de fim de temporada")
+                List.of("/win", "Adicionar um resultado")
         );
         List<List<String>> finalContent = isMod ? content : content.subList(0, 6);
         return title("Lista de comandos") + "```\n" + TablePrinter.formatTable(header, finalContent) + "```\n" + Templates.messageHelpArguments(isMod);
@@ -191,7 +197,7 @@ public class Templates {
                 .append("__ previsões, sendo que __")
                 .append(season.getCorrectPredictions())
                 .append("__ foram previsões corretas. (taxa de acerto: ")
-                .append(String.format("__%.2f", (float) season.getCorrectPredictions() / season.getTotalPredictions() * 100))
+                .append(String.format(Locale.US,"__%.2f", (float) season.getCorrectPredictions() / (season.getTotalPredictions() != 0 ? season.getTotalPredictions() : 1) * 100))
                 .append("%__).\n\n");
         stringBuilder.append("**Vencedores**:\n");
         winners.forEach(u -> stringBuilder.append("- ")
@@ -231,22 +237,43 @@ public class Templates {
 
                 **Curiosidades:**
                 - Esta é a terceira versão do bot.
-                - Esta versão foi feita em Java, usando o [JDA](https://github.com/discord-jda/JDA). (As duas primeiras versões eram em Python).
+                - Esta versão foi feita em Java, usando o [JDA](https://github.com/discord-jda/JDA).
                 - O Bot está disponível 24 horas todos os dias.
-                                
+                               \s
                 Viva o Sporting clube de Braga!!
-                """;
+               \s""";
     }
 
     public static String messageRateLimit() {
         return "Está a sobrecarregar demasiado o bot, aguarde um pouco.";
     }
 
-    public static String messageUnkownCommand() {
+    public static String messageUnknownCommand() {
         return "Comando desconhecido.";
     }
 
     public static String messageNoPermissions() {
         return "Não tem permissões para executar o comando.";
+    }
+
+    public static String messageSeasonBetsOpen(List<String> europeCompetitions) {
+        return String.format("""
+               A nova temporada está prestes a **começar**.
+               
+               Deixa já a tua previsão sobre o que esperas para desta nova temporada, através do comando /bet.
+               As previsões iram fechar daqui aquando o primeiro jogo oficial.
+               
+               **Isto se aplica apenas à modalidade futebol senior**.
+               
+               Se por ventura acertarem algum fator, os pontos recebidos são:
+               
+               - Posição final Liga: 10 pontos
+               - %s: 20 pontos
+               - Taça da Liga: 5 pontos
+               - Taça de Portugal: 10 pontos""", europeCompetitions.isEmpty() ? "Competições Europeias (não vai haver)" : String.join("/", europeCompetitions));
+    }
+
+    public static String messageSeasonBetsClose() {
+        return "As previsões para a nova temporada estão fechadas.";
     }
 }

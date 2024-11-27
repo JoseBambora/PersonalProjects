@@ -16,6 +16,7 @@ import org.botgverreiro.bot.utils.Templates;
 import org.botgverreiro.facade.Facade;
 import org.botgverreiro.model.classes.Game;
 import org.botgverreiro.model.classes.Season;
+import org.botgverreiro.model.classes.SeasonBet;
 import org.botgverreiro.model.classes.User;
 import org.botgverreiro.model.enums.ConverterString;
 import org.botgverreiro.model.enums.Field;
@@ -286,7 +287,18 @@ public class BetCommands {
      * @see Facade
      */
     private void newCommand(SlashCommandInteractionEvent event) {
+        int lc = Inputs.getInteger(event, "lc");
+        int le = Inputs.getInteger(event, "le");
+        int cl = Inputs.getInteger(event, "cl");
         successOrError(event, facade.newSeason(), "Nova Temporada", null);
+        List<String> europeComps = new ArrayList<>(3);
+        if (lc == 1)
+            europeComps.add("Liga dos Campeões");
+        if (le == 1)
+            europeComps.add("Liga Europa");
+        if (cl == 1)
+            europeComps.add("Liga Conferência");
+        MessageSender.sendMessage(event.getChannel().asTextChannel(), Templates.messageSeasonBetsOpen(europeComps));
     }
 
     /**
@@ -452,6 +464,12 @@ public class BetCommands {
      * @see MessageSender
      */
     private void endCommand(SlashCommandInteractionEvent event) {
+        int position = Inputs.getInteger(event, "pl");
+        String euroComp = Inputs.getString(event, "ce");
+        int euroCompPos = Inputs.getInteger(event, "cep");
+        int cupTPPos = Inputs.getInteger(event, "tp");
+        int cupTLPos = Inputs.getInteger(event, "tl");
+        facade.endSeason(position, euroComp, euroCompPos, cupTPPos, cupTLPos);
         Season season = facade.statsSeason(null, Mode.NONE);
         List<User> winners = facade.classification(Mode.NONE, null).stream().filter(u -> u.getPosition() == 1).toList();
         successOrError(event, 0, "Fim de temporada", null);
@@ -479,6 +497,27 @@ public class BetCommands {
     }
 
     /**
+     * Creates a new season bet.
+     *
+     * @param event Event command.
+     */
+    private void betSeasonCommand(SlashCommandInteractionEvent event) {
+        String mention = event.getUser().getAsMention();
+        String username = event.getUser().getName();
+        int position = Inputs.getInteger(event, "pl");
+        String euroComp = Inputs.getString(event, "ce");
+        int euroCompPos = Inputs.getInteger(event, "cep");
+        int cupTPPos = Inputs.getInteger(event, "tp");
+        int cupTLPos = Inputs.getInteger(event, "tl");
+        String startPlayer = Inputs.getString(event, "je");
+        String surprisePlayer = Inputs.getString(event, "js");
+        String worstPlayer = Inputs.getString(event, "jd");
+        String revelationPlayer = Inputs.getString(event, "jr");
+        SeasonBet seasonBet = new SeasonBet(mention, username, position, euroComp, euroCompPos, cupTPPos, cupTLPos, startPlayer, surprisePlayer, worstPlayer, revelationPlayer);
+        successOrError(event, facade.addSeasonBet(seasonBet), "Previsão Temporada", null);
+    }
+
+    /**
      * Function that executes a command. It will check if the command exists and if the user has permissions to use it.
      * If both conditions are satisfiable, this command will call the respective method to handle the response.
      *
@@ -500,6 +539,7 @@ public class BetCommands {
             case "info" -> infoCommand(event);
             case "end" -> endCommand(event);
             case "bot" -> botCommand(event);
+            case "bet" -> betSeasonCommand(event);
         }
     }
 

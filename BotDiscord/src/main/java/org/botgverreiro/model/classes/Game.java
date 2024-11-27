@@ -45,7 +45,7 @@ public record Game(Field field, String opponent, Mode mode, LocalDateTime startG
         fieldStr = markdown ? "**" + fieldStr + "**" : fieldStr;
         String dayStr = day ? startGame.format(DateTimeFormatter.ofPattern("d/M H:mm")) : startGame.format(DateTimeFormatter.ofPattern("H:mm"));
         String modeStr = ConverterString.toStringMode(mode);
-        return fieldStr + " (" + modeStr + ") (" + dayStr + ")";
+        return fieldStr + " (" + modeStr + ") (" + dayStr + ")" + startGame + " " + endGame;
     }
 
     @Override

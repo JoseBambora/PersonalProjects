@@ -15,7 +15,7 @@ public class Main {
         BetCommands betCommands = new BetCommands(facade);
         ReminderService reminderService = new ReminderService(facade);
         MessageReceiveListener messageReceiveListener = new MessageReceiveListener(betCommands);
-        JDABuilder.createLight(ParserInfo.getInstance().getValueString("token_test"), EnumSet.of(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT))
+        JDABuilder.createLight(System.getenv("TOKEN_TEST"), EnumSet.of(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT))
                 .addEventListeners(messageReceiveListener)
                 .addEventListeners(reminderService)
                 .build();

@@ -3,11 +3,9 @@ package org.botgverreiro.facade;
 import org.botgverreiro.bot.threads.MyLocks;
 import org.botgverreiro.dao.repositories.PositionsRepo;
 import org.botgverreiro.dao.repositories.PredictionsRepo;
+import org.botgverreiro.dao.repositories.SeasonBetRepo;
 import org.botgverreiro.dao.repositories.SeasonRepo;
-import org.botgverreiro.model.classes.Game;
-import org.botgverreiro.model.classes.Prediction;
-import org.botgverreiro.model.classes.Season;
-import org.botgverreiro.model.classes.User;
+import org.botgverreiro.model.classes.*;
 import org.jooq.Configuration;
 
 import java.time.LocalDateTime;
@@ -29,7 +27,9 @@ public class GameMode {
     private final PredictionsRepo predictionsRepo;
     private final List<Game> nextGames;
     private final List<Game> waitingResult;
+    private final Set<SeasonBet> seasonBets;
     private boolean open;
+    private boolean openSeason;
     private Game currentGame = null;
 
     public GameMode(String dbName) {
@@ -39,7 +39,9 @@ public class GameMode {
         predictionsRepo = new PredictionsRepo(dbName);
         nextGames = new LinkedList<>();
         waitingResult = new LinkedList<>();
+        seasonBets = new HashSet<>();
         open = false;
+        openSeason = false;
     }
 
     /**
@@ -161,8 +163,8 @@ public class GameMode {
     private void incrementPoints(Configuration configuration, Set<String> predictionUsers, Set<String> winnersUsers, String season) {
         Set<String> predictionUsersFilter = new HashSet<>(predictionUsers);
         predictionUsersFilter.removeIf(winnersUsers::contains);
-        positionsRepo.incrementPoints(configuration, predictionUsersFilter, season, 1);
-        positionsRepo.incrementPoints(configuration, winnersUsers, season, 3);
+        positionsRepo.incrementPoints(configuration, predictionUsersFilter, season, 1,1);
+        positionsRepo.incrementPoints(configuration, winnersUsers, season, 3,1);
     }
 
     /**
@@ -404,5 +406,87 @@ public class GameMode {
         List<Game> res = nextGames.stream().map(Game::clone).toList();
         MyLocks.getInstance().unlockRead("nextGames");
         return res;
+    }
+
+    /**
+     * Opens season predictions.
+     */
+    public void openSeasonBets() {
+        MyLocks.getInstance().lockWrite("openSeason");
+        openSeason = true;
+        MyLocks.getInstance().unlockWrite("openSeason");
+    }
+
+    /**
+     * Adds a new season prediction.
+     *
+     * @param seasonBet Season prediction to add.
+     * @return 1 if season bets are not open, 0 otherwise.
+     */
+    public int addSeasonBet(SeasonBet seasonBet) {
+        int res = 1;
+        MyLocks.getInstance().lockRead("openSeason");
+        if (openSeason) {
+            MyLocks.getInstance().lockWrite("seasonBets");
+            seasonBets.remove(seasonBet);
+            seasonBets.add(seasonBet);
+            MyLocks.getInstance().unlockWrite("seasonBets");
+            res = getData(dbName, configuration -> {
+                positionsRepo.insertUser(configuration, seasonBet.getUserMention(), seasonBet.getUsername(), seasonRepo.getLastSeason(configuration).getSeason());
+                return 0;
+            },1);
+        }
+        MyLocks.getInstance().unlockRead("openSeason");
+        return res;
+    }
+
+    /**
+     * Closes season predictions.
+     *
+     * @return 0 if success, 1 otherwise.
+     * @see SeasonBetRepo
+     */
+    public int closeSeasonBets() {
+        MyLocks.getInstance().lockWrite("openSeason");
+        int res = 1;
+        if (openSeason) {
+            openSeason = false;
+            MyLocks.getInstance().lockWrite("seasonBets");
+            MyLocks.getInstance().unlockWrite("openSeason");
+            res = SeasonBetRepo.writeBets(seasonBets.stream().toList());
+            seasonBets.clear();
+            MyLocks.getInstance().unlockWrite("seasonBets");
+        } else
+            MyLocks.getInstance().unlockWrite("openSeason");
+        return res;
+    }
+
+    /**
+     * Gets the winners for season predictions and updates the database accordingly.
+     *
+     * @param leaguePos Final league position.
+     * @param euroComp  Europe's competition participated.
+     * @param euroPos   Europe's competition position.
+     * @param cupTPPos  National cup position.
+     * @param cupTLPos  League cup position.
+     * @see SeasonBet
+     * @see SeasonRepo
+     * @see PositionsRepo
+     */
+    public void endSeason(int leaguePos, String euroComp, int euroPos, int cupTPPos, int cupTLPos) {
+        List<SeasonBet> seasonBetList = SeasonBetRepo.readBets();
+        List<String> winnersLeaguePos = seasonBetList.stream().filter(s -> s.getLeaguePosition() == leaguePos).map(SeasonBet::getUserMention).toList();
+        List<String> winnersEuroComp = seasonBetList.stream().filter(s -> s.getEuropeCompetition().equals(euroComp) && s.getEuropePosition() == euroPos).map(SeasonBet::getUserMention).toList();
+        List<String> winnersTPPos = seasonBetList.stream().filter(s -> s.getCupTPPosition() == cupTPPos).map(SeasonBet::getUserMention).toList();
+        List<String> winnersTLPos = seasonBetList.stream().filter(s -> s.getCupTLPosition() == cupTLPos).map(SeasonBet::getUserMention).toList();
+
+        getData(dbName, configuration -> {
+            String season = getSeason(configuration, null).getSeason();
+            positionsRepo.incrementPoints(configuration, winnersLeaguePos, season, 10, 0);
+            positionsRepo.incrementPoints(configuration, winnersEuroComp, season, 20, 0);
+            positionsRepo.incrementPoints(configuration, winnersTPPos, season, 10, 0);
+            positionsRepo.incrementPoints(configuration, winnersTLPos, season, 5, 0);
+            return 0;
+        }, 1);
     }
 }
