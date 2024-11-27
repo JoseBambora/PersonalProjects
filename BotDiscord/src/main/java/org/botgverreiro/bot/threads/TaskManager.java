@@ -1,6 +1,5 @@
 package org.botgverreiro.bot.threads;
 
-import org.botgverreiro.ParserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author JoséBambora
  * @version 1.0
- * @see ParserInfo
  */
 public class TaskManager {
     private final BlockingQueue<Runnable> taskQueue;
@@ -23,7 +21,7 @@ public class TaskManager {
     private final AtomicInteger numberTasks = new AtomicInteger(0);
 
     public TaskManager() {
-        int numberThreads = ParserInfo.getInstance().getValueInteger("threads");
+        int numberThreads = Integer.parseInt(System.getenv("THREADS"));
         taskQueue = new LinkedBlockingDeque<>();
         threadList = new ArrayList<>(numberThreads);
         for (int i = 0; i < numberThreads; i++) {
