@@ -5,6 +5,9 @@ jobs:
   run_tests:
     runs-on: ubuntu-latest
     env:
+      CHANNEL_BETS: 1
+      CHANNEL_BETS_TEST: 2
+      CHANNEL_REMINDER: 3
       THREADS: 2
       DATABASE_FOOTBALL: files/db/gverreiro_football.db
       DATABASE_FUTSAL: files/db/gverreiro_futsal.db
@@ -26,4 +29,4 @@ jobs:
 
       - name: Build and run tests
         working-directory: BotDiscord
-        run: THREADS=$THREADS DATABASE_FOOTBALL=$DATABASE_FOOTBALL DATABASE_FUTSAL=$DATABASE_FUTSAL DATABASE_PORTUGAL=$DATABASE_PORTUGAL DATABASE_TEST=$DATABASE_TEST DATABASE_TEST_FOOTBALL=$DATABASE_TEST_FOOTBALL DATABASE_TEST_FUTSAL=$DATABASE_TEST_FUTSAL DATABASE_TEST_PORTUGAL=$DATABASE_TEST_PORTUGAL FILE_SEASON_BETS=$FILE_SEASON_BETS mvn test
+        run: mvn test

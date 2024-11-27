@@ -191,9 +191,6 @@ public class TestBot {
 
     @Test
     public void test05() {
-        System.out.println("=============================");
-        System.out.println(System.getenv("CHANNEL_BETS_TEST"));
-        System.out.println("=============================");
         assertMessage("1x0", "teste", "teste", "❌");
         assertMessage("1x2", "teste2", "teste2", "❌");
         assertCommand("add", "Operação 'Adicionar Jogo' realizada com sucesso. Jogo " + game1 + " adicionado.", Map.of(
