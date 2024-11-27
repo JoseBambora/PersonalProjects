@@ -78,6 +78,7 @@ These libraries are included in the [Maven file](pom.xml).
 - [Mockito Core 5.12](https://mvnrepository.com/artifact/org.mockito/mockito-core/5.12.0): Testing.
 - [JOOQ 3.19.8](https://github.com/jOOQ/jOOQ): Database queries.
 - [SQLite-JDBC 3.45.3.0](https://github.com/xerial/sqlite-jdbc): SQLite connections.
+- [FasterXML Jackson Data format 2.17.2](https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml/2.17.2): Write CSV Files.
 
 ## Configuration Steps
 
