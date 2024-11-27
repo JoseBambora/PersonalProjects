@@ -2,3 +2,4 @@ files/*.bin
 files/*.csv
 .idea/*
 target/*
+.env
