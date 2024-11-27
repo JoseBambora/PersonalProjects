@@ -31,7 +31,7 @@ jobs:
           distribution: 'oracle'
           java-version: '22'
           cache: 'maven'
-          
+
       - name: get JAVA version
         run: 'java --version'
 
@@ -39,6 +39,6 @@ jobs:
         working-directory: BotDiscord
         run: mvn -B package --file pom.xml
 
-      - name: Build and run tests
+      - name: Run Bot tests
         working-directory: BotDiscord
         run: mvn test
