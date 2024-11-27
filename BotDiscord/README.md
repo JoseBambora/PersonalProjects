@@ -84,7 +84,7 @@ These libraries are included in the [Maven file](pom.xml).
 
 ## Configuration Steps
 
-In addition to downloading the necessary libraries, there is a configuration file to set up the bot. This file is located at *files/config/config.txt* and uses a simple key-value format. Each parameter is explained within the file as an example.
+In addition to downloading the necessary libraries, there is a `.env` necessary file to set up the bot. The information needed for this file is on the file `.env.default`.
 
 
 ## Future Work
@@ -95,4 +95,4 @@ This project has potential for future growth, for example, with AI integration s
 - Unfortunately, this is not the real version that the bot is using since running the bot 24/7 would incur costs. However, the *no server* version is based on this version.
 - All the code is documented.
 - All features were developed by myself.
-- All the messages/responses are written in portuguese, since SC Braga is a portuguese team.
+- All the messages/responses are written in portuguese, since SC Braga is a portuguese team and so the server.
