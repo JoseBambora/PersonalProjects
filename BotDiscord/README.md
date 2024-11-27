@@ -1,8 +1,10 @@
 # Bot Gverreiro
 
-This project was developed specifically for a Discord community/server. Unlike other projects, it addresses a real-world use case and it is being used in real life. 
-
+![Bot Gverreiro Image](files/image.jpg "Image Bot Gverreiro")
+This project was developed specifically for a Discord community/server. Unlike other projects, it addresses a real-world use case and it is being used in real life.
+    
 In this document, I provide an introduction to the project, including its use case. I also detail what the bot does, how it operates, the technologies and libraries used, and the final configuration steps. Additionally, the document includes some future development ideas and important notes.
+
 
 ## Introduction
 
@@ -43,6 +45,7 @@ If you to have a look at the SlashCommands available, here they are:
 | /stats  | User statistics                    |
 | /season | Season statistics                  |
 | /top    | Leaderboard                        |
+| /bet    | User predicts season results       |
 
 </div>
 
@@ -75,6 +78,7 @@ These libraries are included in the [Maven file](pom.xml).
 - [Mockito Core 5.12](https://mvnrepository.com/artifact/org.mockito/mockito-core/5.12.0): Testing.
 - [JOOQ 3.19.8](https://github.com/jOOQ/jOOQ): Database queries.
 - [SQLite-JDBC 3.45.3.0](https://github.com/xerial/sqlite-jdbc): SQLite connections.
+- [FasterXML Jackson Data format 2.17.2](https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml/2.17.2): Write CSV Files.
 
 ## Configuration Steps
 

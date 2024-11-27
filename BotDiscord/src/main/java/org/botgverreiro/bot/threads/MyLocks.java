@@ -29,6 +29,8 @@ public class MyLocks {
         locks.put("waitingResults", new ReentrantReadWriteLock());
         locks.put("openMods", new ReentrantReadWriteLock());
         locks.put("interactions", new ReentrantReadWriteLock());
+        locks.put("seasonBets", new ReentrantReadWriteLock());
+        locks.put("openSeason", new ReentrantReadWriteLock());
         locks.put(EnvDB.database_portugal, new ReentrantReadWriteLock());
         locks.put(EnvDB.database_football, new ReentrantReadWriteLock());
         locks.put(EnvDB.database_futsal, new ReentrantReadWriteLock());

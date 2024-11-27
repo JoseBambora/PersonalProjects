@@ -104,11 +104,11 @@ public class PositionsRepo {
      * @param season        Season ID.
      * @param points        Points to increment.
      */
-    public void incrementPoints(Configuration configuration, Iterable<String> users, String season, int points) {
+    public void incrementPoints(Configuration configuration, Iterable<String> users, String season, int points, int prediction) {
         for (String user : users) {
             configuration.dsl().update(tableName)
                     .set(pointsColumn, pointsColumn.plus(points))
-                    .set(predictionsColumn, predictionsColumn.plus(1))
+                    .set(predictionsColumn, predictionsColumn.plus(prediction))
                     .where(seasonColumn.eq(season))
                     .and(userColumn.eq(user))
                     .execute();
@@ -164,7 +164,7 @@ public class PositionsRepo {
                 .set(pointsColumn, 0)
                 .set(predictionsColumn, 0)
                 .onConflictDoNothing()
-                .executeAsync();
+                .execute();
     }
 
 }

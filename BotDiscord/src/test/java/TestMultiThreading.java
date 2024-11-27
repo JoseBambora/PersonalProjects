@@ -3,6 +3,7 @@ import org.botgverreiro.bot.threads.TaskManager;
 import org.botgverreiro.facade.Facade;
 import org.botgverreiro.model.classes.Game;
 import org.botgverreiro.model.classes.Season;
+import org.botgverreiro.model.classes.SeasonBet;
 import org.botgverreiro.model.classes.User;
 import org.botgverreiro.model.enums.Field;
 import org.botgverreiro.model.enums.Mode;
@@ -197,5 +198,36 @@ public class TestMultiThreading {
             Assertions.assertEquals(season2.getScored(), 10);
         });
         taskManager.waitTask();
+    }
+
+    @Test
+    public void test7() {
+        List<SeasonBet> seasonBets = List.of(
+                new SeasonBet("test4", "test2", 1, "LE", 3, 3, 3, "abc", "abc", "abc", "abc"),
+                new SeasonBet("test_4", "test_2", 1, "LE", 3, 3, 3, "abc", "abc", "abc", "abc"),
+                new SeasonBet("test4", "test2", 1, "LC", 3, 3, 3, "abc", "abc", "abc", "abc"),
+                new SeasonBet("test2", "test2", 1, "LE", 3, 3, 3, "abc", "abc", "abc", "abc"),
+                new SeasonBet("test1", "test2", 1, "LE", 3, 3, 3, "abc", "abc", "abc", "abc")
+        );
+        seasonBets.forEach(s -> taskManager.addTask(() -> Assertions.assertEquals(facade.addSeasonBet(s),0)));
+        taskManager.waitTask();
+        facade.closeSeasonsBets();
+        facade.endSeason(1,"LE",3,3,3);
+        facade.classification(Mode.FOOTBALL,null);
+
+
+        User user1 = facade.statsUser("test1", Mode.FOOTBALL, null);
+        User user2 = facade.statsUser("test2", Mode.FOOTBALL, null);
+        User user3 = facade.statsUser("test4", Mode.FOOTBALL, null);
+        User user4 = facade.statsUser("test_4", Mode.FOOTBALL, null);
+
+        Assertions.assertEquals(user1.getTotalPredictions(), 2);
+        Assertions.assertEquals(user1.getTotalPoints(), 51);
+        Assertions.assertEquals(user2.getTotalPredictions(), 2);
+        Assertions.assertEquals(user2.getTotalPoints(), 47);
+        Assertions.assertEquals(user3.getTotalPredictions(), 2);
+        Assertions.assertEquals(user3.getTotalPoints(), 31);
+        Assertions.assertEquals(user4.getTotalPredictions(), 0);
+        Assertions.assertEquals(user4.getTotalPoints(), 45);
     }
 }

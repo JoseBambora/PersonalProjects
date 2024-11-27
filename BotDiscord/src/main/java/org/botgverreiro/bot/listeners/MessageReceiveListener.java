@@ -46,7 +46,7 @@ public class MessageReceiveListener extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         MessageSender.sendThinking(event);
         if (betCommands.hasCommand(event))
-            MessageSender.sendMessage(event, Templates.messageUnkownCommand());
+            MessageSender.sendMessage(event, Templates.messageUnknownCommand());
         else if (betCommands.hasPermission(event))
             MessageSender.sendMessage(event, Templates.messageNoPermissions());
         else if (RateLimiter.isRateLimited(event.getUser().getId()))
