@@ -43,7 +43,8 @@ public class TestFacade {
         File[] files = directory.toFile().listFiles();
         if (files != null) {
             for (File file : files) {
-                file.delete();
+                if(!file.getName().equals("README.md"))
+                    file.delete();
             }
         }
     }
