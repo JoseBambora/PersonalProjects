@@ -1,9 +1,11 @@
-# Bot Gverreiro
+# Bot Gverreiro ![](https://github.com/JoseBambora/PersonalProjects/actions/workflows/run-botdiscord-tests.yml/badge.svg)
 
-![Bot Gverreiro Image](files/image.jpg "Image Bot Gverreiro")
+<img style="float: right;" src="files/image.jpg" alt="Image Bot Gverreiro" width="200"/>
+
 This project was developed specifically for a Discord community/server. Unlike other projects, it addresses a real-world use case and it is being used in real life.
     
 In this document, I provide an introduction to the project, including its use case. I also detail what the bot does, how it operates, the technologies and libraries used, and the final configuration steps. Additionally, the document includes some future development ideas and important notes.
+
 
 
 ## Introduction
