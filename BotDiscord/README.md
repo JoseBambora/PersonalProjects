@@ -1,4 +1,4 @@
-# Bot Gverreiro ![](https://github.com/JoseBambora/PersonalProjects/actions/workflows/run-botdiscord-tests.yml/badge.svg)
+# Bot Gverreiro ![](https://github.com/JoseBambora/PersonalProjects/actions/workflows/run-botdiscord-tests.yml/badge.svg) ![Java](https://img.shields.io/badge/Java-ED8B00?style=flat&logo=openjdk&logoColor=white) ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat&logo=sqlite&logoColor=white) 
 
 <img style="float: right;" src="files/image.jpg" alt="Image Bot Gverreiro" width="200"/>
 
