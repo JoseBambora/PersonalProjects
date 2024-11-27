@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.botgverreiro.ParserInfo;
 import org.botgverreiro.bot.listeners.MessageReceiveListener;
 import org.mockito.ArgumentCaptor;
 
@@ -33,7 +32,7 @@ public class MockMessage {
         when(event.getAuthor()).thenReturn(user);
         when(user.isBot()).thenReturn(false);
         when(event.getChannel()).thenReturn(channel);
-        when(channel.getId()).thenReturn(ParserInfo.getInstance().getValueString("channelBetsTest"));
+        when(channel.getId()).thenReturn(System.getenv("CHANNEL_BETS_TEST"));
         when(event.getMessage()).thenReturn(message);
         when(message.addReaction(any())).thenReturn(restAction);
         when(message.getContentDisplay()).thenReturn(messageContent);

@@ -26,7 +26,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
@@ -489,7 +488,7 @@ public class TestBot {
         Assertions.assertEquals(mock1.getResultMessage(), "Operação 'Fim de temporada' realizada com sucesso.");
         Assertions.assertEquals(mock1.getMessageSent(), """
                 # Fim da temporada 24/25
-                A temporada **24/25** chegou ao fim. Nesta temporada houve um total de __398__ previsões, sendo que __9__ foram previsões corretas. (taxa de acerto: __2,26%__).
+                A temporada **24/25** chegou ao fim. Nesta temporada houve um total de __398__ previsões, sendo que __9__ foram previsões corretas. (taxa de acerto: __2.26%__).
 
                 **Vencedores**:
                 - teste21 (6 pontos, 2 previsões).
@@ -723,7 +722,7 @@ public class TestBot {
         Assertions.assertEquals(slashCommand1.getResultMessage(), "Operação 'Fim de temporada' realizada com sucesso.");
         Assertions.assertEquals(slashCommand1.getMessageSent(), """
                 # Fim da temporada 26/27
-                A temporada **26/27** chegou ao fim. Nesta temporada houve um total de __0__ previsões, sendo que __0__ foram previsões corretas. (taxa de acerto: __0,00%__).
+                A temporada **26/27** chegou ao fim. Nesta temporada houve um total de __0__ previsões, sendo que __0__ foram previsões corretas. (taxa de acerto: __0.00%__).
                 
                 **Vencedores**:
                 - jose (45 pontos, 0 previsões).

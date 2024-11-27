@@ -1,0 +1,37 @@
+name: Bot Gverreiro Tests
+on: 
+  push: 
+    paths-ignore:
+      - '*.md'
+      - '*.txt'
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+    env:
+      CHANNEL_BETS: 1
+      CHANNEL_BETS_TEST: 2
+      CHANNEL_REMINDER: 3
+      THREADS: 2
+      DATABASE_FOOTBALL: files/db/gverreiro_football.db
+      DATABASE_FUTSAL: files/db/gverreiro_futsal.db
+      DATABASE_PORTUGAL: files/db/gverreiro_pt.db
+      DATABASE_TEST: files/dbtests/gverreiro.db
+      DATABASE_TEST_FOOTBALL: files/dbtests/gverreiro_football.db
+      DATABASE_TEST_FUTSAL: files/dbtests/gverreiro_futsal.db
+      DATABASE_TEST_PORTUGAL: files/dbtests/gverreiro_pt.db
+      FILE_SEASON_BETS: files/db/season_bets.csv
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 22
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '22'
+          cache: 'maven'
+
+      - name: Build and Run Bot tests
+        working-directory: BotDiscord
+        run: mvn test

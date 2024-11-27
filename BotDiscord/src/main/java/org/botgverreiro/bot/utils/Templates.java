@@ -7,6 +7,7 @@ import org.botgverreiro.model.classes.User;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * This is just a class to format the messages that are sent.
@@ -196,7 +197,7 @@ public class Templates {
                 .append("__ previsões, sendo que __")
                 .append(season.getCorrectPredictions())
                 .append("__ foram previsões corretas. (taxa de acerto: ")
-                .append(String.format("__%.2f", (float) season.getCorrectPredictions() / (season.getTotalPredictions() != 0 ? season.getTotalPredictions() : 1) * 100))
+                .append(String.format(Locale.US,"__%.2f", (float) season.getCorrectPredictions() / (season.getTotalPredictions() != 0 ? season.getTotalPredictions() : 1) * 100))
                 .append("%__).\n\n");
         stringBuilder.append("**Vencedores**:\n");
         winners.forEach(u -> stringBuilder.append("- ")

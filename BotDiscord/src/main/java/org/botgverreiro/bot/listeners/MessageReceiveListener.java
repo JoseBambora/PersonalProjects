@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.botgverreiro.ParserInfo;
 import org.botgverreiro.bot.frontend.BetCommands;
 import org.botgverreiro.bot.frontend.MessageSender;
 import org.botgverreiro.bot.threads.TaskManager;
@@ -32,8 +31,8 @@ public class MessageReceiveListener extends ListenerAdapter {
 
     private boolean correctTextChannel(@NotNull MessageReceivedEvent event) {
         String id = event.getChannel().getId();
-        return !id.equals(ParserInfo.getInstance().getValueString("channelBets")) &&
-                !id.equals(ParserInfo.getInstance().getValueString("channelBetsTest"));
+        return !id.equals(System.getenv("CHANNEL_BETS")) &&
+                !id.equals(System.getenv("CHANNEL_BETS_TEST"));
     }
 
     @Override
