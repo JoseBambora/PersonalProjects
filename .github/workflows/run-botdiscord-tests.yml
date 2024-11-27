@@ -6,6 +6,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       THREADS: 2
+      DATABASE_FOOTBALL: files/db/gverreiro_football.db
+      DATABASE_FUTSAL: files/db/gverreiro_futsal.db
+      DATABASE_PORTUGAL: files/db/gverreiro_pt.db
+      DATABASE_TEST: files/dbtests/gverreiro.db
+      DATABASE_TEST_FOOTBALL: files/dbtests/gverreiro_football.db
+      DATABASE_TEST_FUTSAL: files/dbtests/gverreiro_futsal.db
+      DATABASE_TEST_PORTUGAL: files/dbtests/gverreiro_pt.db
+      FILE_SEASON_BETS: files/db/season_bets.csv
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -15,7 +23,7 @@ jobs:
         with:
           java-version: '22'
           distribution: 'oracle'
-          
+
       - name: Build and run tests
         working-directory: BotDiscord
         run: mvn test
