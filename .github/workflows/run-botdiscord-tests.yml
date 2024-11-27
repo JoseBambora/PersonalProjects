@@ -32,13 +32,6 @@ jobs:
           java-version: '22'
           cache: 'maven'
 
-      - name: get JAVA version
-        run: 'java --version'
-
-      - name: Build with Maven
-        working-directory: BotDiscord
-        run: mvn -B package --file pom.xml
-
-      - name: Run Bot tests
+      - name: Build and Run Bot tests
         working-directory: BotDiscord
         run: mvn test
