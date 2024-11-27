@@ -98,6 +98,8 @@ public class ReminderService extends ListenerAdapter {
         List<Game> openGames = facade.openBets(now);
         System.out.println("Open Bets acordou. Open games: " + openGames);
         if (!openGames.isEmpty()) {
+            if (facade.closeSeasonsBets() == 0)
+                MessageSender.sendMessage(channelBets, Templates.messageSeasonBetsClose());
             changePermissionsWrite(true);
             MessageSender.sendMessage(channelBets, Templates.messageOpenBets(openGames));
             List<LocalDateTime> alarms = getAlarms(openGames, Game::startGame);

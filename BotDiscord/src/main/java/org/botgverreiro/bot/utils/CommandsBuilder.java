@@ -33,16 +33,34 @@ public class CommandsBuilder {
                 .addOptions(getSeasonOption());
         CommandData deleteUser = Commands.slash("delete", "Eliminar dados do utilizador");
         CommandData addGame = getAddGameCommand();
-        CommandData newSeason = Commands.slash("new", "Apenas para Mods. Nova temporada");
+        CommandData newSeason = Commands.slash("new", "Apenas para Mods. Nova temporada")
+                .addOptions(getEuropeCompetition("lc", "Liga dos Campeões"))
+                .addOptions(getEuropeCompetition("le", "Liga Europa"))
+                .addOptions(getEuropeCompetition("cl", "Liga Conferência"));
         CommandData inst = Commands.slash("inst", "Instruções de submissão de prognósticos");
         CommandData help = Commands.slash("help", "Lista de comandos e os seus significados");
         CommandData info = Commands.slash("info", "Estado atual do bot");
-        CommandData end = Commands.slash("end", "Mensagem de fim da temporada");
+        CommandData end = Commands.slash("end", "Mensagem de fim da temporada")
+                .addOptions(getBetSeasonLeaguePos(),
+                        getBetSeasonEuroComp(),
+                        getBetSeasonCup("cep", "Competição Europeia",true),
+                        getBetSeasonCup("tp", "Taça de Portugal", false),
+                        getBetSeasonCup("tl", "Taça da Liga", true));
         CommandData bot = Commands.slash("bot", "Mensagem introdutória do bot");
+        CommandData bet = Commands.slash("bet", "Submeter prognóstico para a temporada")
+                .addOptions(getBetSeasonLeaguePos(),
+                        getBetSeasonEuroComp(),
+                        getBetSeasonCup("cep", "Competição Europeia", true),
+                        getBetSeasonCup("tp", "Taça de Portugal", false),
+                        getBetSeasonCup("tl", "Taça da Liga", true),
+                        getBetSeasonPlayer("je", "Jogador Estrela"),
+                        getBetSeasonPlayer("js", "Jogador Surpresa"),
+                        getBetSeasonPlayer("jd", "Jogador Desilusão"),
+                        getBetSeasonPlayer("jr", "Jogador Revelação da formação"));
         CommandData remove = getRemoveGameCommand();
         CommandData win = getWinCommand();
         modsCommands = Stream.of(addGame, newSeason, win, remove, info, end).map(c -> c.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))).toList();
-        usersCommands = List.of(top, statsUser, statsSeason, deleteUser, inst, help, bot);
+        usersCommands = List.of(top, statsUser, statsSeason, deleteUser, inst, help, bot, bet);
         usersCommandsNames = usersCommands.stream().map(CommandData::getName).toList();
     }
 
@@ -60,16 +78,49 @@ public class CommandsBuilder {
                 .addChoice("Seleção", "P");
     }
 
+    private OptionData getEuropeCompetition(String tag, String competition) {
+        return new OptionData(INTEGER, tag, competition, true)
+                .addChoice("Sim", 1)
+                .addChoice("Não", 0);
+    }
+
+    private OptionData getBetSeasonEuroComp() {
+        return new OptionData(STRING, "ce", "Competição Europeia", true)
+                .addChoice("Liga dos Campeões", "LC")
+                .addChoice("Liga Europa", "LE")
+                .addChoice("Liga Conferência", "CL");
+    }
+
+    private OptionData getBetSeasonLeaguePos() {
+        return new OptionData(INTEGER, "pl", "Posição Campeonato", true);
+    }
+
+    private OptionData getBetSeasonCup(String cuptag, String cupName, boolean groupstage) {
+        OptionData res = new OptionData(INTEGER, cuptag, cupName, true)
+                .addChoice("Vencedores", 1)
+                .addChoice("Finalista", 2)
+                .addChoice("Meia Final", 3)
+                .addChoice("4º Finais", 4)
+                .addChoice("8º Finais", 8)
+                .addChoice("16º Avos", 16)
+                .addChoice("32º Avos", 32);
+        return groupstage ? res.addChoice("Fase de grupos", 300) : res;
+    }
+
+    private OptionData getBetSeasonPlayer(String tag, String desc) {
+        return new OptionData(STRING, tag, desc, true);
+    }
+
     private OptionData getSeasonOption() {
         return new OptionData(STRING, "temporada", "Época no formato x/x", false);
     }
 
     private OptionData getMinuteOption() {
-        return new OptionData(INTEGER, "minuto", "Minuto", true);
-        // .addChoice("15", 15)
-        // .addChoice("30", 30)
-        // .addChoice("45", 45)
-        // .addChoice("00", 0);
+        return new OptionData(INTEGER, "minuto", "Minuto", true)
+                .addChoice("15", 15)
+                .addChoice("30", 30)
+                .addChoice("45", 45)
+                .addChoice("00", 0);
     }
 
     private OptionData getHourOption() {
