@@ -1,13 +1,10 @@
 # Bot Gverreiro
 
-<div style="display: flex; align-items: center;">
-  <img src="files/image.jpg" alt="image description" style="width: 150px; margin-right: 20px;">
-  <div>
-    This project was developed specifically for a Discord community/server. Unlike other projects, it addresses a real-world use case and it is being used in real life.
+[Bot Gverreiro Image](files/image.jpg)
+This project was developed specifically for a Discord community/server. Unlike other projects, it addresses a real-world use case and it is being used in real life.
     
-    In this document, I provide an introduction to the project, including its use case. I also detail what the bot does, how it operates, the technologies and libraries used, and the final configuration steps. Additionally, the document includes some future development ideas and important notes.
-  </div>
-</div>
+In this document, I provide an introduction to the project, including its use case. I also detail what the bot does, how it operates, the technologies and libraries used, and the final configuration steps. Additionally, the document includes some future development ideas and important notes.
+
 
 ## Introduction
 
