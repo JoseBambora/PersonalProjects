@@ -1,4 +1,4 @@
-package org.jdaextension.reponses;
+package org.jdaextension.responses;
 
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jsoup.Jsoup;

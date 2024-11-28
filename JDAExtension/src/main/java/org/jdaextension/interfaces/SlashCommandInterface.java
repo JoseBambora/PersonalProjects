@@ -1,10 +1,8 @@
 package org.jdaextension.interfaces;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jdaextension.configuration.SlashCommand;
-import org.jdaextension.reponses.ResponseButtonClick;
-import org.jdaextension.reponses.ResponseMessage;
+import org.jdaextension.responses.ResponseMessage;
 
 import java.util.Map;
 

@@ -3,7 +3,7 @@ package org.jdaextension.examples;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.interfaces.SlashCommandInterface;
-import org.jdaextension.reponses.ResponseMessage;
+import org.jdaextension.responses.ResponseMessage;
 
 import java.util.Map;
 

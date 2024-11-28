@@ -5,8 +5,8 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jdaextension.interfaces.SlashCommandInterface;
-import org.jdaextension.reponses.ResponseButtonClick;
-import org.jdaextension.reponses.ResponseMessage;
+import org.jdaextension.responses.ResponseButtonClick;
+import org.jdaextension.responses.ResponseMessage;
 
 import java.util.HashMap;
 import java.util.Map;
