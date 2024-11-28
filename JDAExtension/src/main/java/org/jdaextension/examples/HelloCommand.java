@@ -26,7 +26,7 @@ public class HelloCommand implements SlashCommandInterface {
     }
 
     @Override
-    public ResponseMessage execute(SlashCommandInteractionEvent event, Map<String, Object> variables) {
+    public ResponseMessage onCall(SlashCommandInteractionEvent event, Map<String, Object> variables) {
         String word = (String) variables.get("word");
         MyType myType = (MyType) variables.get("coords");
         System.out.println(word);
