@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class Configuration extends ListenerAdapter {
     private final Map<String,SlashCommand> commands;
+
     public Configuration() {
         commands = new HashMap<>();
     }

@@ -19,10 +19,10 @@ public class HelloCommand implements SlashCommandInterface {
                 .setCustom()
                 .addChoice("Option 1", new MyType(1,1))
                 .addChoice("Option 2", new MyType(2,2));
-        SlashCommand slashCommand = new SlashCommand("hello", "hello world");
-        slashCommand.addOption(option1);
-        slashCommand.addOption(option2);
-        return slashCommand;
+        return new SlashCommand("hello", "hello world")
+                .addOption(option1)
+                .addOption(option2)
+                .setSendThinking();
     }
 
     @Override
@@ -31,7 +31,7 @@ public class HelloCommand implements SlashCommandInterface {
         MyType myType = (MyType) variables.get("coords");
         System.out.println(word);
         System.out.println(myType);
-        return new ResponseMessage("views/Template2")
+        return new ResponseMessage("Template2")
                 .setVariable("word",word)
                 .setVariable("coords", myType.toString());
     }

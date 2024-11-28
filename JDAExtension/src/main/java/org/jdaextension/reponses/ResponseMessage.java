@@ -22,7 +22,7 @@ public class ResponseMessage {
     private final List<Button> buttons;
 
     public ResponseMessage(String filename) {
-        this.file = filename;
+        this.file = System.getenv("VIEWS_FOLDER") + "/" + filename;
         this.message = new StringBuilder();
         this.variables = new HashMap<>();
         this.buttons = new ArrayList<>();
@@ -59,14 +59,31 @@ public class ResponseMessage {
             System.err.println("Error sending message: \n" + e);
         }
     }
-    public void send(SlashCommandInteractionEvent event) {
+
+    public void send(SlashCommandInteractionEvent event, boolean sentThinking) {
         this.build();
-        if(this.buttons.isEmpty())
-            event.reply(this.message.toString())
-                    .queue();
-        else
-            event.reply(this.message.toString())
-                .setActionRow(this.buttons)
-                .queue();
+        if(sentThinking) {
+            if(this.buttons.isEmpty()) {
+                event.getHook()
+                        .sendMessage(this.message.toString())
+                        .queue();
+            }
+            else {
+                event.getHook()
+                        .sendMessage(this.message.toString())
+                        .setActionRow(this.buttons)
+                        .queue();
+            }
+        }
+        else {
+            if(this.buttons.isEmpty()) {
+                event.reply(this.message.toString()).queue();
+            }
+            else {
+                event.reply(this.message.toString())
+                        .setActionRow(this.buttons)
+                        .queue();
+            }
+        }
     }
 }
