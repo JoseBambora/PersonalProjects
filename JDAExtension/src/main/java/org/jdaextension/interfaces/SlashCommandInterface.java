@@ -7,6 +7,6 @@ import org.jdaextension.responses.ResponseMessage;
 import java.util.Map;
 
 public interface SlashCommandInterface {
-    public SlashCommand configure();
-    public ResponseMessage onCall(SlashCommandInteractionEvent event, Map<String, Object> variables);
+    SlashCommand configure();
+    ResponseMessage onCall(SlashCommandInteractionEvent event, Map<String, Object> variables);
 }

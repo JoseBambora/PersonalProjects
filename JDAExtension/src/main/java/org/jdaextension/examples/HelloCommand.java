@@ -1,5 +1,6 @@
 package org.jdaextension.examples;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jdaextension.configuration.Option;
 import org.jdaextension.configuration.SlashCommand;
@@ -22,6 +23,7 @@ public class HelloCommand implements SlashCommandInterface {
         return new SlashCommand("hello", "hello world")
                 .addOption(option1)
                 .addOption(option2)
+                .addPermission(Permission.ADMINISTRATOR)
                 .setSendThinking();
     }
 

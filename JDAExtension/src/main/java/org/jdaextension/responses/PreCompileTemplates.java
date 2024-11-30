@@ -2,9 +2,6 @@ package org.jdaextension.responses;
 
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
-import com.github.jknack.handlebars.io.FileTemplateLoader;
-
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -15,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PreCompileTemplates {
-    private Map<String, Template> templates = null;
+    private Map<String, Template> templates;
 
     private void compileDirectory(String directoryTemplates, String directoryPartials) {
         Handlebars handlebars = new Handlebars();

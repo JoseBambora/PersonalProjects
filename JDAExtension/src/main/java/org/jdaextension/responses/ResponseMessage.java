@@ -1,6 +1,7 @@
 package org.jdaextension.responses;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class ResponseMessage extends Response {
 
@@ -37,6 +38,16 @@ public class ResponseMessage extends Response {
                         .setActionRow(this.buttons)
                         .queue();
             }
+        }
+    }
+
+    public void send(MessageReceivedEvent event) {
+        this.build(event.getJumpUrl());
+        if(this.buttons.isEmpty()) {
+            event.getMessage().reply(this.message.toString()).queue();
+        }
+        else {
+            event.getMessage().reply(this.message.toString()).setActionRow(this.buttons).queue();
         }
     }
 }
