@@ -2,6 +2,8 @@ package org.jdaextension.configuration;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jdaextension.interfaces.MessageReceiverInterface;
+import org.jdaextension.responses.Response;
+import org.jdaextension.responses.ResponseMessage;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,12 +12,13 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MessageReceiver {
+public class MessageReceiver extends ButtonBehaviour<MessageReceiver> {
     private String channelID;
     private Pattern pattern;
     private boolean catchMoreThanOne;
     private MessageReceiverInterface controller;
     private Function<MessageReceivedEvent,String> onErrorRegex;
+    private int id;
 
     public MessageReceiver() {
         channelID = null;
@@ -36,6 +39,10 @@ public class MessageReceiver {
         return this;
     }
 
+    protected void setId(int id) {
+        this.id = id;
+    }
+
     protected void setController(MessageReceiverInterface controller) {
         this.controller = controller;
     }
@@ -46,7 +53,7 @@ public class MessageReceiver {
     }
 
     private void addMatchFound(Matcher matcher, List<String> groups) {
-        for(int i = 0; i < matcher.groupCount(); i++)
+        for(int i = 1; i < matcher.groupCount()+1; i++)
             groups.add(matcher.group(i));
     }
 
@@ -67,14 +74,21 @@ public class MessageReceiver {
             return Collections.emptyList();
     }
 
-    protected void messageReceived(MessageReceivedEvent event) {
+    protected Response messageReceived(MessageReceivedEvent event) {
         if(channelID == null || channelID.isBlank() || channelID.equals(event.getChannel().getId())) {
             String message = event.getMessage().getContentDisplay();
             List<String> groups = getGroups(message);
-            if(groups != null)
-                controller.onCall(event,groups ).send(event);
-            else
-                event.getMessage().reply(onErrorRegex.apply(event)).queue();
+            ResponseMessage responseMessage = new ResponseMessage(event,id);
+            if(groups != null) {
+                controller.onCall(event, groups, responseMessage);
+            }
+            else {
+                responseMessage.setTemplate("400");
+                responseMessage.setVariable("message", onErrorRegex.apply(event));
+            }
+            return responseMessage;
         }
+        else
+            return null;
     }
 }

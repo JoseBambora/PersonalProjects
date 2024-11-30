@@ -42,6 +42,7 @@ public class PreCompileTemplates {
     private PreCompileTemplates() {
         templates = new HashMap<>();
         compileDirectory(System.getenv("TEMPLATES_FOLDER"), System.getenv("PARTIALS_FOLDER"));
+        compileDirectory(System.getenv("ERRORS_FOLDER"), System.getenv("PARTIALS_FOLDER"));
     }
 
     private String getResult(String template, Map<String, Object> variables) {
@@ -55,7 +56,7 @@ public class PreCompileTemplates {
 
     private static PreCompileTemplates instance = null;
 
-    public static String apply(String template, Map<String, Object> variables) {
+    protected static String apply(String template, Map<String, Object> variables) {
         if(instance == null)
             instance = new PreCompileTemplates();
         return instance.getResult(template,variables);

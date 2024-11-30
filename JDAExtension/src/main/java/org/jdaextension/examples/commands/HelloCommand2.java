@@ -1,12 +1,11 @@
-package org.jdaextension.examples;
+package org.jdaextension.examples.commands;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jdaextension.configuration.Option;
 import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.interfaces.SlashCommandInterface;
-import org.jdaextension.responses.ResponseButtonClick;
-import org.jdaextension.responses.ResponseMessage;
+import org.jdaextension.responses.Response;
 
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -28,31 +27,31 @@ public class HelloCommand2 implements SlashCommandInterface {
     }
 
     @Override
-    public ResponseMessage onCall(SlashCommandInteractionEvent event, Map<String, Object> variables) {
+    public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, Response response) {
         String name = (String) variables.get("name");
         Integer integer = (Integer) variables.get("number");
-        return new ResponseMessage("Template1")
+        response.setTemplate("Template1")
                 .setVariable("name",name)
                 .setVariable("items", IntStream.range(0,integer).boxed().toList());
     }
 
-    public ResponseButtonClick onButton1(ButtonInteractionEvent event) {
-        return new ResponseButtonClick("Template3")
+    public void onButton1(ButtonInteractionEvent event, Response response) {
+        response.setTemplate("Template3")
                 .setVariable("name","Button 1 clicked");
     }
 
-    public ResponseButtonClick onButton2(ButtonInteractionEvent event) {
-        return new ResponseButtonClick("Template3")
+    public void onButton2(ButtonInteractionEvent event, Response response) {
+        response.setTemplate("Template3")
                 .setVariable("name","Button 2 clicked");
     }
 
-    public ResponseButtonClick onButton3(ButtonInteractionEvent event) {
-        return new ResponseButtonClick("Template3")
+    public void onButton3(ButtonInteractionEvent event, Response response) {
+        response.setTemplate("Template3")
                 .setVariable("name","Button 3 clicked");
     }
 
-    public ResponseButtonClick onButton4(ButtonInteractionEvent event) {
-        return new ResponseButtonClick("Template3")
+    public void onButton4(ButtonInteractionEvent event, Response response) {
+        response.setTemplate("Template3")
                 .setVariable("name","Button 4 clicked");
     }
 }

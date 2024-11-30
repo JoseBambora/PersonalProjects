@@ -1,31 +1,36 @@
 package org.jdaextension.responses;
 
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public abstract class Response {
-    private final String file;
+    private String file;
     private final Map<String,Object> variables;
     protected final StringBuilder message;
     protected final List<Button> buttons;
 
-    protected Response(String filename) {
-        this.file = filename;
+    public Response() {
+        this.file = "";
         this.message = new StringBuilder();
         this.variables = new HashMap<>();
         this.buttons = new ArrayList<>();
     }
 
-    protected Response setVariable(String name, Object value) {
+    public Response setTemplate(String template) {
+        this.file = template;
+        return this;
+    }
+
+    public Response setVariable(String name, Object value) {
         this.variables.put(name,value);
         return this;
     }
@@ -50,4 +55,6 @@ public abstract class Response {
         configMessage(doc);
         configButtons(doc,id);
     }
+
+    public abstract void send();
 }

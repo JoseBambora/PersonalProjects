@@ -1,11 +1,12 @@
-package org.jdaextension.examples;
+package org.jdaextension.examples.commands;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jdaextension.configuration.Option;
 import org.jdaextension.configuration.SlashCommand;
+import org.jdaextension.examples.MyType;
 import org.jdaextension.interfaces.SlashCommandInterface;
-import org.jdaextension.responses.ResponseMessage;
+import org.jdaextension.responses.Response;
 
 import java.util.Map;
 
@@ -28,12 +29,12 @@ public class HelloCommand implements SlashCommandInterface {
     }
 
     @Override
-    public ResponseMessage onCall(SlashCommandInteractionEvent event, Map<String, Object> variables) {
+    public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, Response response) {
         String word = (String) variables.get("word");
         MyType myType = (MyType) variables.get("coords");
         System.out.println(word);
         System.out.println(myType);
-        return new ResponseMessage("Template2")
+        response.setTemplate("Template2")
                 .setVariable("word",word)
                 .setVariable("coords", myType.toString());
     }

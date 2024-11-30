@@ -4,17 +4,14 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
 import java.util.Collections;
 
-public class ResponseButtonClick extends Response{
-    public ResponseButtonClick(String filename) {
-        super(filename);
+public class ResponseButton extends Response{
+    private final ButtonInteractionEvent event;
+    public ResponseButton(ButtonInteractionEvent eventBT) {
+        this.event = eventBT;
     }
 
     @Override
-    public ResponseButtonClick setVariable(String name, Object value) {
-        return (ResponseButtonClick) super.setVariable(name, value);
-    }
-
-    public void send(ButtonInteractionEvent event) {
+    public void send() {
         String command = event.getButton().getId().split("_")[0];
         this.build(command);
         if(this.buttons.isEmpty()) {

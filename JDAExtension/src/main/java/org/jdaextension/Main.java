@@ -3,10 +3,10 @@ package org.jdaextension;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.jdaextension.configuration.Configuration;
-import org.jdaextension.examples.HelloCommand;
-import org.jdaextension.examples.HelloCommand2;
-import org.jdaextension.examples.HelloMessage;
-import org.jdaextension.examples.SimpleCommand;
+import org.jdaextension.examples.commands.HelloCommand;
+import org.jdaextension.examples.commands.HelloCommand2;
+import org.jdaextension.examples.messages.HelloMessage;
+import org.jdaextension.examples.commands.SimpleCommand;
 
 import java.util.*;
 

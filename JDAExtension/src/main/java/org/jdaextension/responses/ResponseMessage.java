@@ -1,48 +1,18 @@
 package org.jdaextension.responses;
 
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class ResponseMessage extends Response {
-
-    public ResponseMessage(String filename) {
-        super(filename);
+public class ResponseMessage extends Response{
+    private final MessageReceivedEvent event;
+    private final int id;
+    public ResponseMessage(MessageReceivedEvent event, int id) {
+        this.event = event;
+        this.id = id;
     }
 
     @Override
-    public ResponseMessage setVariable(String name, Object value) {
-        return (ResponseMessage) super.setVariable(name, value);
-    }
-
-    public void send(SlashCommandInteractionEvent event, boolean sentThinking) {
-        this.build(event.getName());
-        if(sentThinking) {
-            if(this.buttons.isEmpty()) {
-                event.getHook()
-                        .sendMessage(this.message.toString())
-                        .queue();
-            }
-            else {
-                event.getHook()
-                        .sendMessage(this.message.toString())
-                        .setActionRow(this.buttons)
-                        .queue();
-            }
-        }
-        else {
-            if(this.buttons.isEmpty()) {
-                event.reply(this.message.toString()).queue();
-            }
-            else {
-                event.reply(this.message.toString())
-                        .setActionRow(this.buttons)
-                        .queue();
-            }
-        }
-    }
-
-    public void send(MessageReceivedEvent event) {
-        this.build(event.getJumpUrl());
+    public void send() {
+        this.build("message" + id);
         if(this.buttons.isEmpty()) {
             event.getMessage().reply(this.message.toString()).queue();
         }

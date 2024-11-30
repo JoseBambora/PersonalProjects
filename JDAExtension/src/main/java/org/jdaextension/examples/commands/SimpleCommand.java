@@ -1,9 +1,9 @@
-package org.jdaextension.examples;
+package org.jdaextension.examples.commands;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.interfaces.SlashCommandInterface;
-import org.jdaextension.responses.ResponseMessage;
+import org.jdaextension.responses.Response;
 
 import java.util.Map;
 
@@ -14,7 +14,7 @@ public class SimpleCommand implements SlashCommandInterface {
     }
 
     @Override
-    public ResponseMessage onCall(SlashCommandInteractionEvent event, Map<String, Object> variables) {
-        return new ResponseMessage("Template");
+    public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, Response response) {
+        response.setTemplate("Template");
     }
 }

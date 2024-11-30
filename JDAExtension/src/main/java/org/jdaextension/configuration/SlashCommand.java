@@ -2,27 +2,24 @@ package org.jdaextension.configuration;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jdaextension.interfaces.SlashCommandInterface;
-import org.jdaextension.responses.ResponseButtonClick;
-import org.jdaextension.responses.ResponseMessage;
+import org.jdaextension.responses.Response;
+import org.jdaextension.responses.ResponseSlashCommand;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
-public class SlashCommand {
+public class SlashCommand extends ButtonBehaviour<SlashCommand> {
     private final String name;
     private final String description;
     private SlashCommandInterface controller;
     private final Map<String,Option> options;
-    private final Map<String, Function<ButtonInteractionEvent, ResponseButtonClick>> buttonsInteractions;
     private boolean sendThinking;
     private final List<Permission> permissions;
 
@@ -30,7 +27,6 @@ public class SlashCommand {
         this.name = name;
         this.description = description;
         options = new HashMap<>();
-        buttonsInteractions = new HashMap<>();
         this.controller = null;
         this.sendThinking = false;
         this.permissions = new ArrayList<>();
@@ -49,28 +45,27 @@ public class SlashCommand {
         return this;
     }
 
-    public SlashCommand addButtonClick(String buttonID, Function<ButtonInteractionEvent, ResponseButtonClick> buttonClickFunction) {
-        buttonsInteractions.put(buttonID,buttonClickFunction);
-        return this;
-    }
-
     public SlashCommand addPermission(Permission permission) {
         permissions.add(permission);
         return this;
     }
 
-    protected void execute(SlashCommandInteractionEvent event) {
-        if(event.getMember().hasPermission(permissions)) {
+    protected Response execute(SlashCommandInteractionEvent event) {
+        if(permissions.isEmpty() || (event.getMember() != null && event.getMember().hasPermission(permissions))) {
             if (sendThinking)
                 event.deferReply().queue();
             Map<String, Object> variables = new HashMap<>();
             for (Map.Entry<String, Option> optionEntry : options.entrySet())
                 variables.put(optionEntry.getKey(), optionEntry.getValue().parser(event));
-            ResponseMessage responseMessage = controller.onCall(event, variables);
-            responseMessage.send(event, sendThinking);
+            ResponseSlashCommand responseSlashCommand = new ResponseSlashCommand(event,sendThinking);
+            controller.onCall(event, variables,responseSlashCommand);
+            return responseSlashCommand;
         }
-        else
-            event.reply("You do not have access to this command").queue();
+        else {
+            return new ResponseSlashCommand(event,sendThinking)
+                    .setTemplate("403")
+                    .setVariable("message","You do not have access to this command");
+        }
     }
 
     protected CommandData build() {
@@ -86,8 +81,4 @@ public class SlashCommand {
         return name;
     }
 
-    protected void onButtonClick(ButtonInteractionEvent event) {
-        String[] split = event.getButton().getId().split("_");
-        this.buttonsInteractions.get(split[split.length-1]).apply(event).send(event);
-    }
 }
