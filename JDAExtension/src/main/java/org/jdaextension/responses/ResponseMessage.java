@@ -12,12 +12,15 @@ public class ResponseMessage extends Response{
 
     @Override
     public void send() {
-        this.build("message" + id);
-        if(this.buttons.isEmpty()) {
-            event.getMessage().reply(this.message.toString()).queue();
-        }
-        else {
-            event.getMessage().reply(this.message.toString()).setActionRow(this.buttons).queue();
+        boolean hasFile = this.build("message" + id);
+        this.sendReactions(event.getMessage());
+        if(hasFile) {
+            if(this.buttons.isEmpty()) {
+                event.getMessage().reply(this.message.toString()).setFiles(this.files).queue();
+            }
+            else {
+                event.getMessage().reply(this.message.toString()).setFiles(this.files).setActionRow(this.buttons).queue();
+            }
         }
     }
 }

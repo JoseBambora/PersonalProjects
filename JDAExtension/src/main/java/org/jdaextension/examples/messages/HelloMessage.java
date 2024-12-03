@@ -1,5 +1,6 @@
 package org.jdaextension.examples.messages;
 
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jdaextension.configuration.MessageReceiver;
@@ -25,6 +26,6 @@ public class HelloMessage implements MessageReceiverInterface {
     @Override
     public void onCall(MessageReceivedEvent event, List<String> groups, Response response) {
         System.out.println(groups);
-        response.setTemplate("Template");
+        response.addEmoji(Emoji.fromUnicode("✅"));
     }
 }

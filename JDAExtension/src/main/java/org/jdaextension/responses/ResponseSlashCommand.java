@@ -12,28 +12,30 @@ public class ResponseSlashCommand extends Response{
 
     @Override
     public void send() {
-        this.build(event.getName());
-        if(sendThinking) {
-            if(this.buttons.isEmpty()) {
-                event.getHook()
-                        .sendMessage(this.message.toString())
-                        .queue();
-            }
-            else {
-                event.getHook()
-                        .sendMessage(this.message.toString())
-                        .setActionRow(this.buttons)
-                        .queue();
-            }
-        }
-        else {
-            if(this.buttons.isEmpty()) {
-                event.reply(this.message.toString()).queue();
-            }
-            else {
-                event.reply(this.message.toString())
-                        .setActionRow(this.buttons)
-                        .queue();
+        boolean hasFile = this.build(event.getName());
+        if(hasFile) {
+            if (sendThinking) {
+                if (this.buttons.isEmpty()) {
+                    event.getHook()
+                            .sendMessage(this.message.toString())
+                            .setFiles(this.files)
+                            .queue();
+                } else {
+                    event.getHook()
+                            .sendMessage(this.message.toString())
+                            .setActionRow(this.buttons)
+                            .setFiles(this.files)
+                            .queue();
+                }
+            } else {
+                if (this.buttons.isEmpty()) {
+                    event.reply(this.message.toString()).setFiles(this.files).queue();
+                } else {
+                    event.reply(this.message.toString())
+                            .setActionRow(this.buttons)
+                            .setFiles(this.files)
+                            .queue();
+                }
             }
         }
     }

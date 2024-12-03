@@ -6,19 +6,21 @@ import java.util.Collections;
 
 public class ResponseButton extends Response{
     private final ButtonInteractionEvent event;
-    public ResponseButton(ButtonInteractionEvent eventBT) {
-        this.event = eventBT;
+    public ResponseButton(ButtonInteractionEvent event) {
+        this.event = event;
     }
 
     @Override
     public void send() {
         String command = event.getButton().getId().split("_")[0];
-        this.build(command);
-        if(this.buttons.isEmpty()) {
-            event.editMessage(message.toString()).setComponents(Collections.emptyList()).queue();
-        }
-        else {
-            event.editMessage(message.toString()).setActionRow(buttons).queue();
+        boolean hasFile = this.build(command);
+        this.sendReactions(event.getMessage());
+        if(hasFile) {
+            if (this.buttons.isEmpty()) {
+                event.editMessage(message.toString()).setFiles(this.files).setComponents(Collections.emptyList()).queue();
+            } else {
+                event.editMessage(message.toString()).setFiles(this.files).setActionRow(buttons).queue();
+            }
         }
     }
 }
