@@ -1,6 +1,10 @@
 package org.jdaextension.responses;
 
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
 public class ResponseSlashCommand extends Response{
     private final SlashCommandInteractionEvent event;
@@ -10,32 +14,31 @@ public class ResponseSlashCommand extends Response{
         this.sendThinking = sendThinking;
     }
 
+    private ReplyCallbackAction replyMessageEmbed() {
+        return setEmbed(event.reply(message.toString()));
+    }
+
+    private ReplyCallbackAction setButtons(ReplyCallbackAction r) {
+        return buttons.isEmpty() ? r : r.setActionRow(buttons);
+    }
+
+    private WebhookMessageEditAction<Message> setButtons(WebhookMessageEditAction<Message> r) {
+        return buttons.isEmpty() ? r : r.setActionRow(buttons);
+    }
+
+    private WebhookMessageCreateAction<Message> setButtons(WebhookMessageCreateAction<Message> r) {
+        return buttons.isEmpty() ? r : r.setActionRow(buttons);
+    }
+
+
     @Override
     public void send() {
         boolean hasFile = this.build(event.getName());
         if(hasFile) {
             if (sendThinking) {
-                if (this.buttons.isEmpty()) {
-                    event.getHook()
-                            .sendMessage(this.message.toString())
-                            .setFiles(this.files)
-                            .queue();
-                } else {
-                    event.getHook()
-                            .sendMessage(this.message.toString())
-                            .setActionRow(this.buttons)
-                            .setFiles(this.files)
-                            .queue();
-                }
+                setButtons(setEmbed(event.getHook().editOriginal(message.toString()))).setFiles(this.files).queue();
             } else {
-                if (this.buttons.isEmpty()) {
-                    event.reply(this.message.toString()).setFiles(this.files).queue();
-                } else {
-                    event.reply(this.message.toString())
-                            .setActionRow(this.buttons)
-                            .setFiles(this.files)
-                            .queue();
-                }
+                setButtons(replyMessageEmbed()).setFiles(this.files).queue();
             }
         }
     }

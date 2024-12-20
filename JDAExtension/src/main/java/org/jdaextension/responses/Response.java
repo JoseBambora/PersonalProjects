@@ -1,18 +1,25 @@
 package org.jdaextension.responses;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
+import net.dv8tion.jda.api.requests.restaction.interactions.MessageEditCallbackAction;
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
+import java.awt.*;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 
 public abstract class Response {
@@ -22,6 +29,7 @@ public abstract class Response {
     protected final List<Button> buttons;
     protected final List<Emoji> emojis;
     protected final List<FileUpload> files;
+    private final EmbedBuilder embedBuilder;
 
     public Response() {
         this.file = "";
@@ -30,6 +38,7 @@ public abstract class Response {
         this.buttons = new ArrayList<>();
         this.emojis = new ArrayList<>();
         this.files = new ArrayList<>();
+        embedBuilder = new EmbedBuilder();
     }
 
     public Response setTemplate(String template) {
@@ -83,14 +92,39 @@ public abstract class Response {
             }
         }).filter(Objects::nonNull).map(Paths::get).map(FileUpload::fromData).toList());
     }
+    private String getAttribute(Element element,  String name) {
+        return element.hasAttr(name) ? element.attribute(name).getValue() : null;
+    }
+    private String getAttribute(Element element,  String name, String defaultValue) {
+        return element.hasAttr(name) ? element.attribute(name).getValue() : defaultValue;
+    }
+    private void configEmbed(Document doc) {
+        if(!doc.getElementsByTag("embed").isEmpty()) {
+            Element elementEmbed = doc.getElementsByTag("embed").getFirst();
+            Elements elementsTable = elementEmbed.getElementsByTag("table").getFirst().getElementsByTag("tr");
+            Element elementFooter = elementEmbed.getElementsByTag("footer").getFirst();
+            embedBuilder.setAuthor(getAttribute(elementEmbed, "author"));
+            embedBuilder.setColor(Color.decode(getAttribute(elementEmbed, "color", "0xFF5733")));
+            embedBuilder.setTitle(getAttribute(elementEmbed, "title"));
+            embedBuilder.setDescription(getAttribute(elementEmbed, "description"));
+            embedBuilder.setThumbnail(getAttribute(elementEmbed, "thumbnail"));
+            for (Element elementRow : elementsTable) {
+                Elements elementsColumns = elementRow.getElementsByTag("td");
+                elementsColumns.forEach(c -> embedBuilder.addField(c.attribute("name").getValue(), c.text(), true));
+                embedBuilder.addBlankField(false);
+            }
+            embedBuilder.setFooter(elementFooter.text());
+        }
+    }
 
     protected boolean build(String id) {
         if(this.file != null && !this.file.isBlank()) {
             String result = PreCompileTemplates.apply(file, variables);
             Document doc = Jsoup.parse(result, "", org.jsoup.parser.Parser.xmlParser());
-            configMessage(doc);
             configButtons(doc, id);
             configFiles(doc);
+            configEmbed(doc);
+            configMessage(doc);
             return true;
         }
         else
@@ -101,5 +135,22 @@ public abstract class Response {
 
     protected void sendReactions(Message message) {
         emojis.forEach(e -> message.addReaction(e).queue());
+    }
+
+    protected MessageEditCallbackAction setEmbed(MessageEditCallbackAction m) {
+       return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
+    }
+
+    protected MessageCreateAction setEmbed(MessageCreateAction m ) {
+        return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
+    }
+
+    protected ReplyCallbackAction setEmbed(ReplyCallbackAction m) {
+        return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
+    }
+
+
+    protected WebhookMessageEditAction<Message> setEmbed(WebhookMessageEditAction<Message> m) {
+        return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
     }
 }

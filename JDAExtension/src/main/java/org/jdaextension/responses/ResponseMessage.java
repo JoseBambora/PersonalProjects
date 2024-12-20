@@ -1,6 +1,8 @@
 package org.jdaextension.responses;
 
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 
 public class ResponseMessage extends Response{
     private final MessageReceivedEvent event;
@@ -10,17 +12,19 @@ public class ResponseMessage extends Response{
         this.id = id;
     }
 
+    private MessageCreateAction sendMessageEmbed() {
+        return setEmbed(event.getMessage().reply(this.message.toString()));
+    }
+
+    private MessageCreateAction setButtons(MessageCreateAction messageCreateAction) {
+        return buttons.isEmpty() ? messageCreateAction : messageCreateAction.setActionRow(buttons);
+    }
     @Override
     public void send() {
         boolean hasFile = this.build("message" + id);
         this.sendReactions(event.getMessage());
         if(hasFile) {
-            if(this.buttons.isEmpty()) {
-                event.getMessage().reply(this.message.toString()).setFiles(this.files).queue();
-            }
-            else {
-                event.getMessage().reply(this.message.toString()).setFiles(this.files).setActionRow(this.buttons).queue();
-            }
+            setButtons(sendMessageEmbed()).setFiles(this.files).queue();
         }
     }
 }

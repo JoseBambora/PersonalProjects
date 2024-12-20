@@ -1,9 +1,7 @@
 package org.jdaextension.examples;
 
 
-import org.jdaextension.interfaces.CustomType;
-
-public class MyType implements CustomType {
+public class MyType {
     private final int x;
     private final int y;
 
@@ -12,13 +10,15 @@ public class MyType implements CustomType {
         this.y = y;
     }
 
-    @Override
-    public String toString() {
-        return "Coords(" + x + "," + y + ")";
+    public MyType(String string) {
+        string = string.substring(1,string.length()-1);
+        String[] split = string.split(",");
+        this.x = Integer.parseInt(split[0]);
+        this.y = Integer.parseInt(split[1]);
     }
 
     @Override
-    public CustomType clone() {
-        return new MyType(x,y);
+    public String toString() {
+        return "Coords(" + x + "," + y + ")";
     }
 }

@@ -26,6 +26,7 @@ public class HelloMessage implements MessageReceiverInterface {
     @Override
     public void onCall(MessageReceivedEvent event, List<String> groups, Response response) {
         System.out.println(groups);
-        response.addEmoji(Emoji.fromUnicode("✅"));
+        response.setTemplate("TemplateEmbed").setVariable("counter","2");
+        // response.addEmoji(Emoji.fromUnicode("✅"));
     }
 }

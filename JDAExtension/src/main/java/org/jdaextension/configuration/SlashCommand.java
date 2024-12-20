@@ -1,11 +1,13 @@
 package org.jdaextension.configuration;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.jdaextension.configuration.option.Option;
 import org.jdaextension.interfaces.SlashCommandInterface;
 import org.jdaextension.responses.Response;
 import org.jdaextension.responses.ResponseSlashCommand;
@@ -19,7 +21,7 @@ public class SlashCommand extends ButtonBehaviour<SlashCommand> {
     private final String name;
     private final String description;
     private SlashCommandInterface controller;
-    private final Map<String,Option> options;
+    private final Map<String, Option> options;
     private boolean sendThinking;
     private final List<Permission> permissions;
 
@@ -73,7 +75,7 @@ public class SlashCommand extends ButtonBehaviour<SlashCommand> {
                 .addOptions(options.values()
                         .stream()
                         .sorted((o1, _) -> !o1.isRequired() ? 1 : -1 )
-                        .map(Option::generateOptionData).toList());
+                        .map(Option::buildOption).toList());
         return permissions.isEmpty() ? scd : scd.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
     }
 
@@ -81,4 +83,10 @@ public class SlashCommand extends ButtonBehaviour<SlashCommand> {
         return name;
     }
 
+    public boolean isSendThinking() {
+        return sendThinking;
+    }
+    public void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
+        options.get(event.getFocusedOption().getName()).onAutoComplete(event);
+    }
 }

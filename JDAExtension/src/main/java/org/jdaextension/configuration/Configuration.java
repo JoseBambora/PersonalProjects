@@ -1,7 +1,10 @@
 package org.jdaextension.configuration;
 
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -12,7 +15,10 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 
 public class Configuration extends ListenerAdapter {
     private static final Logger log = LoggerFactory.getLogger(Configuration.class);
@@ -50,7 +56,6 @@ public class Configuration extends ListenerAdapter {
         catch (Exception e) {
             log.error("Error: ", e);
             response.setTemplate("500")
-                    .setVariable("message", e.getMessage() + ". Please contact the developer.")
                     .send();
         }
     }
@@ -58,7 +63,7 @@ public class Configuration extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         Runnable runnable = () -> commands.get(event.getName()).execute(event).send();
-        sendError(runnable,  new ResponseSlashCommand(event,false));
+        sendError(runnable,  new ResponseSlashCommand(event,commands.get(event.getName()).isSendThinking()));
     }
 
 
@@ -90,5 +95,20 @@ public class Configuration extends ListenerAdapter {
                 messageReceivers.values().stream().map(m -> m.messageReceived(event)).filter(Objects::nonNull).forEach(Response::send);
         };
         sendError(runnable, new ResponseMessage(event,-1));
+    }
+
+    @Override
+    public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
+        commands.get(event.getName()).onAutoComplete(event);
+    }
+
+    @Override
+    public void onUserContextInteraction(UserContextInteractionEvent event) {
+        // TO DO: https://jda.wiki/using-jda/interactions/#context-menus
+    }
+
+    @Override
+    public void onMessageContextInteraction(MessageContextInteractionEvent event) {
+        // TO DO: https://jda.wiki/using-jda/interactions/#context-menus
     }
 }
