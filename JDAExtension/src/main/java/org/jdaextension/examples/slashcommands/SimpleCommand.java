@@ -1,4 +1,4 @@
-package org.jdaextension.examples.commands;
+package org.jdaextension.examples.slashcommands;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;

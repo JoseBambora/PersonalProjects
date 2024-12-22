@@ -1,5 +1,6 @@
 package org.jdaextension.configuration;
 
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
@@ -8,6 +9,8 @@ import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEven
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jdaextension.interfaces.MessageCommandInterface;
+import org.jdaextension.interfaces.UserCommandInterface;
 import org.jdaextension.interfaces.MessageReceiverInterface;
 import org.jdaextension.interfaces.SlashCommandInterface;
 import org.jdaextension.responses.*;
@@ -15,24 +18,39 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 public class Configuration extends ListenerAdapter {
     private static final Logger log = LoggerFactory.getLogger(Configuration.class);
-    private final Map<String,SlashCommand> commands;
+    private final Map<String,SlashCommand> slashCommands;
+    private final Map<String,UserCommand> userCommands;
+    private final Map<String,MessageCommand> messageCommands;
     private final Map<Integer,MessageReceiver> messageReceivers;
 
     public Configuration() {
-        commands = new HashMap<>();
+        slashCommands = new HashMap<>();
+        userCommands = new HashMap<>();
+        messageCommands = new HashMap<>();
         messageReceivers = new HashMap<>();
     }
     public void addCommand(SlashCommandInterface slashCommandClass) {
         SlashCommand slashCommand = slashCommandClass.configure();
         slashCommand.setController(slashCommandClass);
-        commands.put(slashCommand.getName(),slashCommand);
+        slashCommands.put(slashCommand.getName(),slashCommand);
+    }
+
+    public void addCommand(UserCommandInterface userCommandClass) {
+        UserCommand userCommand = userCommandClass.configure();
+        userCommand.setController(userCommandClass);
+        userCommands.put(userCommand.getName(),userCommand);
+    }
+
+
+    public void addCommand(MessageCommandInterface messageCommandClass) {
+        MessageCommand messageCommand = messageCommandClass.configure();
+        messageCommand.setController(messageCommandClass);
+        messageCommands.put(messageCommand.getName(),messageCommand);
     }
 
     public void addMessageReceiver(MessageReceiverInterface messageReceiverInterface) {
@@ -45,7 +63,9 @@ public class Configuration extends ListenerAdapter {
     @Override
     public void onGuildReady(GuildReadyEvent event) {
         event.getGuild().updateCommands()
-                .addCommands(commands.values().stream().map(SlashCommand::build).toList())
+                .addCommands(slashCommands.values().stream().map(SlashCommand::build).toList())
+                .addCommands(userCommands.values().stream().map(UserCommand::build).toList())
+                .addCommands(messageCommands.values().stream().map(MessageCommand::build).toList())
                 .queue();
     }
 
@@ -61,14 +81,6 @@ public class Configuration extends ListenerAdapter {
     }
 
     @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        SlashCommand command = commands.get(event.getName());
-        Runnable runnable = () -> command.execute(event).send();
-        sendError(runnable,  new ResponseSlashCommand(event,command.isSendThinking(), command.isEphemeral()));
-    }
-
-
-    @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         Runnable runnable = () -> {
             String idButton = event.getButton().getId();
@@ -78,7 +90,7 @@ public class Configuration extends ListenerAdapter {
                 if (command.contains("message"))
                     messageReceivers.get(Integer.parseInt(command.replaceAll("message", ""))).onButtonClick(event, split[1]).send();
                 else
-                    commands.get(command).onButtonClick(event, split[1]).send();
+                    slashCommands.get(command).onButtonClick(event, split[1]).send();
             }
             else {
                 ResponseButton responseButton = new ResponseButton(event);
@@ -98,18 +110,29 @@ public class Configuration extends ListenerAdapter {
         sendError(runnable, new ResponseMessage(event,-1));
     }
 
+
+    @Override
+    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+        SlashCommand command = slashCommands.get(event.getName());
+        Runnable runnable = () -> command.execute(event).send();
+        sendError(runnable,  new ResponseCommand(event,command.isSendThinking(), command.isEphemeral()));
+    }
     @Override
     public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
-        commands.get(event.getName()).onAutoComplete(event);
+        slashCommands.get(event.getName()).onAutoComplete(event);
     }
 
     @Override
     public void onUserContextInteraction(UserContextInteractionEvent event) {
-        // TO DO: https://jda.wiki/using-jda/interactions/#context-menus
+        UserCommand userCommand = userCommands.get(event.getName());
+        Runnable runnable = () -> userCommand.execute(event).send();
+        sendError(runnable,  new ResponseCommand(event,userCommand.isSendThinking(), userCommand.isEphemeral()));
     }
 
     @Override
     public void onMessageContextInteraction(MessageContextInteractionEvent event) {
-        // TO DO: https://jda.wiki/using-jda/interactions/#context-menus
+        MessageCommand messageCommand = messageCommands.get(event.getName());
+        Runnable runnable = () -> messageCommand.execute(event).send();
+        sendError(runnable,  new ResponseCommand(event,messageCommand.isSendThinking(), messageCommand.isEphemeral()));
     }
 }

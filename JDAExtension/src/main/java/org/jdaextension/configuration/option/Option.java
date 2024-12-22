@@ -6,12 +6,13 @@ import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class Option<T> {
+public abstract class Option<T> implements Comparable<Option<?>> {
     private final String name;
     private final String description;
     private final boolean required;
@@ -69,5 +70,10 @@ public abstract class Option<T> {
     public void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
         List<Choice> choices = this.autoComplete.apply(event);
         event.replyChoices(choices).queue();
+    }
+
+    @Override
+    public int compareTo(@NotNull Option<?> other) {
+        return this.isRequired() ? -1 : other.isRequired() ? 1 : 0;
     }
 }

@@ -1,4 +1,4 @@
-package org.jdaextension.examples.commands;
+package org.jdaextension.examples.slashcommands;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -27,9 +27,7 @@ public class HelloCommand implements SlashCommandInterface {
         OptionCustom option3 = new OptionCustom("coords2","coords no choice", true, MyType::new)
                 .setAutoComplete(this::onAutoComplete);
         return new SlashCommand("hello", "hello world")
-                .addOption(option1)
-                .addOption(option2)
-                .addOption(option3)
+                .addOptions(option1, option2, option3)
                 .setEphemeral()
                 .addPermission(Permission.ADMINISTRATOR)
                 .setSendThinking();

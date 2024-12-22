@@ -1,16 +1,16 @@
 package org.jdaextension.responses;
 
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
-public class ResponseSlashCommand extends Response{
-    private final SlashCommandInteractionEvent event;
+public class ResponseCommand extends Response{
+    private final CommandInteraction event;
     private final boolean sendThinking;
     private final boolean ephemeral;
-    public ResponseSlashCommand(SlashCommandInteractionEvent event, boolean sendThinking, boolean ephemeral) {
+    public ResponseCommand(CommandInteraction event, boolean sendThinking, boolean ephemeral) {
         this.event = event;
         this.sendThinking = sendThinking;
         this.ephemeral = ephemeral;
