@@ -3,7 +3,6 @@ package org.jdaextension.examples.commands;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jdaextension.configuration.option.OptionNumber;
-import org.jdaextension.configuration.option.Option;
 import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.configuration.option.OptionString;
 import org.jdaextension.interfaces.SlashCommandInterface;

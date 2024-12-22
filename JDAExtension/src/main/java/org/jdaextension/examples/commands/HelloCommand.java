@@ -4,7 +4,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jdaextension.configuration.option.OptionCustom;
-import org.jdaextension.configuration.option.Option;
 import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.configuration.option.OptionString;
 import org.jdaextension.examples.MyType;
@@ -31,6 +30,7 @@ public class HelloCommand implements SlashCommandInterface {
                 .addOption(option1)
                 .addOption(option2)
                 .addOption(option3)
+                .setEphemeral()
                 .addPermission(Permission.ADMINISTRATOR)
                 .setSendThinking();
     }

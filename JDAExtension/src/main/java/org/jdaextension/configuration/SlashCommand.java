@@ -23,14 +23,16 @@ public class SlashCommand extends ButtonBehaviour<SlashCommand> {
     private SlashCommandInterface controller;
     private final Map<String, Option> options;
     private boolean sendThinking;
+    private boolean ephemeral;
     private final List<Permission> permissions;
 
     public SlashCommand(String name, String description) {
         this.name = name;
         this.description = description;
-        options = new HashMap<>();
+        this.options = new HashMap<>();
         this.controller = null;
         this.sendThinking = false;
+        this.ephemeral = false;
         this.permissions = new ArrayList<>();
     }
 
@@ -52,19 +54,24 @@ public class SlashCommand extends ButtonBehaviour<SlashCommand> {
         return this;
     }
 
+    public SlashCommand setEphemeral() {
+        ephemeral = true;
+        return this;
+    }
+
     protected Response execute(SlashCommandInteractionEvent event) {
         if(permissions.isEmpty() || (event.getMember() != null && event.getMember().hasPermission(permissions))) {
             if (sendThinking)
-                event.deferReply().queue();
+                event.deferReply().setEphemeral(ephemeral).queue();
             Map<String, Object> variables = new HashMap<>();
             for (Map.Entry<String, Option> optionEntry : options.entrySet())
                 variables.put(optionEntry.getKey(), optionEntry.getValue().parser(event));
-            ResponseSlashCommand responseSlashCommand = new ResponseSlashCommand(event,sendThinking);
+            ResponseSlashCommand responseSlashCommand = new ResponseSlashCommand(event,sendThinking, ephemeral);
             controller.onCall(event, variables,responseSlashCommand);
             return responseSlashCommand;
         }
         else {
-            return new ResponseSlashCommand(event,sendThinking)
+            return new ResponseSlashCommand(event,sendThinking, ephemeral)
                     .setTemplate("403")
                     .setVariable("message","You do not have access to this command");
         }
@@ -85,6 +92,9 @@ public class SlashCommand extends ButtonBehaviour<SlashCommand> {
 
     public boolean isSendThinking() {
         return sendThinking;
+    }
+    public boolean isEphemeral() {
+        return ephemeral;
     }
     public void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
         options.get(event.getFocusedOption().getName()).onAutoComplete(event);

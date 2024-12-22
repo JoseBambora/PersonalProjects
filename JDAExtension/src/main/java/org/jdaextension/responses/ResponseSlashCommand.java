@@ -9,9 +9,11 @@ import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 public class ResponseSlashCommand extends Response{
     private final SlashCommandInteractionEvent event;
     private final boolean sendThinking;
-    public ResponseSlashCommand(SlashCommandInteractionEvent event, boolean sendThinking) {
+    private final boolean ephemeral;
+    public ResponseSlashCommand(SlashCommandInteractionEvent event, boolean sendThinking, boolean ephemeral) {
         this.event = event;
         this.sendThinking = sendThinking;
+        this.ephemeral = ephemeral;
     }
 
     private ReplyCallbackAction replyMessageEmbed() {
@@ -38,7 +40,7 @@ public class ResponseSlashCommand extends Response{
             if (sendThinking) {
                 setButtons(setEmbed(event.getHook().editOriginal(message.toString()))).setFiles(this.files).queue();
             } else {
-                setButtons(replyMessageEmbed()).setFiles(this.files).queue();
+                setButtons(replyMessageEmbed().setEphemeral(ephemeral)).setFiles(this.files).queue();
             }
         }
     }

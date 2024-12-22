@@ -62,8 +62,9 @@ public class Configuration extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        Runnable runnable = () -> commands.get(event.getName()).execute(event).send();
-        sendError(runnable,  new ResponseSlashCommand(event,commands.get(event.getName()).isSendThinking()));
+        SlashCommand command = commands.get(event.getName());
+        Runnable runnable = () -> command.execute(event).send();
+        sendError(runnable,  new ResponseSlashCommand(event,command.isSendThinking(), command.isEphemeral()));
     }
 
 
