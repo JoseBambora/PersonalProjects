@@ -6,5 +6,6 @@ import org.jdaextension.responses.Response;
 
 public interface UserCommandInterface {
     UserCommand configure();
+
     void onCall(UserContextInteractionEvent event, Response response);
 }

@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 
 public class OptionBool extends Option<OptionBool> {
     public OptionBool(String name, String description, boolean required) {
-        super(name,description,required, OptionType.BOOLEAN);
+        super(name, description, required, OptionType.BOOLEAN);
     }
 
     @Override

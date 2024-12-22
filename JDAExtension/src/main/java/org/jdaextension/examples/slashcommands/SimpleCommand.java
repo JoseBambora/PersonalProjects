@@ -11,17 +11,17 @@ import java.util.Map;
 public class SimpleCommand implements SlashCommandInterface {
     @Override
     public SlashCommand configure() {
-        return new SlashCommand("test","test")
-                .addButtonClick("1",this::onButton1);
+        return new SlashCommand("test", "test")
+                .addButtonClick("1", this::onButton1);
     }
 
     @Override
     public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, Response response) {
-        response.setTemplate("TemplateEmbed").setVariable("counter","1");
+        response.setTemplate("TemplateEmbed").setVariable("counter", "1");
     }
 
 
     public void onButton1(ButtonInteractionEvent event, Response response) {
-        response.setTemplate("TemplateEmbed").setVariable("counter","2");
+        response.setTemplate("TemplateEmbed").setVariable("counter", "2");
     }
 }

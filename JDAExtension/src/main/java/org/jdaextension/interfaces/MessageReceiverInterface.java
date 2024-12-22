@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface MessageReceiverInterface {
     MessageReceiver configure();
+
     void onCall(MessageReceivedEvent event, List<String> groups, Response response);
 }

@@ -8,5 +8,6 @@ import java.util.Map;
 
 public interface SlashCommandInterface {
     SlashCommand configure();
+
     void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, Response response);
 }

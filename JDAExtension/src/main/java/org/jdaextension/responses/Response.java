@@ -2,7 +2,6 @@ package org.jdaextension.responses;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
@@ -18,18 +17,18 @@ import org.jsoup.select.Elements;
 import java.awt.*;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 public abstract class Response {
-    private String file;
-    private final Map<String,Object> variables;
     protected final StringBuilder message;
     protected final List<Button> buttons;
     protected final List<Emoji> emojis;
     protected final List<FileUpload> files;
+    private final Map<String, Object> variables;
     private final EmbedBuilder embedBuilder;
+    private String file;
 
     public Response() {
         this.file = "";
@@ -47,7 +46,7 @@ public abstract class Response {
     }
 
     public Response setVariable(String name, Object value) {
-        this.variables.put(name,value);
+        this.variables.put(name, value);
         return this;
     }
 
@@ -58,22 +57,23 @@ public abstract class Response {
 
     private void configMessage(Document doc) {
         Element message = doc.getElementsByTag("main").getFirst();
-        this.message.append(message.wholeText().strip().replaceAll("\n +","\n"));
+        this.message.append(message.wholeText().strip().replaceAll("\n +", "\n"));
     }
-    private void configButton(Document doc, String classCSS, Function<Element,Button> function) {
+
+    private void configButton(Document doc, String classCSS, Function<Element, Button> function) {
         Elements buttonsDoc = doc.select("button." + classCSS);
         buttons.addAll(buttonsDoc.stream().map(function).toList());
     }
 
     private void configLinks(Document doc) {
         Elements links = doc.getElementsByTag("a");
-        buttons.addAll(links.stream().map(l -> Button.link(l.attr("href"),l.text())).toList());
+        buttons.addAll(links.stream().map(l -> Button.link(l.attr("href"), l.text())).toList());
     }
 
     private void configButtons(Document doc, String id) {
-        configButton(doc, "primary", n -> Button.primary(id + "_" + n.id(),n.text()));
-        configButton(doc, "secondary",n -> Button.secondary(id + "_" + n.id(),n.text()));
-        configButton(doc, "danger",n -> Button.danger(id + "_" + n.id(),n.text()));
+        configButton(doc, "primary", n -> Button.primary(id + "_" + n.id(), n.text()));
+        configButton(doc, "secondary", n -> Button.secondary(id + "_" + n.id(), n.text()));
+        configButton(doc, "danger", n -> Button.danger(id + "_" + n.id(), n.text()));
         configLinks(doc);
     }
 
@@ -83,7 +83,7 @@ public abstract class Response {
             try {
                 return Response.class
                         .getClassLoader()
-                        .getResource(System.getenv("FILES_FOLDER") + f.attr("src") )
+                        .getResource(System.getenv("FILES_FOLDER") + f.attr("src"))
                         .toURI();
 
             } catch (URISyntaxException e) {
@@ -92,14 +92,17 @@ public abstract class Response {
             }
         }).filter(Objects::nonNull).map(Paths::get).map(FileUpload::fromData).toList());
     }
-    private String getAttribute(Element element,  String name) {
+
+    private String getAttribute(Element element, String name) {
         return element.hasAttr(name) ? element.attribute(name).getValue() : null;
     }
-    private String getAttribute(Element element,  String name, String defaultValue) {
+
+    private String getAttribute(Element element, String name, String defaultValue) {
         return element.hasAttr(name) ? element.attribute(name).getValue() : defaultValue;
     }
+
     private void configEmbed(Document doc) {
-        if(!doc.getElementsByTag("embed").isEmpty()) {
+        if (!doc.getElementsByTag("embed").isEmpty()) {
             Element elementEmbed = doc.getElementsByTag("embed").getFirst();
             Elements elementsTable = elementEmbed.getElementsByTag("table").getFirst().getElementsByTag("tr");
             Element elementFooter = elementEmbed.getElementsByTag("footer").getFirst();
@@ -118,7 +121,7 @@ public abstract class Response {
     }
 
     protected boolean build(String id) {
-        if(this.file != null && !this.file.isBlank()) {
+        if (this.file != null && !this.file.isBlank()) {
             String result = PreCompileTemplates.apply(file, variables);
             Document doc = Jsoup.parse(result, "", org.jsoup.parser.Parser.xmlParser());
             configButtons(doc, id);
@@ -126,8 +129,7 @@ public abstract class Response {
             configEmbed(doc);
             configMessage(doc);
             return true;
-        }
-        else
+        } else
             return false;
     }
 
@@ -138,10 +140,10 @@ public abstract class Response {
     }
 
     protected MessageEditCallbackAction setEmbed(MessageEditCallbackAction m) {
-       return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
+        return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
     }
 
-    protected MessageCreateAction setEmbed(MessageCreateAction m ) {
+    protected MessageCreateAction setEmbed(MessageCreateAction m) {
         return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
     }
 

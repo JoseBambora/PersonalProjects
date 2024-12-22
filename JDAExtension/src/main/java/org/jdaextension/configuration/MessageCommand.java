@@ -11,10 +11,12 @@ import org.jdaextension.responses.ResponseCommand;
 
 public class MessageCommand extends Command<MessageCommand> {
     private MessageCommandInterface controller;
+
     public MessageCommand(String name) {
         super(name);
         controller = null;
     }
+
     protected void setController(MessageCommandInterface controller) {
         this.controller = controller;
     }
@@ -25,8 +27,8 @@ public class MessageCommand extends Command<MessageCommand> {
 
     @Override
     protected Response executeCommand(CommandInteraction event) {
-        ResponseCommand responseSlashCommand = new ResponseCommand(event,isSendThinking(), isEphemeral());
-        controller.onCall((MessageContextInteractionEvent) event,responseSlashCommand);
+        ResponseCommand responseSlashCommand = new ResponseCommand(event, isSendThinking(), isEphemeral());
+        controller.onCall((MessageContextInteractionEvent) event, responseSlashCommand);
         return responseSlashCommand;
     }
 }

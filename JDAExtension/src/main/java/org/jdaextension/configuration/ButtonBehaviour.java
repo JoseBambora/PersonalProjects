@@ -19,7 +19,7 @@ public abstract class ButtonBehaviour<T> {
     }
 
     public T addButtonClick(String buttonID, BiConsumer<ButtonInteractionEvent, Response> buttonClickFunction) {
-        buttonsInteractions.put(buttonID,buttonClickFunction);
+        buttonsInteractions.put(buttonID, buttonClickFunction);
         return (T) this;
     }
 
@@ -27,8 +27,8 @@ public abstract class ButtonBehaviour<T> {
         ResponseButton responseButton = new ResponseButton(event);
         log.atDebug().log(id);
         log.atDebug().log(buttonsInteractions.keySet().toString());
-        if(this.buttonsInteractions.containsKey(id))
-            this.buttonsInteractions.get(id).accept(event,responseButton);
+        if (this.buttonsInteractions.containsKey(id))
+            this.buttonsInteractions.get(id).accept(event, responseButton);
         else {
             responseButton.setTemplate("500")
                     .setVariable("message", "No Behaviour defined for this button");

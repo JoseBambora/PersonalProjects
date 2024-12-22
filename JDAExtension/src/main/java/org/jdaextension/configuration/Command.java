@@ -12,10 +12,10 @@ import java.util.Collection;
 import java.util.List;
 
 public abstract class Command<T> extends ButtonBehaviour<T> {
-    private boolean sendThinking;
-    private boolean ephemeral;
     protected final String name;
     protected final List<Permission> permissions;
+    private boolean sendThinking;
+    private boolean ephemeral;
 
     protected Command(String name) {
         this.name = name;
@@ -27,7 +27,7 @@ public abstract class Command<T> extends ButtonBehaviour<T> {
         return (T) this;
     }
 
-    public T addPermissions(Permission ... permissions) {
+    public T addPermissions(Permission... permissions) {
         return addPermissions(Arrays.asList(permissions));
     }
 
@@ -43,7 +43,7 @@ public abstract class Command<T> extends ButtonBehaviour<T> {
     }
 
     public T setSendThinking() {
-        this.sendThinking =  true;
+        this.sendThinking = true;
         return (T) this;
     }
 
@@ -51,6 +51,7 @@ public abstract class Command<T> extends ButtonBehaviour<T> {
     public boolean isSendThinking() {
         return sendThinking;
     }
+
     public boolean isEphemeral() {
         return ephemeral;
     }
@@ -60,18 +61,18 @@ public abstract class Command<T> extends ButtonBehaviour<T> {
     }
 
     protected Response execute(CommandInteraction event) {
-        if(permissions.isEmpty() || (event.getMember() != null && event.getMember().hasPermission(permissions))) {
+        if (permissions.isEmpty() || (event.getMember() != null && event.getMember().hasPermission(permissions))) {
             if (isSendThinking())
                 event.deferReply().setEphemeral(isEphemeral()).queue();
             return executeCommand(event);
-        }
-        else {
-            return new ResponseCommand(event,false, false)
+        } else {
+            return new ResponseCommand(event, false, false)
                     .setTemplate("403")
-                    .setVariable("message","You do not have access to this command");
+                    .setVariable("message", "You do not have access to this command");
         }
     }
 
     protected abstract CommandData build();
+
     protected abstract Response executeCommand(CommandInteraction event);
 }

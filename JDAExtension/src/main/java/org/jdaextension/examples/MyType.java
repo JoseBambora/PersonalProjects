@@ -11,7 +11,7 @@ public class MyType {
     }
 
     public MyType(String string) {
-        string = string.substring(1,string.length()-1);
+        string = string.substring(1, string.length() - 1);
         String[] split = string.split(",");
         this.x = Integer.parseInt(split[0]);
         this.y = Integer.parseInt(split[1]);

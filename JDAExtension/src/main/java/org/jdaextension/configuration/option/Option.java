@@ -35,25 +35,26 @@ public abstract class Option<T> implements Comparable<Option<?>> {
     }
 
     protected void addChoiceString(String name, String value) {
-        this.choiceList.add(new Choice(name,value));
+        this.choiceList.add(new Choice(name, value));
     }
 
     protected void addChoiceLong(String name, long value) {
-        this.choiceList.add(new Choice(name,value));
+        this.choiceList.add(new Choice(name, value));
     }
 
     protected void addChoiceDouble(String name, double value) {
-        this.choiceList.add(new Choice(name,value));
+        this.choiceList.add(new Choice(name, value));
     }
 
     public Object parser(SlashCommandInteractionEvent event) {
         OptionMapping optionMapping = event.getOption(name);
         return optionMapping == null ? null : this.parseOption(optionMapping);
     }
-    protected abstract Object parseOption( OptionMapping optionMapping);
+
+    protected abstract Object parseOption(OptionMapping optionMapping);
 
     public OptionData buildOption() {
-        OptionData optionData = new OptionData(type,name,description,required, autoComplete != null).addChoices(this.choiceList);
+        OptionData optionData = new OptionData(type, name, description, required, autoComplete != null).addChoices(this.choiceList);
         // to clear some RAM usage
         choiceList.clear();
         return optionData;
