@@ -9,6 +9,7 @@ import java.util.function.BiFunction;
 
 
 public interface MessageReceiverInterface {
-    List<BiFunction<MessageReceivedEvent,Map<String,Object>, Boolean>> configure();
-    void onCall(MessageReceivedEvent event, Map<String,Object> data, Response response);
+    List<BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean>> configure();
+
+    void onCall(MessageReceivedEvent event, Map<String, Object> data, Response response);
 }

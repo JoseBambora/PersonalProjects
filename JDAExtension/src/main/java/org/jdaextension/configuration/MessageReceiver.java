@@ -13,27 +13,26 @@ import java.util.function.BiFunction;
 
 public class MessageReceiver extends ButtonBehaviour<MessageReceiver> {
     private final MessageReceiverInterface controller;
-    private final List<BiFunction<MessageReceivedEvent,Map<String,Object>, Boolean>> pipeline;
+    private final List<BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean>> pipeline;
     private final int id;
 
-    protected MessageReceiver(MessageReceiverInterface controller, List<BiFunction<MessageReceivedEvent,Map<String,Object>, Boolean>> pipeline, int id) {
+    protected MessageReceiver(MessageReceiverInterface controller, List<BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean>> pipeline, int id) {
         this.controller = controller;
         this.pipeline = pipeline;
         this.id = id;
     }
 
     protected Response messageReceived(MessageReceivedEvent event) {
-        Iterator<BiFunction<MessageReceivedEvent,Map<String,Object>, Boolean>> iterator = pipeline.iterator();
-        Map<String,Object> data = new HashMap<>();
+        Iterator<BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean>> iterator = pipeline.iterator();
+        Map<String, Object> data = new HashMap<>();
         boolean b = true;
         while (b && iterator.hasNext())
-            b = iterator.next().apply(event,data);
-        if(b) {
+            b = iterator.next().apply(event, data);
+        if (b) {
             ResponseMessage responseMessage = new ResponseMessage(event, id);
             controller.onCall(event, data, responseMessage);
             return responseMessage;
-        }
-        else
+        } else
             return null;
     }
 }

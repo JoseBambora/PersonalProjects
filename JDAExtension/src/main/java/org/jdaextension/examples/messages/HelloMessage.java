@@ -11,10 +11,10 @@ import java.util.function.BiFunction;
 
 public class HelloMessage implements MessageReceiverInterface {
     @Override
-    public List<BiFunction<MessageReceivedEvent,Map<String,Object>, Boolean>> configure() {
+    public List<BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean>> configure() {
         return List.of(
-                (e,m) -> {
-                    m.put("counter","5");
+                (e, m) -> {
+                    m.put("counter", "5");
                     return true;
                 }
         );
@@ -26,7 +26,7 @@ public class HelloMessage implements MessageReceiverInterface {
     }
 
     @Override
-    public void onCall(MessageReceivedEvent event, Map<String,Object> data, Response response) {
+    public void onCall(MessageReceivedEvent event, Map<String, Object> data, Response response) {
         response.setTemplate("TemplateEmbed").setVariable("counter", data.get("counter"));
         // response.addEmoji(Emoji.fromUnicode("✅"));
     }

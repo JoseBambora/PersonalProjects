@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
-import java.util.function.Predicate;
 
 
 public class Configuration extends ListenerAdapter {
@@ -53,7 +52,7 @@ public class Configuration extends ListenerAdapter {
         userCommand.setController(userCommandClass);
         userCommands.put(userCommand.getName(), userCommand);
     }
-    
+
     public void addCommand(MessageCommandInterface messageCommandClass) {
         MessageCommand messageCommand = messageCommandClass.configure();
         messageCommand.setController(messageCommandClass);
@@ -61,8 +60,8 @@ public class Configuration extends ListenerAdapter {
     }
 
     public void addMessageReceiver(MessageReceiverInterface messageReceiverInterface) {
-        List<BiFunction<MessageReceivedEvent,Map<String,Object>, Boolean>> pipeline = messageReceiverInterface.configure();
-        MessageReceiver messageReceiver = new MessageReceiver(messageReceiverInterface,pipeline,messageReceivers.size());
+        List<BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean>> pipeline = messageReceiverInterface.configure();
+        MessageReceiver messageReceiver = new MessageReceiver(messageReceiverInterface, pipeline, messageReceivers.size());
         messageReceivers.put(messageReceivers.size(), messageReceiver);
     }
 
