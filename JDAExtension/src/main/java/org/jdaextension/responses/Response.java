@@ -151,8 +151,12 @@ public abstract class Response {
         return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
     }
 
-
     protected WebhookMessageEditAction<Message> setEmbed(WebhookMessageEditAction<Message> m) {
         return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
+    }
+
+    public String getMessageTest() {
+        build("");
+        return message.toString();
     }
 }
