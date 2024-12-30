@@ -2,19 +2,22 @@ package org.jdaextension.examples.messages;
 
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.jdaextension.configuration.MessageReceiver;
 import org.jdaextension.interfaces.MessageReceiverInterface;
 import org.jdaextension.responses.Response;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 public class HelloMessage implements MessageReceiverInterface {
     @Override
-    public MessageReceiver configure() {
-        return new MessageReceiver()
-                .setRegex("(\\d+) *[x\\-] *(\\d+)", (m) -> String.format("%s, mensagem no formato errado.", m.getAuthor().getAsMention()))
-                .catchPatternMultipleTimes()
-                .addButtonClick("1", this::onButton1);
+    public List<BiFunction<MessageReceivedEvent,Map<String,Object>, Boolean>> configure() {
+        return List.of(
+                (e,m) -> {
+                    m.put("counter","5");
+                    return true;
+                }
+        );
     }
 
     private void onButton1(ButtonInteractionEvent event, Response response) {
@@ -23,9 +26,8 @@ public class HelloMessage implements MessageReceiverInterface {
     }
 
     @Override
-    public void onCall(MessageReceivedEvent event, List<String> groups, Response response) {
-        System.out.println(groups);
-        response.setTemplate("TemplateEmbed").setVariable("counter", "2");
+    public void onCall(MessageReceivedEvent event, Map<String,Object> data, Response response) {
+        response.setTemplate("TemplateEmbed").setVariable("counter", data.get("counter"));
         // response.addEmoji(Emoji.fromUnicode("✅"));
     }
 }

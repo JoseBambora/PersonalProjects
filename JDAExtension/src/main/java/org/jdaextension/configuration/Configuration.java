@@ -21,8 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 
 public class Configuration extends ListenerAdapter {
@@ -58,9 +61,8 @@ public class Configuration extends ListenerAdapter {
     }
 
     public void addMessageReceiver(MessageReceiverInterface messageReceiverInterface) {
-        MessageReceiver messageReceiver = messageReceiverInterface.configure();
-        messageReceiver.setController(messageReceiverInterface);
-        messageReceiver.setId(messageReceivers.size());
+        List<BiFunction<MessageReceivedEvent,Map<String,Object>, Boolean>> pipeline = messageReceiverInterface.configure();
+        MessageReceiver messageReceiver = new MessageReceiver(messageReceiverInterface,pipeline,messageReceivers.size());
         messageReceivers.put(messageReceivers.size(), messageReceiver);
     }
 
