@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jdaextension.configuration.SlashCommand;
+import org.jdaextension.configuration.option.Number;
 import org.jdaextension.configuration.option.OptionNumber;
 import org.jdaextension.configuration.option.OptionString;
 import org.jdaextension.interfaces.SlashCommandInterface;
@@ -16,7 +17,7 @@ public class SimpleCommandMod implements SlashCommandInterface {
     @Override
     public SlashCommand configure() {
         OptionString option1 = new OptionString("name", "Name to appear in the message", true);
-        OptionNumber option2 = new OptionNumber("number", "number of items", true);
+        OptionNumber option2 = new OptionNumber("number", "number of items", true, Number.INTEGER);
         return new SlashCommand("simplemod", "ola versão 2")
                 .addOption(option1)
                 .addOption(option2)
@@ -31,7 +32,7 @@ public class SimpleCommandMod implements SlashCommandInterface {
     public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, Response response) {
         String name = (String) variables.get("name");
         Integer integer = (Integer) variables.get("number");
-        response.setTemplate("Template1")
+        response.setTemplate("SimpleCommandMod")
                 .setVariable("name", name)
                 .setVariable("items", IntStream.range(0, integer).boxed().toList());
     }

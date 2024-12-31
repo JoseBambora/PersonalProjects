@@ -3,6 +3,7 @@ package org.jdaextension.examples.slashcommands;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jdaextension.configuration.SlashCommand;
+import org.jdaextension.configuration.option.Number;
 import org.jdaextension.configuration.option.OptionNumber;
 import org.jdaextension.configuration.option.OptionString;
 import org.jdaextension.interfaces.SlashCommandInterface;
@@ -15,7 +16,7 @@ public class HelloCommand2 implements SlashCommandInterface {
     @Override
     public SlashCommand configure() {
         OptionString option1 = new OptionString("name", "Name to appear in the message", true);
-        OptionNumber option2 = new OptionNumber("number", "number of items", true);
+        OptionNumber option2 = new OptionNumber("number", "number of items", true, Number.INTEGER);
         return new SlashCommand("ola", "ola versão 2")
                 .addOption(option1)
                 .addOption(option2)

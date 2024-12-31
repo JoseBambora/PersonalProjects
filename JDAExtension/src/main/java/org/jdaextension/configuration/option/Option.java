@@ -46,6 +46,10 @@ public abstract class Option<T> implements Comparable<Option<?>> {
         this.choiceList.add(new Choice(name, value));
     }
 
+    protected void addChoiceInt(String name, int value) {
+        this.choiceList.add(new Choice(name, value));
+    }
+
     public Object parser(SlashCommandInteractionEvent event) {
         OptionMapping optionMapping = event.getOption(name);
         return optionMapping == null ? null : this.parseOption(optionMapping);

@@ -12,10 +12,7 @@ import org.jdaextension.interfaces.SlashCommandInterface;
 import org.jdaextension.responses.Response;
 import org.jdaextension.responses.ResponseCommand;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class SlashCommand extends Command<SlashCommand> {
     private final String description;
@@ -59,10 +56,18 @@ public class SlashCommand extends Command<SlashCommand> {
     @Override
     protected Response executeCommand(CommandInteraction event) {
         Map<String, Object> variables = new HashMap<>();
-        for (Map.Entry<String, Option<?>> optionEntry : options.entrySet())
-            variables.put(optionEntry.getKey(), optionEntry.getValue().parser((SlashCommandInteractionEvent) event));
+        List<String> errorArgs = new ArrayList<>();
+        for (Map.Entry<String, Option<?>> optionEntry : options.entrySet()) {
+            Object parsed = optionEntry.getValue().parser((SlashCommandInteractionEvent) event);
+            variables.put(optionEntry.getKey(), parsed);
+            if(optionEntry.getValue().isRequired() && parsed == null)
+                errorArgs.add(optionEntry.getKey());
+        }
         ResponseCommand responseSlashCommand = new ResponseCommand(event, isSendThinking(), isEphemeral());
-        controller.onCall((SlashCommandInteractionEvent) event, variables, responseSlashCommand);
+        if(errorArgs.isEmpty())
+            controller.onCall((SlashCommandInteractionEvent) event, variables, responseSlashCommand);
+        else
+            responseSlashCommand.setTemplate("400").setVariable("errors",errorArgs.stream().sorted().map(s -> "Argument `" + s + "` is missing").toList());
         return responseSlashCommand;
     }
 

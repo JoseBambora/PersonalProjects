@@ -18,7 +18,6 @@ import net.dv8tion.jda.api.utils.FileUpload;
 import org.jdaextension.configuration.Configuration;
 import org.mockito.ArgumentCaptor;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +55,7 @@ public class MockSlashCommand {
         when(event.getUser()).thenReturn(user);
         when(event.getMember()).thenReturn(member);
         when(member.hasPermission((Permission) any())).thenReturn(mod);
+        when(member.hasPermission(anyList())).thenReturn(mod);
         when(event.reply(anyString())).thenReturn(replyCallbackAction);
         when(event.deferReply()).thenReturn(replyCallbackAction);
         when(replyCallbackAction.setEphemeral(anyBoolean())).thenReturn(replyCallbackAction);
@@ -69,6 +69,8 @@ public class MockSlashCommand {
                             when(mapping.getAsString()).thenReturn((String) v);
                         else if (v instanceof Integer)
                             when(mapping.getAsInt()).thenReturn((Integer) v);
+                        else if (v instanceof Double)
+                            when(mapping.getAsDouble()).thenReturn((Double) v);
                         return mapping;
                     }));
         }
@@ -113,14 +115,15 @@ public class MockSlashCommand {
 
     public List<Button> getButtons2() {
         ArgumentCaptor<List<Button>> captor = ArgumentCaptor.forClass(List.class);
+
         verify(replyCallbackAction).setActionRow(captor.capture());
         return captor.getValue();
     }
 
     public MessageEmbed getResultEmbed() {
         ArgumentCaptor<MessageEmbed> captor = ArgumentCaptor.forClass(MessageEmbed.class);
-        verify(interactionHook).editOriginalEmbeds(captor.capture());
-        return captor.getValue();
+        verify(replyCallbackAction, atMost(1)).setEmbeds(captor.capture());
+        return captor.getAllValues().isEmpty() ? null : captor.getValue();
     }
 
     public List<FileUpload> getFiles() {

@@ -1,3 +1,6 @@
 <main>
-    Wrong data format {{message}}
+    Wrong data format. Please fix the following errors:
+    {{#each errors ~}}
+        - {{this}}
+    {{/each ~}}
 </main>

@@ -40,7 +40,7 @@ public class SimpleCommandOptions implements SlashCommandInterface {
         System.out.println(word);
         System.out.println(myType);
         System.out.println(myType2);
-        response.setTemplate("Template2")
+        response.setTemplate("SimpleCommandOptions")
                 .setVariable("word", word)
                 .setVariable("coords", myType.toString());
     }
