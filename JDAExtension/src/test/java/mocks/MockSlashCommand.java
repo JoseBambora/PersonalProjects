@@ -14,9 +14,11 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.jdaextension.configuration.Configuration;
 import org.mockito.ArgumentCaptor;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -101,7 +103,6 @@ public class MockSlashCommand {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(event).reply(captor.capture());
         return captor.getValue();
-
     }
 
     public List<Button> getButtons() {
@@ -110,9 +111,21 @@ public class MockSlashCommand {
         return captor.getValue();
     }
 
+    public List<Button> getButtons2() {
+        ArgumentCaptor<List<Button>> captor = ArgumentCaptor.forClass(List.class);
+        verify(replyCallbackAction).setActionRow(captor.capture());
+        return captor.getValue();
+    }
+
     public MessageEmbed getResultEmbed() {
         ArgumentCaptor<MessageEmbed> captor = ArgumentCaptor.forClass(MessageEmbed.class);
         verify(interactionHook).editOriginalEmbeds(captor.capture());
+        return captor.getValue();
+    }
+
+    public List<FileUpload> getFiles() {
+        ArgumentCaptor<List<FileUpload>> captor = ArgumentCaptor.forClass(List.class);
+        verify(replyCallbackAction).setFiles(captor.capture());
         return captor.getValue();
     }
 

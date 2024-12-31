@@ -155,8 +155,24 @@ public abstract class Response {
         return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
     }
 
-    public String getMessageTest() {
-        build("");
-        return message.toString();
+    public static class ResponseTests {
+        private static Response configureMessage(String id,String template, Map<String,Object> variables) {
+            Response responseCommand = new ResponseCommand(null,false,false).setTemplate(template);
+            variables.forEach(responseCommand::setVariable);
+            responseCommand.build(id);
+            return responseCommand;
+        }
+        public static String getMessageTest(String id, String template, Map<String,Object> variables) {
+            return configureMessage(id, template,variables).message.toString();
+        }
+
+        public static List<Button> getButtonsTest(String id, String template, Map<String,Object> variables) {
+            return configureMessage(id, template,variables).buttons;
+        }
+
+        public static List<FileUpload> getFilesTest(String id, String template, Map<String,Object> variables) {
+            return configureMessage(id,template,variables).files;
+
+        }
     }
 }
