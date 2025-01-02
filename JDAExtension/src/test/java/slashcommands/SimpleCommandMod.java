@@ -38,22 +38,22 @@ public class SimpleCommandMod implements SlashCommandInterface {
     }
 
     public void onButton1(ButtonInteractionEvent event, Response response) {
-        response.setTemplate("Template3")
+        response.setTemplate("SimpleCommandMod")
                 .setVariable("name", "Button 1 clicked");
     }
 
     public void onButton2(ButtonInteractionEvent event, Response response) {
-        response.setTemplate("Template3")
+        response.setTemplate("SimpleCommandMod")
                 .setVariable("name", "Button 2 clicked");
     }
 
     public void onButton3(ButtonInteractionEvent event, Response response) {
-        response.setTemplate("Template3")
+        response.setTemplate("SimpleCommandMod")
                 .setVariable("name", "Button 3 clicked");
     }
 
     public void onButton4(ButtonInteractionEvent event, Response response) {
-        response.setTemplate("Template3")
+        response.setTemplate("SimpleCommandMod")
                 .setVariable("name", "Button 4 clicked");
     }
 }

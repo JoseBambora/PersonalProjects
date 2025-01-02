@@ -2,6 +2,8 @@ package org.jdaextension.responses;
 
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PreCompileTemplates {
+    private static final Logger log = LoggerFactory.getLogger(PreCompileTemplates.class);
     private static PreCompileTemplates instance = null;
     private final Map<String, Template> templates;
 
@@ -54,12 +57,23 @@ public class PreCompileTemplates {
                 .toList();
     }
 
+    private String serverError() {
+        try {
+            return templates.get("500").apply(Map.of());
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
     private String getResult(String template, Map<String, Object> variables) {
         try {
             return templates.get(template).apply(variables);
         } catch (IOException e) {
-            System.err.println("Error variables: \n" + e + "\n\nReturning Empty String");
-            return "";
+            log.error("Error variables: \n{}\n\nReturning Empty String", String.valueOf(e));
+            return serverError();
+        } catch (NullPointerException e) {
+            log.error("Template {} does not exist", template);
+            return serverError();
         }
     }
 }

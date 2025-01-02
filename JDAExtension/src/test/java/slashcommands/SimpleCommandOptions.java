@@ -37,12 +37,10 @@ public class SimpleCommandOptions implements SlashCommandInterface {
         String word = (String) variables.get("word");
         MyType myType = (MyType) variables.get("coords");
         MyType myType2 = (MyType) variables.get("coords2");
-        System.out.println(word);
-        System.out.println(myType);
-        System.out.println(myType2);
         response.setTemplate("SimpleCommandOptions")
                 .setVariable("word", word)
-                .setVariable("coords", myType.toString());
+                .setVariable("coords", myType.toString())
+                .setVariable("coords2", myType2.toString());
     }
 
 

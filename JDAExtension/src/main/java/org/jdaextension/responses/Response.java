@@ -45,6 +45,11 @@ public abstract class Response {
         return this;
     }
 
+    public Response setVariables(Map<String,Object> variables) {
+        this.variables.putAll(variables);
+        return this;
+    }
+
     public Response setVariable(String name, Object value) {
         this.variables.put(name, value);
         return this;
@@ -56,8 +61,11 @@ public abstract class Response {
     }
 
     private void configMessage(Document doc) {
-        Element message = doc.getElementsByTag("main").getFirst();
-        this.message.append(message.wholeText().strip().replaceAll("\n +", "\n"));
+        Elements messageElement = doc.getElementsByTag("main");
+        if(!messageElement.isEmpty()){
+            Element message = messageElement.getFirst();
+            this.message.append(message.wholeText().strip().replaceAll("\n +", "\n"));
+        }
     }
 
     private void configButton(Document doc, String classCSS, Function<Element, Button> function) {
@@ -93,30 +101,31 @@ public abstract class Response {
         }).filter(Objects::nonNull).map(Paths::get).map(FileUpload::fromData).toList());
     }
 
-    private String getAttribute(Element element, String name) {
-        return element.hasAttr(name) ? element.attribute(name).getValue() : null;
-    }
-
     private String getAttribute(Element element, String name, String defaultValue) {
         return element.hasAttr(name) ? element.attribute(name).getValue() : defaultValue;
+    }
+
+    private String getElementText(Element elementEmbed, String tag) {
+        Elements elements = elementEmbed.getElementsByTag(tag);
+        return elements.isEmpty() ? null : elements.getFirst().wholeText();
     }
 
     private void configEmbed(Document doc) {
         if (!doc.getElementsByTag("embed").isEmpty()) {
             Element elementEmbed = doc.getElementsByTag("embed").getFirst();
             Elements elementsTable = elementEmbed.getElementsByTag("table").getFirst().getElementsByTag("tr");
-            Element elementFooter = elementEmbed.getElementsByTag("footer").getFirst();
-            embedBuilder.setAuthor(getAttribute(elementEmbed, "author"));
-            embedBuilder.setColor(Color.decode(getAttribute(elementEmbed, "color", "0xFF5733")));
-            embedBuilder.setTitle(getAttribute(elementEmbed, "title"));
-            embedBuilder.setDescription(getAttribute(elementEmbed, "description"));
-            embedBuilder.setThumbnail(getAttribute(elementEmbed, "thumbnail"));
+
+            embedBuilder.setColor(Color.decode(getAttribute(elementEmbed, "color", "0xFF5733")))
+                    .setAuthor(getElementText(elementEmbed,"author"))
+                    .setTitle(getElementText(elementEmbed,"title"))
+                    .setDescription(getElementText(elementEmbed,"description"))
+                    .setThumbnail(getElementText(elementEmbed,"thumbnail"))
+                    .setFooter(getElementText(elementEmbed,"footer"));
             for (Element elementRow : elementsTable) {
                 Elements elementsColumns = elementRow.getElementsByTag("td");
                 elementsColumns.forEach(c -> embedBuilder.addField(c.attribute("name").getValue(), c.text(), true));
                 embedBuilder.addBlankField(false);
             }
-            embedBuilder.setFooter(elementFooter.text());
         }
     }
 
@@ -163,7 +172,8 @@ public abstract class Response {
             return responseCommand;
         }
         public static String getMessageTest(String id, String template, Map<String,Object> variables) {
-            return configureMessage(id, template,variables).message.toString();
+            Response response = configureMessage(id, template,variables);
+            return response.message.isEmpty() ? null : response.message.toString();
         }
 
         public static List<Button> getButtonsTest(String id, String template, Map<String,Object> variables) {
