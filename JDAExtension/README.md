@@ -2,5 +2,5 @@
 
 **TODO**:
 - Documentation (code + this markdown)
-- Test to user and message interactions / commands.
+- Fix issue and test buttons interactions within normal messages.
 - Modals, Select Menus and Capture Edit and Deleted messages.

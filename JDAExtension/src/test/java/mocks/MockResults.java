@@ -10,9 +10,7 @@ import org.mockito.ArgumentCaptor;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class MockResults {
-
-
+public abstract class MockResults {
     protected Emoji getEmoji(Consumer<ArgumentCaptor<Emoji>> consumer) {
         ArgumentCaptor<Emoji> captor = ArgumentCaptor.forClass(Emoji.class);
         consumer.accept(captor);

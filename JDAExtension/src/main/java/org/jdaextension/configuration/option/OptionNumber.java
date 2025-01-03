@@ -5,8 +5,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 
 public class OptionNumber extends Option<OptionNumber> {
     private final Number type;
+
     public OptionNumber(String name, String description, boolean required, Number type) {
-        super(name, description, required, OptionType.NUMBER);
+        super(name, description, required, type == Number.INTEGER ? OptionType.INTEGER : OptionType.NUMBER);
         this.type = type;
     }
 

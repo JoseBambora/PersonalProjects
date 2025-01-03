@@ -63,7 +63,7 @@ public abstract class Command<T> extends ButtonBehaviour<T> {
     protected Response execute(CommandInteraction event) {
         if (permissions.isEmpty() || (event.getMember() != null && event.getMember().hasPermission(permissions))) {
             if (isSendThinking())
-                event.deferReply().setEphemeral(isEphemeral()).queue();
+                event.deferReply(isEphemeral()).queue();
             return executeCommand(event);
         } else {
             return new ResponseCommand(event, false, false)

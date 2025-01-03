@@ -22,14 +22,14 @@ public class GenericTests {
         }
     }
 
-    public static void testMessage(String message, boolean hasMessage, List<Button> buttonList, boolean hasButtons, List<FileUpload> fileUploadList, boolean hasFile, MessageEmbed messageEmbed, boolean hasEmbed, String id, String template, Map<String,Object> variables) {
+    public static void testMessage(String message, boolean hasMessage, List<Button> buttonList, boolean hasButtons, List<FileUpload> fileUploadList, boolean hasFile, MessageEmbed messageEmbed, boolean hasEmbed, String id, String template, Map<String, Object> variables) {
         Assertions.assertNotEquals(hasMessage, message == null || message.isBlank());
-        Assertions.assertNotEquals(hasButtons,buttonList.isEmpty());
-        Assertions.assertNotEquals(hasFile,fileUploadList.isEmpty());
+        Assertions.assertNotEquals(hasButtons, buttonList.isEmpty());
+        Assertions.assertNotEquals(hasFile, fileUploadList.isEmpty());
         Assertions.assertEquals(hasEmbed, messageEmbed != null);
-        Assertions.assertEquals(Response.ResponseTests.getMessageTest(id,template,variables), message);
-        Assertions.assertEquals(Response.ResponseTests.getButtonsTest(id,template,variables), buttonList);
-        Assertions.assertEquals(Response.ResponseTests.getFilesTest(id,template,variables).stream().map(GenericTests::getFileData).toList(), fileUploadList.stream().map(GenericTests::getFileData).toList());
+        Assertions.assertEquals(Response.ResponseTests.getMessageTest(id, template, variables), message);
+        Assertions.assertEquals(Response.ResponseTests.getButtonsTest(id, template, variables), buttonList);
+        Assertions.assertEquals(Response.ResponseTests.getFilesTest(id, template, variables).stream().map(GenericTests::getFileData).toList(), fileUploadList.stream().map(GenericTests::getFileData).toList());
     }
 
     public static <T> T getValueSingle(ArgumentCaptor<T> captor) {

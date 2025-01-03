@@ -1,15 +1,12 @@
 package mocks;
 
-import aux.GenericTests;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.restaction.interactions.MessageEditCallbackAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jdaextension.configuration.Configuration;
-import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
@@ -25,26 +22,6 @@ public class MockButtonReaction extends MockResults {
     private final String mention;
     private final Configuration configuration;
 
-    private void configureUser() {
-        when(user.getId()).thenReturn(mention);
-        when(user.getAsMention()).thenReturn(mention);
-    }
-    private void configureButton(String id) {
-        when(button.getId()).thenReturn(id);
-    }
-    private void configureEvent() {
-        when(event.getMessageId()).thenReturn("");
-        when(event.getUser()).thenReturn(user);
-        when(event.getButton()).thenReturn(button);
-        when(event.editMessage(anyString())).thenReturn(messageEditCallbackAction);
-    }
-    private void configureMessageEdit() {
-        when(messageEditCallbackAction.setActionRow(anyList())).thenReturn(messageEditCallbackAction);
-        when(messageEditCallbackAction.setComponents(anyList())).thenReturn(messageEditCallbackAction);
-        when(messageEditCallbackAction.setEmbeds(any(MessageEmbed.class))).thenReturn(messageEditCallbackAction);
-        when(messageEditCallbackAction.setFiles(anyList())).thenReturn(messageEditCallbackAction);
-    }
-
     public MockButtonReaction(String id, String mention, Configuration configuration) {
         event = mock(ButtonInteractionEvent.class);
         user = mock(User.class);
@@ -56,6 +33,29 @@ public class MockButtonReaction extends MockResults {
         configureEvent();
         configureUser();
         configureMessageEdit();
+    }
+
+    private void configureUser() {
+        when(user.getId()).thenReturn(mention);
+        when(user.getAsMention()).thenReturn(mention);
+    }
+
+    private void configureButton(String id) {
+        when(button.getId()).thenReturn(id);
+    }
+
+    private void configureEvent() {
+        when(event.getMessageId()).thenReturn("");
+        when(event.getUser()).thenReturn(user);
+        when(event.getButton()).thenReturn(button);
+        when(event.editMessage(anyString())).thenReturn(messageEditCallbackAction);
+    }
+
+    private void configureMessageEdit() {
+        when(messageEditCallbackAction.setActionRow(anyList())).thenReturn(messageEditCallbackAction);
+        when(messageEditCallbackAction.setComponents(anyList())).thenReturn(messageEditCallbackAction);
+        when(messageEditCallbackAction.setEmbeds(any(MessageEmbed.class))).thenReturn(messageEditCallbackAction);
+        when(messageEditCallbackAction.setFiles(anyList())).thenReturn(messageEditCallbackAction);
     }
 
     public void execute() {

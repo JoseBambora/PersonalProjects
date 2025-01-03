@@ -12,20 +12,16 @@ public class ResponseMessage extends Response {
         this.id = id;
     }
 
-    private MessageCreateAction sendMessageEmbed() {
-        return setEmbed(event.getMessage().reply(this.message.toString()));
-    }
-
-    private MessageCreateAction setButtons(MessageCreateAction messageCreateAction) {
-        return buttons.isEmpty() ? messageCreateAction : messageCreateAction.setActionRow(buttons);
-    }
-
     @Override
     public void send() {
         boolean hasFile = this.build("message" + id);
         this.sendReactions(event.getMessage());
         if (hasFile) {
-            setButtons(sendMessageEmbed()).setFiles(this.files).queue();
+            MessageCreateAction mca = event.getMessage().reply(this.message.toString());
+            mca = !this.embedBuilder.isEmpty() ? mca.setEmbeds(embedBuilder.build()) : mca;
+            mca = buttons.isEmpty() ? mca : mca.setActionRow(buttons);
+            mca = mca.setFiles(this.files);
+            mca.queue();
         }
     }
 }

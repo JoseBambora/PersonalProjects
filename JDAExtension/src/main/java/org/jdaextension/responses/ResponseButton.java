@@ -12,21 +12,17 @@ public class ResponseButton extends Response {
         this.event = event;
     }
 
-    private MessageEditCallbackAction handleButtons(MessageEditCallbackAction messageEditRequest) {
-        return buttons.isEmpty() ? messageEditRequest.setComponents(Collections.emptyList()) : messageEditRequest.setActionRow(buttons);
-    }
-
-    private MessageEditCallbackAction sendMessageEmbed() {
-        return setEmbed(event.editMessage(message.toString()));
-    }
-
     @Override
     public void send() {
         String command = event.getButton().getId().split("_")[0];
         boolean hasFile = this.build(command);
         this.sendReactions(event.getMessage());
         if (hasFile) {
-            handleButtons(sendMessageEmbed()).setFiles(this.files).queue();
+            MessageEditCallbackAction meca = event.editMessage(message.toString());
+            meca = !this.embedBuilder.isEmpty() ? meca.setEmbeds(embedBuilder.build()) : meca;
+            meca = buttons.isEmpty() ? meca.setComponents(Collections.emptyList()) : meca.setActionRow(buttons);
+            meca = meca.setFiles(this.files);
+            meca.queue();
         }
     }
 }

@@ -4,10 +4,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
-import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
-import net.dv8tion.jda.api.requests.restaction.interactions.MessageEditCallbackAction;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,8 +22,8 @@ public abstract class Response {
     protected final List<Button> buttons;
     protected final List<Emoji> emojis;
     protected final List<FileUpload> files;
+    protected final EmbedBuilder embedBuilder;
     private final Map<String, Object> variables;
-    private final EmbedBuilder embedBuilder;
     private String file;
 
     public Response() {
@@ -45,7 +41,7 @@ public abstract class Response {
         return this;
     }
 
-    public Response setVariables(Map<String,Object> variables) {
+    public Response setVariables(Map<String, Object> variables) {
         this.variables.putAll(variables);
         return this;
     }
@@ -62,7 +58,7 @@ public abstract class Response {
 
     private void configMessage(Document doc) {
         Elements messageElement = doc.getElementsByTag("main");
-        if(!messageElement.isEmpty()){
+        if (!messageElement.isEmpty()) {
             Element message = messageElement.getFirst();
             this.message.append(message.wholeText().strip().replaceAll("\n +", "\n"));
         }
@@ -116,11 +112,11 @@ public abstract class Response {
             Elements elementsTable = elementEmbed.getElementsByTag("table").getFirst().getElementsByTag("tr");
 
             embedBuilder.setColor(Color.decode(getAttribute(elementEmbed, "color", "0xFF5733")))
-                    .setAuthor(getElementText(elementEmbed,"author"))
-                    .setTitle(getElementText(elementEmbed,"title"))
-                    .setDescription(getElementText(elementEmbed,"description"))
-                    .setThumbnail(getElementText(elementEmbed,"thumbnail"))
-                    .setFooter(getElementText(elementEmbed,"footer"));
+                    .setAuthor(getElementText(elementEmbed, "author"))
+                    .setTitle(getElementText(elementEmbed, "title"))
+                    .setDescription(getElementText(elementEmbed, "description"))
+                    .setThumbnail(getElementText(elementEmbed, "thumbnail"))
+                    .setFooter(getElementText(elementEmbed, "footer"));
             for (Element elementRow : elementsTable) {
                 Elements elementsColumns = elementRow.getElementsByTag("td");
                 elementsColumns.forEach(c -> embedBuilder.addField(c.attribute("name").getValue(), c.text(), true));
@@ -148,40 +144,25 @@ public abstract class Response {
         emojis.forEach(e -> message.addReaction(e).queue());
     }
 
-    protected MessageEditCallbackAction setEmbed(MessageEditCallbackAction m) {
-        return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
-    }
-
-    protected MessageCreateAction setEmbed(MessageCreateAction m) {
-        return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
-    }
-
-    protected ReplyCallbackAction setEmbed(ReplyCallbackAction m) {
-        return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
-    }
-
-    protected WebhookMessageEditAction<Message> setEmbed(WebhookMessageEditAction<Message> m) {
-        return !this.embedBuilder.isEmpty() ? m.setEmbeds(embedBuilder.build()) : m;
-    }
-
     public static class ResponseTests {
-        private static Response configureMessage(String id,String template, Map<String,Object> variables) {
-            Response responseCommand = new ResponseCommand(null,false,false).setTemplate(template);
+        private static Response configureMessage(String id, String template, Map<String, Object> variables) {
+            Response responseCommand = new ResponseCommand(null, false, false).setTemplate(template);
             variables.forEach(responseCommand::setVariable);
             responseCommand.build(id);
             return responseCommand;
         }
-        public static String getMessageTest(String id, String template, Map<String,Object> variables) {
-            Response response = configureMessage(id, template,variables);
+
+        public static String getMessageTest(String id, String template, Map<String, Object> variables) {
+            Response response = configureMessage(id, template, variables);
             return response.message.isEmpty() ? null : response.message.toString();
         }
 
-        public static List<Button> getButtonsTest(String id, String template, Map<String,Object> variables) {
-            return configureMessage(id, template,variables).buttons;
+        public static List<Button> getButtonsTest(String id, String template, Map<String, Object> variables) {
+            return configureMessage(id, template, variables).buttons;
         }
 
-        public static List<FileUpload> getFilesTest(String id, String template, Map<String,Object> variables) {
-            return configureMessage(id,template,variables).files;
+        public static List<FileUpload> getFilesTest(String id, String template, Map<String, Object> variables) {
+            return configureMessage(id, template, variables).files;
 
         }
     }

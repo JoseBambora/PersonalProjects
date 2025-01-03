@@ -60,14 +60,14 @@ public class SlashCommand extends Command<SlashCommand> {
         for (Map.Entry<String, Option<?>> optionEntry : options.entrySet()) {
             Object parsed = optionEntry.getValue().parser((SlashCommandInteractionEvent) event);
             variables.put(optionEntry.getKey(), parsed);
-            if(optionEntry.getValue().isRequired() && parsed == null)
+            if (optionEntry.getValue().isRequired() && parsed == null)
                 errorArgs.add(optionEntry.getKey());
         }
         ResponseCommand responseSlashCommand = new ResponseCommand(event, isSendThinking(), isEphemeral());
-        if(errorArgs.isEmpty())
+        if (errorArgs.isEmpty())
             controller.onCall((SlashCommandInteractionEvent) event, variables, responseSlashCommand);
         else
-            responseSlashCommand.setTemplate("400").setVariable("errors",errorArgs.stream().sorted().map(s -> "Argument `" + s + "` is missing").toList());
+            responseSlashCommand.setTemplate("400").setVariable("errors", errorArgs.stream().sorted().map(s -> "Argument `" + s + "` is missing").toList());
         return responseSlashCommand;
     }
 

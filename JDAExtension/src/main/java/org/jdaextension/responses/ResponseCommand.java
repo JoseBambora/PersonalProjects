@@ -2,7 +2,6 @@ package org.jdaextension.responses;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
-import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
@@ -17,31 +16,22 @@ public class ResponseCommand extends Response {
         this.ephemeral = ephemeral;
     }
 
-    private ReplyCallbackAction replyMessageEmbed() {
-        return setEmbed(event.reply(message.toString()));
-    }
-
-    private ReplyCallbackAction setButtons(ReplyCallbackAction r) {
-        return buttons.isEmpty() ? r : r.setActionRow(buttons);
-    }
-
-    private WebhookMessageEditAction<Message> setButtons(WebhookMessageEditAction<Message> r) {
-        return buttons.isEmpty() ? r : r.setActionRow(buttons);
-    }
-
-    private WebhookMessageCreateAction<Message> setButtons(WebhookMessageCreateAction<Message> r) {
-        return buttons.isEmpty() ? r : r.setActionRow(buttons);
-    }
-
-
     @Override
     public void send() {
         boolean hasFile = this.build(event.getName());
         if (hasFile) {
             if (sendThinking) {
-                setButtons(setEmbed(event.getHook().editOriginal(message.toString()))).setFiles(this.files).queue();
+                WebhookMessageEditAction<Message> wmea = event.getHook().editOriginal(message.toString());
+                wmea = !this.embedBuilder.isEmpty() ? wmea.setEmbeds(embedBuilder.build()) : wmea;
+                wmea = buttons.isEmpty() ? wmea : wmea.setActionRow(buttons);
+                wmea = wmea.setFiles(this.files);
+                wmea.queue();
             } else {
-                setButtons(replyMessageEmbed().setEphemeral(ephemeral)).setFiles(this.files).queue();
+                ReplyCallbackAction rca = event.reply(message.toString()).setEphemeral(ephemeral);
+                rca = !this.embedBuilder.isEmpty() ? rca.setEmbeds(embedBuilder.build()) : rca;
+                rca = buttons.isEmpty() ? rca : rca.setActionRow(buttons);
+                rca = rca.setFiles(this.files);
+                rca.queue();
             }
         }
     }

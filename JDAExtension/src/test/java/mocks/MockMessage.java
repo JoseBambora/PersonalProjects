@@ -1,6 +1,5 @@
 package mocks;
 
-import aux.GenericTests;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -12,7 +11,6 @@ import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jdaextension.configuration.Configuration;
-import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
@@ -27,6 +25,19 @@ public class MockMessage extends MockResults {
     private final RestAction<Void> restAction;
     private final MessageCreateAction messageCreateAction;
     private final Configuration configuration;
+
+    public MockMessage(String messageContent, String mentionUser, String userName, Configuration configuration) {
+        event = mock(MessageReceivedEvent.class);
+        user = mock(User.class);
+        channel = mock(MessageChannelUnion.class);
+        message = mock(Message.class);
+        restAction = mock(RestAction.class);
+        messageCreateAction = mock(MessageCreateAction.class);
+        configureMessage(messageContent);
+        configureEvent();
+        configureUser(mentionUser, userName);
+        this.configuration = configuration;
+    }
 
     private void configureUser(String mentionUser, String userName) {
         when(user.getAsMention()).thenReturn(mentionUser);
@@ -49,19 +60,6 @@ public class MockMessage extends MockResults {
         when(messageCreateAction.setFiles(anyList())).thenReturn(messageCreateAction);
         when(messageCreateAction.setEmbeds(any(MessageEmbed.class))).thenReturn(messageCreateAction);
         when(messageCreateAction.setActionRow(anyList())).thenReturn(messageCreateAction);
-    }
-
-    public MockMessage(String messageContent, String mentionUser, String userName, Configuration configuration) {
-        event = mock(MessageReceivedEvent.class);
-        user = mock(User.class);
-        channel = mock(MessageChannelUnion.class);
-        message = mock(Message.class);
-        restAction = mock(RestAction.class);
-        messageCreateAction = mock(MessageCreateAction.class);
-        configureMessage(messageContent);
-        configureEvent();
-        configureUser(mentionUser,userName);
-        this.configuration = configuration;
     }
 
     public void execute() {
