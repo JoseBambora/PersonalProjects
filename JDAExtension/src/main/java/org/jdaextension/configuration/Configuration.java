@@ -60,8 +60,8 @@ public class Configuration extends ListenerAdapter {
     }
 
     public void addMessageReceiver(MessageReceiverInterface messageReceiverInterface) {
-        List<BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean>> pipeline = messageReceiverInterface.configure();
-        MessageReceiver messageReceiver = new MessageReceiver(messageReceiverInterface, pipeline, messageReceivers.size());
+        MessageReceiver messageReceiver = new MessageReceiver(messageReceiverInterface, messageReceivers.size());
+        messageReceiverInterface.configure(messageReceiver);
         messageReceivers.put(messageReceivers.size(), messageReceiver);
     }
 

@@ -1,4 +1,5 @@
 import aux.GenericTests;
+import cases.messages.SimpleMessage;
 import cases.slashcommands.SimpleCommand;
 import cases.slashcommands.SimpleCommandMod;
 import cases.slashcommands.SimpleCommandOptions;
@@ -22,6 +23,7 @@ public class TestButtons {
         configuration.addCommand(new SimpleCommandOptions());
         configuration.addCommand(new SimpleCommandMod());
         configuration.addCommand(new SimpleCommand());
+        configuration.addMessageReceiver(new SimpleMessage());
     }
 
     private void testButtonClick(String command, String button, boolean hasButtons, boolean hasFile, boolean hasEmbed, String template, Map<String, Object> variables) {
@@ -45,5 +47,10 @@ public class TestButtons {
         testButtonClick("simplemod", "1", true, false, false, "SimpleCommandMod", Map.of("name", "Button 1 clicked"));
         testButtonClick("simplemod", "2", true, false, false, "SimpleCommandMod", Map.of("name", "Button 2 clicked"));
         testButtonClick("simplemod", "3", true, false, false, "SimpleCommandMod", Map.of("name", "Button 3 clicked"));
+    }
+
+    @Test
+    public void testButtonClickMessage() {
+        testButtonClick("message0","1", true, false,false, "SimpleMessage", Map.of("name","Button Clicked"));
     }
 }

@@ -5,10 +5,7 @@ import org.jdaextension.interfaces.MessageReceiverInterface;
 import org.jdaextension.responses.Response;
 import org.jdaextension.responses.ResponseMessage;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 
 public class MessageReceiver extends ButtonBehaviour<MessageReceiver> {
@@ -16,11 +13,17 @@ public class MessageReceiver extends ButtonBehaviour<MessageReceiver> {
     private final List<BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean>> pipeline;
     private final int id;
 
-    protected MessageReceiver(MessageReceiverInterface controller, List<BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean>> pipeline, int id) {
+    public MessageReceiver(MessageReceiverInterface controller, int id) {
         this.controller = controller;
-        this.pipeline = pipeline;
+        this.pipeline = new ArrayList<>();
         this.id = id;
     }
+
+    public MessageReceiver addToPipeline(BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean> function) {
+        pipeline.add(function);
+        return this;
+    }
+
 
     protected Response messageReceived(MessageReceivedEvent event) {
         Iterator<BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean>> iterator = pipeline.iterator();
