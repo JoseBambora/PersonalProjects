@@ -51,6 +51,6 @@ public class TestButtons {
 
     @Test
     public void testButtonClickMessage() {
-        testButtonClick("message0","1", true, false,false, "SimpleMessage", Map.of("name","Button Clicked"));
+        testButtonClick("message0", "1", true, false, false, "SimpleMessage", Map.of("name", "Button Clicked"));
     }
 }

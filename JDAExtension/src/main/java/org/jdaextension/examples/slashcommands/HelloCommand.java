@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 public class HelloCommand implements SlashCommandInterface {
     @Override
-    public SlashCommand configure() {
+    public void configure(SlashCommand slashCommand) {
         OptionString option1 = new OptionString("word", "word desc", false)
                 .addChoice("Option 1", "World")
                 .addChoice("Option 2", "Braga");
@@ -26,7 +26,8 @@ public class HelloCommand implements SlashCommandInterface {
                 .addChoice("Option 2", "(2,2)");
         OptionCustom option3 = new OptionCustom("coords2", "coords no choice", true, MyType::new)
                 .setAutoComplete(this::onAutoComplete);
-        return new SlashCommand("hello", "hello world")
+        slashCommand.setName("hello")
+                .setDescription("hello world")
                 .addOptions(option1, option2, option3)
                 .setEphemeral()
                 .addPermission(Permission.ADMINISTRATOR)

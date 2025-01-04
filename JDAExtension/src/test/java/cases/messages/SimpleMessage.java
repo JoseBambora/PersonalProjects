@@ -6,7 +6,6 @@ import org.jdaextension.configuration.MessageReceiver;
 import org.jdaextension.interfaces.MessageReceiverInterface;
 import org.jdaextension.responses.Response;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -22,9 +21,10 @@ public class SimpleMessage implements MessageReceiverInterface {
     }
 
     private void button1(ButtonInteractionEvent event, Response response) {
-        response.setVariable("name","Button Clicked").setTemplate("SimpleMessage");
+        response.setVariable("name", "Button Clicked").setTemplate("SimpleMessage");
 
     }
+
     @Override
     public void onCall(MessageReceivedEvent event, Map<String, Object> data, Response response) {
         response.setVariables(data).setTemplate("SimpleMessage");

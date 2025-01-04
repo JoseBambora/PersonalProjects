@@ -8,8 +8,8 @@ import org.jdaextension.responses.Response;
 
 public class HelloCommandMessage2 implements MessageCommandInterface {
     @Override
-    public MessageCommand configure() {
-        return new MessageCommand("Hello2");
+    public void configure(MessageCommand messageCommand) {
+        messageCommand.setName("Hello2");
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.Map;
 public class HelloMessage implements MessageReceiverInterface {
     @Override
     public void configure(MessageReceiver messageReceiver) {
-        messageReceiver.addButtonClick("1",this::onButton1)
+        messageReceiver.addButtonClick("1", this::onButton1)
                 .addToPipeline((e, m) -> {
                     m.put("counter", "5");
                     return true;

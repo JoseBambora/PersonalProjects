@@ -10,8 +10,9 @@ import java.util.Map;
 
 public class SimpleCommand implements SlashCommandInterface {
     @Override
-    public SlashCommand configure() {
-        return new SlashCommand("simple", "test")
+    public void configure(SlashCommand slashCommand) {
+        slashCommand.setName("simple")
+                .setDescription("test")
                 .addButtonClick("1", this::onButton1);
     }
 

@@ -10,14 +10,10 @@ import org.jdaextension.responses.Response;
 import org.jdaextension.responses.ResponseCommand;
 
 public class UserCommand extends Command<UserCommand> {
-    private UserCommandInterface controller;
+    private final UserCommandInterface controller;
 
-    public UserCommand(String name) {
-        super(name);
-        controller = null;
-    }
-
-    protected void setController(UserCommandInterface controller) {
+    protected UserCommand(UserCommandInterface controller) {
+        super();
         this.controller = controller;
     }
 

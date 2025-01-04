@@ -21,10 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiFunction;
 
 
 public class Configuration extends ListenerAdapter {
@@ -42,20 +40,20 @@ public class Configuration extends ListenerAdapter {
     }
 
     public void addCommand(SlashCommandInterface slashCommandClass) {
-        SlashCommand slashCommand = slashCommandClass.configure();
-        slashCommand.setController(slashCommandClass);
+        SlashCommand slashCommand = new SlashCommand(slashCommandClass);
+        slashCommandClass.configure(slashCommand);
         slashCommands.put(slashCommand.getName(), slashCommand);
     }
 
     public void addCommand(UserCommandInterface userCommandClass) {
-        UserCommand userCommand = userCommandClass.configure();
-        userCommand.setController(userCommandClass);
+        UserCommand userCommand = new UserCommand(userCommandClass);
+        userCommandClass.configure(userCommand);
         userCommands.put(userCommand.getName(), userCommand);
     }
 
     public void addCommand(MessageCommandInterface messageCommandClass) {
-        MessageCommand messageCommand = messageCommandClass.configure();
-        messageCommand.setController(messageCommandClass);
+        MessageCommand messageCommand = new MessageCommand(messageCommandClass);
+        messageCommandClass.configure(messageCommand);
         messageCommands.put(messageCommand.getName(), messageCommand);
     }
 

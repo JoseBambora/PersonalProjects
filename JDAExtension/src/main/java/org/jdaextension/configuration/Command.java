@@ -12,14 +12,19 @@ import java.util.Collection;
 import java.util.List;
 
 public abstract class Command<T> extends ButtonBehaviour<T> {
-    protected final String name;
     protected final List<Permission> permissions;
+    protected String name;
     private boolean sendThinking;
     private boolean ephemeral;
 
-    protected Command(String name) {
-        this.name = name;
+    protected Command() {
+        this.name = "";
         permissions = new ArrayList<>();
+    }
+
+    public T setName(String name) {
+        this.name = name;
+        return (T) this;
     }
 
     public T addPermission(Permission permission) {

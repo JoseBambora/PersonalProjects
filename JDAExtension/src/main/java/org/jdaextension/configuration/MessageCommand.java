@@ -10,14 +10,10 @@ import org.jdaextension.responses.Response;
 import org.jdaextension.responses.ResponseCommand;
 
 public class MessageCommand extends Command<MessageCommand> {
-    private MessageCommandInterface controller;
+    private final MessageCommandInterface controller;
 
-    public MessageCommand(String name) {
-        super(name);
-        controller = null;
-    }
-
-    protected void setController(MessageCommandInterface controller) {
+    protected MessageCommand(MessageCommandInterface controller) {
+        super();
         this.controller = controller;
     }
 

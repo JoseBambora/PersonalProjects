@@ -13,7 +13,7 @@ public class MessageReceiver extends ButtonBehaviour<MessageReceiver> {
     private final List<BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean>> pipeline;
     private final int id;
 
-    public MessageReceiver(MessageReceiverInterface controller, int id) {
+    protected MessageReceiver(MessageReceiverInterface controller, int id) {
         this.controller = controller;
         this.pipeline = new ArrayList<>();
         this.id = id;

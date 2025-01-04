@@ -8,8 +8,8 @@ import org.jdaextension.responses.Response;
 
 public class HelloCommandUser implements UserCommandInterface {
     @Override
-    public UserCommand configure() {
-        return new UserCommand("Hello").setEphemeral().setSendThinking();
+    public void configure(UserCommand userCommand) {
+        userCommand.setName("Hello").setEphemeral().setSendThinking();
     }
 
     @Override

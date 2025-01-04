@@ -5,7 +5,7 @@ import org.jdaextension.configuration.MessageCommand;
 import org.jdaextension.responses.Response;
 
 public interface MessageCommandInterface {
-    MessageCommand configure();
+    void configure(MessageCommand messageCommand);
 
     void onCall(MessageContextInteractionEvent event, Response response);
 }

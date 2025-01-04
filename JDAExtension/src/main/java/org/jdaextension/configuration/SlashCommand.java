@@ -15,19 +15,20 @@ import org.jdaextension.responses.ResponseCommand;
 import java.util.*;
 
 public class SlashCommand extends Command<SlashCommand> {
-    private final String description;
     private final Map<String, Option<?>> options;
-    private SlashCommandInterface controller;
+    private final SlashCommandInterface controller;
+    private String description;
 
-    public SlashCommand(String name, String description) {
-        super(name);
-        this.description = description;
+    protected SlashCommand(SlashCommandInterface controller) {
+        super();
+        this.description = "";
         this.options = new HashMap<>();
-        this.controller = null;
+        this.controller = controller;
     }
 
-    protected void setController(SlashCommandInterface controller) {
-        this.controller = controller;
+    public SlashCommand setDescription(String description) {
+        this.description = description;
+        return this;
     }
 
     public SlashCommand addOption(Option<?> option) {

@@ -7,7 +7,7 @@ import org.jdaextension.responses.Response;
 import java.util.Map;
 
 public interface SlashCommandInterface {
-    SlashCommand configure();
+    void configure(SlashCommand slashCommand);
 
     void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, Response response);
 }

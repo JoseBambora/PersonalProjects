@@ -8,8 +8,8 @@ import org.jdaextension.responses.Response;
 
 public class HelloCommandMessage implements MessageCommandInterface {
     @Override
-    public MessageCommand configure() {
-        return new MessageCommand("Hello").setEphemeral().setSendThinking();
+    public void configure(MessageCommand messageCommand) {
+        messageCommand.setName("Hello").setEphemeral().setSendThinking();
     }
 
     @Override

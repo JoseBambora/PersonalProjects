@@ -14,10 +14,11 @@ import java.util.stream.IntStream;
 
 public class HelloCommand2 implements SlashCommandInterface {
     @Override
-    public SlashCommand configure() {
+    public void configure(SlashCommand slashCommand) {
         OptionString option1 = new OptionString("name", "Name to appear in the message", true);
         OptionNumber option2 = new OptionNumber("number", "number of items", true, Number.INTEGER);
-        return new SlashCommand("ola", "ola versão 2")
+        slashCommand.setName("ola")
+                .setDescription("ola versão 2")
                 .addOption(option1)
                 .addOption(option2)
                 .addButtonClick("1", this::onButton1)

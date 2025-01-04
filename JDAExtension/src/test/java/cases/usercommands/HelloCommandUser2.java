@@ -8,8 +8,8 @@ import org.jdaextension.responses.Response;
 
 public class HelloCommandUser2 implements UserCommandInterface {
     @Override
-    public UserCommand configure() {
-        return new UserCommand("Hello2");
+    public void configure(UserCommand userCommand) {
+        userCommand.setName("Hello2");
     }
 
     @Override

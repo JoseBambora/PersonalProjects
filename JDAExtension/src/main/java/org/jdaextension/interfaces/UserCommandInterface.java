@@ -5,7 +5,7 @@ import org.jdaextension.configuration.UserCommand;
 import org.jdaextension.responses.Response;
 
 public interface UserCommandInterface {
-    UserCommand configure();
+    void configure(UserCommand userCommand);
 
     void onCall(UserContextInteractionEvent event, Response response);
 }
