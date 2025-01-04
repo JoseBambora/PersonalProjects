@@ -7,13 +7,13 @@ import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.configuration.option.Number;
 import org.jdaextension.configuration.option.OptionNumber;
 import org.jdaextension.configuration.option.OptionString;
-import org.jdaextension.interfaces.SlashCommandInterface;
+import org.jdaextension.generic.SlashEvent;
 import org.jdaextension.responses.Response;
 
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class SimpleCommandMod implements SlashCommandInterface {
+public class SimpleCommandMod extends SlashEvent {
     @Override
     public void configure(SlashCommand slashCommand) {
         OptionString option1 = new OptionString("name", "Name to appear in the message", true);
@@ -22,10 +22,6 @@ public class SimpleCommandMod implements SlashCommandInterface {
                 .setDescription("ola versão 2")
                 .addOption(option1)
                 .addOption(option2)
-                .addButtonClick("1", this::onButton1)
-                .addButtonClick("2", this::onButton2)
-                .addButtonClick("3", this::onButton3)
-                .addButtonClick("4", this::onButton4)
                 .addPermission(Permission.KICK_MEMBERS);
     }
 
@@ -56,5 +52,16 @@ public class SimpleCommandMod implements SlashCommandInterface {
     public void onButton4(ButtonInteractionEvent event, Response response) {
         response.setTemplate("SimpleCommandMod")
                 .setVariable("name", "Button 4 clicked");
+    }
+
+    @Override
+    public void onCall(ButtonInteractionEvent event, String id, Response response) {
+        switch (id) {
+            case "1" -> onButton1(event, response);
+            case "2" -> onButton2(event, response);
+            case "3" -> onButton3(event, response);
+            case "4" -> onButton4(event, response);
+            default -> response.setTemplate("400").setVariable("message", "Button does not exists");
+        }
     }
 }

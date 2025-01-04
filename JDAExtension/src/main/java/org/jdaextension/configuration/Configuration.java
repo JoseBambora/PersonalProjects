@@ -1,6 +1,7 @@
 package org.jdaextension.configuration;
 
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -8,10 +9,10 @@ import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEven
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jdaextension.interfaces.MessageCommandInterface;
-import org.jdaextension.interfaces.MessageReceiverInterface;
-import org.jdaextension.interfaces.SlashCommandInterface;
-import org.jdaextension.interfaces.UserCommandInterface;
+import org.jdaextension.generic.MessageContextEvent;
+import org.jdaextension.generic.MessageReceiverEvent;
+import org.jdaextension.generic.SlashEvent;
+import org.jdaextension.generic.UserContextEvent;
 import org.jdaextension.responses.Response;
 import org.jdaextension.responses.ResponseButton;
 import org.jdaextension.responses.ResponseCommand;
@@ -39,25 +40,25 @@ public class Configuration extends ListenerAdapter {
         messageReceivers = new HashMap<>();
     }
 
-    public void addCommand(SlashCommandInterface slashCommandClass) {
+    public void addCommand(SlashEvent slashCommandClass) {
         SlashCommand slashCommand = new SlashCommand(slashCommandClass);
         slashCommandClass.configure(slashCommand);
         slashCommands.put(slashCommand.getName(), slashCommand);
     }
 
-    public void addCommand(UserCommandInterface userCommandClass) {
+    public void addCommand(UserContextEvent userCommandClass) {
         UserCommand userCommand = new UserCommand(userCommandClass);
         userCommandClass.configure(userCommand);
         userCommands.put(userCommand.getName(), userCommand);
     }
 
-    public void addCommand(MessageCommandInterface messageCommandClass) {
+    public void addCommand(MessageContextEvent messageCommandClass) {
         MessageCommand messageCommand = new MessageCommand(messageCommandClass);
         messageCommandClass.configure(messageCommand);
         messageCommands.put(messageCommand.getName(), messageCommand);
     }
 
-    public void addMessageReceiver(MessageReceiverInterface messageReceiverInterface) {
+    public void addMessageReceiver(MessageReceiverEvent messageReceiverInterface) {
         MessageReceiver messageReceiver = new MessageReceiver(messageReceiverInterface, messageReceivers.size());
         messageReceiverInterface.configure(messageReceiver);
         messageReceivers.put(messageReceivers.size(), messageReceiver);
@@ -90,9 +91,13 @@ public class Configuration extends ListenerAdapter {
                 String[] split = idButton.split("_");
                 String command = split[0];
                 if (command.contains("message"))
-                    messageReceivers.get(Integer.parseInt(command.replaceAll("message", ""))).onButtonClick(event, split[1]).send();
+                    messageReceivers.get(Integer.parseInt(command.replaceAll("message", ""))).onButtonClicked(event, split[1]).send();
+                else if (command.contains("usercontext"))
+                    userCommands.get(command.replaceAll("usercontext", "")).onButtonClicked(event,split[1]).send();
+                else if (command.contains("messagecontext"))
+                    messageCommands.get(command.replaceAll("messagecontext", "")).onButtonClicked(event,split[1]).send();
                 else
-                    slashCommands.get(command).onButtonClick(event, split[1]).send();
+                    slashCommands.get(command).onButtonClicked(event, split[1]).send();
             } else {
                 ResponseButton responseButton = new ResponseButton(event);
                 responseButton.setTemplate("404").setVariable("message", "Button");
@@ -120,21 +125,26 @@ public class Configuration extends ListenerAdapter {
     }
 
     @Override
-    public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
+    public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event) {
         slashCommands.get(event.getName()).onAutoComplete(event);
     }
 
     @Override
-    public void onUserContextInteraction(UserContextInteractionEvent event) {
+    public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
         UserCommand userCommand = userCommands.get(event.getName());
         Runnable runnable = () -> userCommand.execute(event).send();
         sendError(runnable, new ResponseCommand(event, userCommand.isSendThinking(), userCommand.isEphemeral()));
     }
 
     @Override
-    public void onMessageContextInteraction(MessageContextInteractionEvent event) {
+    public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         MessageCommand messageCommand = messageCommands.get(event.getName());
         Runnable runnable = () -> messageCommand.execute(event).send();
         sendError(runnable, new ResponseCommand(event, messageCommand.isSendThinking(), messageCommand.isEphemeral()));
+    }
+
+    @Override
+    public void onModalInteraction(@NotNull ModalInteractionEvent event) {
+
     }
 }

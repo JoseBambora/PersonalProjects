@@ -8,7 +8,8 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jdaextension.configuration.option.Option;
-import org.jdaextension.interfaces.SlashCommandInterface;
+import org.jdaextension.generic.GenericEvents;
+import org.jdaextension.generic.SlashEvent;
 import org.jdaextension.responses.Response;
 import org.jdaextension.responses.ResponseCommand;
 
@@ -16,10 +17,10 @@ import java.util.*;
 
 public class SlashCommand extends Command<SlashCommand> {
     private final Map<String, Option<?>> options;
-    private final SlashCommandInterface controller;
+    private final SlashEvent controller;
     private String description;
 
-    protected SlashCommand(SlashCommandInterface controller) {
+    protected SlashCommand(SlashEvent controller) {
         super();
         this.description = "";
         this.options = new HashMap<>();
@@ -74,5 +75,10 @@ public class SlashCommand extends Command<SlashCommand> {
 
     protected void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
         options.get(event.getFocusedOption().getName()).onAutoComplete(event);
+    }
+
+    @Override
+    protected GenericEvents getController() {
+        return controller;
     }
 }

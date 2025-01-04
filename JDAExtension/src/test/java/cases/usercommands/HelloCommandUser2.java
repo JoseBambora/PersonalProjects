@@ -2,11 +2,11 @@ package cases.usercommands;
 
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import org.jdaextension.configuration.UserCommand;
-import org.jdaextension.interfaces.UserCommandInterface;
+import org.jdaextension.generic.UserContextEvent;
 import org.jdaextension.responses.Response;
 
 
-public class HelloCommandUser2 implements UserCommandInterface {
+public class HelloCommandUser2 extends UserContextEvent {
     @Override
     public void configure(UserCommand userCommand) {
         userCommand.setName("Hello2");

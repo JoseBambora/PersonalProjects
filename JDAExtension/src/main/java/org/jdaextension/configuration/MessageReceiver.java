@@ -1,19 +1,20 @@
 package org.jdaextension.configuration;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.jdaextension.interfaces.MessageReceiverInterface;
+import org.jdaextension.generic.GenericEvents;
+import org.jdaextension.generic.MessageReceiverEvent;
 import org.jdaextension.responses.Response;
 import org.jdaextension.responses.ResponseMessage;
 
 import java.util.*;
 import java.util.function.BiFunction;
 
-public class MessageReceiver extends ButtonBehaviour<MessageReceiver> {
-    private final MessageReceiverInterface controller;
+public class MessageReceiver extends ButtonReceiver {
+    private final MessageReceiverEvent controller;
     private final List<BiFunction<MessageReceivedEvent, Map<String, Object>, Boolean>> pipeline;
     private final int id;
 
-    protected MessageReceiver(MessageReceiverInterface controller, int id) {
+    protected MessageReceiver(MessageReceiverEvent controller, int id) {
         this.controller = controller;
         this.pipeline = new ArrayList<>();
         this.id = id;
@@ -37,5 +38,10 @@ public class MessageReceiver extends ButtonBehaviour<MessageReceiver> {
             return responseMessage;
         } else
             return null;
+    }
+
+    @Override
+    protected GenericEvents getController() {
+        return controller;
     }
 }

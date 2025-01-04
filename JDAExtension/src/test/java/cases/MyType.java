@@ -1,5 +1,4 @@
-package org.jdaextension.examples;
-
+package cases;
 
 public class MyType {
     private final int x;

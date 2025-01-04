@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class Command<T> extends ButtonBehaviour<T> {
+public abstract class Command<T> extends ButtonReceiver {
     protected final List<Permission> permissions;
     protected String name;
     private boolean sendThinking;
