@@ -14,7 +14,7 @@ public class ResponseMessage extends Response {
 
     @Override
     public void send() {
-        boolean hasFile = this.build("message" + id);
+        boolean hasFile = this.build("message_" + id);
         this.sendReactions(event.getMessage());
         if (hasFile) {
             MessageCreateAction mca = event.getMessage().reply(this.message.toString());

@@ -1,15 +1,14 @@
 package org.jdaextension.configuration;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jdaextension.responses.Response;
 import org.jdaextension.responses.ResponseCommand;
+import org.jdaextension.responses.ResponseModal;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public abstract class Command<T> extends ButtonReceiver {
     protected final List<Permission> permissions;
@@ -71,7 +70,7 @@ public abstract class Command<T> extends ButtonReceiver {
                 event.deferReply(isEphemeral()).queue();
             return executeCommand(event);
         } else {
-            return new ResponseCommand(event, false, false)
+            return new ResponseCommand(event, "", false, false)
                     .setTemplate("403")
                     .setVariable("message", "You do not have access to this command");
         }
@@ -80,4 +79,13 @@ public abstract class Command<T> extends ButtonReceiver {
     protected abstract CommandData build();
 
     protected abstract Response executeCommand(CommandInteraction event);
+
+
+    public Response onModalInteraction(ModalInteractionEvent event, String id) {
+        Map<String,String> fields = new HashMap<>();
+        event.getValues().forEach(mm -> fields.put(mm.getId(),mm.getAsString()));
+        ResponseModal responseButton = new ResponseModal(event, sendThinking, ephemeral);
+        getController().onCall(event,id, fields, responseButton);
+        return responseButton;
+    }
 }

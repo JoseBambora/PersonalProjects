@@ -32,7 +32,7 @@ public class TestSlashCommands {
         List<Button> buttonList = mockSlashCommand.getResultButtons(sendThinking);
         List<FileUpload> fileUploadList = mockSlashCommand.getResultFiles(sendThinking);
         MessageEmbed messageEmbed = mockSlashCommand.getResultEmbed(sendThinking);
-        GenericTests.testMessage(message, true, buttonList, hasButtons, fileUploadList, hasFile, messageEmbed, hasEmbed, id, template, variables);
+        GenericTests.testMessage(message, "command", true, buttonList, hasButtons, fileUploadList, hasFile, messageEmbed, hasEmbed, id, template, variables);
     }
 
     private void emptyBody(MockSlashCommand mockSlashCommand, boolean sendThinking) {
@@ -48,14 +48,14 @@ public class TestSlashCommands {
         String noPermission = mockSlashCommandNoPermission.getResultMessage(sendThinking);
         Assertions.assertFalse(noPermission.isBlank());
         emptyBody(mockSlashCommandNoPermission, sendThinking);
-        Assertions.assertEquals(Response.ResponseTests.getMessageTest(mockSlashCommandNoPermission.getCommand(), "403", Map.of("message", "You do not have access to this command")), noPermission);
+        Assertions.assertEquals(Response.ResponseTests.getMessageTest(mockSlashCommandNoPermission.getCommand(), "", "403", Map.of("message", "You do not have access to this command")), noPermission);
     }
 
     private void test400(MockSlashCommand mockSlashCommandPermissionArgs, boolean sendThinking, List<String> argumentsMissing) {
         String messageNoArgs = mockSlashCommandPermissionArgs.getResultMessage(sendThinking);
         Assertions.assertFalse(messageNoArgs.isBlank());
         emptyBody(mockSlashCommandPermissionArgs, sendThinking);
-        Assertions.assertEquals(Response.ResponseTests.getMessageTest(mockSlashCommandPermissionArgs.getCommand(), "400", Map.of("errors", argumentsMissing.stream().map(s -> "Argument `" + s + "` is missing").sorted().toList())), messageNoArgs);
+        Assertions.assertEquals(Response.ResponseTests.getMessageTest(mockSlashCommandPermissionArgs.getCommand(), "","400", Map.of("errors", argumentsMissing.stream().map(s -> "Argument `" + s + "` is missing").sorted().toList())), messageNoArgs);
     }
 
     @Test

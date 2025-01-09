@@ -9,14 +9,16 @@ import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEven
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.LayoutComponent;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import org.jdaextension.generic.MessageContextEvent;
 import org.jdaextension.generic.MessageReceiverEvent;
 import org.jdaextension.generic.SlashEvent;
 import org.jdaextension.generic.UserContextEvent;
-import org.jdaextension.responses.Response;
-import org.jdaextension.responses.ResponseButton;
-import org.jdaextension.responses.ResponseCommand;
-import org.jdaextension.responses.ResponseMessage;
+import org.jdaextension.responses.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,13 +93,13 @@ public class Configuration extends ListenerAdapter {
                 String[] split = idButton.split("_");
                 String command = split[0];
                 if (command.contains("message"))
-                    messageReceivers.get(Integer.parseInt(command.replaceAll("message", ""))).onButtonClicked(event, split[1]).send();
+                    messageReceivers.get(Integer.parseInt(split[1])).onButtonClicked(event, split[2]).send();
                 else if (command.contains("usercontext"))
-                    userCommands.get(command.replaceAll("usercontext", "")).onButtonClicked(event,split[1]).send();
+                    userCommands.get(split[1]).onButtonClicked(event,split[2]).send();
                 else if (command.contains("messagecontext"))
-                    messageCommands.get(command.replaceAll("messagecontext", "")).onButtonClicked(event,split[1]).send();
+                    messageCommands.get(split[1]).onButtonClicked(event,split[2]).send();
                 else
-                    slashCommands.get(command).onButtonClicked(event, split[1]).send();
+                    slashCommands.get(split[1]).onButtonClicked(event, split[2]).send();
             } else {
                 ResponseButton responseButton = new ResponseButton(event);
                 responseButton.setTemplate("404").setVariable("message", "Button");
@@ -121,7 +123,7 @@ public class Configuration extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         SlashCommand command = slashCommands.get(event.getName());
         Runnable runnable = () -> command.execute(event).send();
-        sendError(runnable, new ResponseCommand(event, command.isSendThinking(), command.isEphemeral()));
+        sendError(runnable, new ResponseCommand(event, "command", command.isSendThinking(), command.isEphemeral()));
     }
 
     @Override
@@ -133,18 +135,29 @@ public class Configuration extends ListenerAdapter {
     public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
         UserCommand userCommand = userCommands.get(event.getName());
         Runnable runnable = () -> userCommand.execute(event).send();
-        sendError(runnable, new ResponseCommand(event, userCommand.isSendThinking(), userCommand.isEphemeral()));
+        sendError(runnable, new ResponseCommand(event , "usercontext", userCommand.isSendThinking(), userCommand.isEphemeral()));
     }
 
     @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         MessageCommand messageCommand = messageCommands.get(event.getName());
         Runnable runnable = () -> messageCommand.execute(event).send();
-        sendError(runnable, new ResponseCommand(event, messageCommand.isSendThinking(), messageCommand.isEphemeral()));
+        sendError(runnable, new ResponseCommand(event, "messagecontext", messageCommand.isSendThinking(), messageCommand.isEphemeral()));
     }
 
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
-
+        Runnable runnable = () -> {
+            String idModal = event.getModalId();
+            String[] split = idModal.split("_");
+            String command = split[0];
+            if (command.contains("usercontext"))
+                userCommands.get(split[1]).onModalInteraction(event,split[1]).send();
+            else if (command.contains("messagecontext"))
+                messageCommands.get(split[1]).onModalInteraction(event,split[1]).send();
+            else
+                slashCommands.get(split[1]).onModalInteraction(event, split[1]).send();
+        };
+        sendError(runnable, new ResponseModal(event, false, false));
     }
 }

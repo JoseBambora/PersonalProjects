@@ -24,7 +24,7 @@ public class MessageCommand extends Command<MessageCommand> {
 
     @Override
     protected Response executeCommand(CommandInteraction event) {
-        ResponseCommand responseSlashCommand = new ResponseCommand(event, isSendThinking(), isEphemeral());
+        ResponseCommand responseSlashCommand = new ResponseCommand(event , "messagecontext", isSendThinking(), isEphemeral());
         controller.onCall((MessageContextInteractionEvent) event, responseSlashCommand);
         return responseSlashCommand;
     }

@@ -33,24 +33,24 @@ public class TestButtons {
         List<Button> buttonList = buttonReaction.getResultButtons();
         List<FileUpload> fileUploadList = buttonReaction.getResultFiles();
         MessageEmbed messageEmbed = buttonReaction.getResultEmbed();
-        GenericTests.testMessage(message, true, buttonList, hasButtons, fileUploadList, hasFile, messageEmbed, hasEmbed, command, template, variables);
+        GenericTests.testMessage(message, "", true, buttonList, hasButtons, fileUploadList, hasFile, messageEmbed, hasEmbed, command, template, variables);
 
     }
 
     @Test
     public void testButtonClickSimpleCommand() {
-        testButtonClick("simple", "1", true, true, true, "SimpleCommand", Map.of("counter", 2));
+        testButtonClick("command_simple", "1", true, true, true, "SimpleCommand", Map.of("counter", 2));
     }
 
     @Test
     public void testButtonClickSimpleCommandMod() {
-        testButtonClick("simplemod", "1", true, false, false, "SimpleCommandMod", Map.of("name", "Button 1 clicked"));
-        testButtonClick("simplemod", "2", true, false, false, "SimpleCommandMod", Map.of("name", "Button 2 clicked"));
-        testButtonClick("simplemod", "3", true, false, false, "SimpleCommandMod", Map.of("name", "Button 3 clicked"));
+        testButtonClick("command_simplemod", "1", true, false, false, "SimpleCommandMod", Map.of("name", "Button 1 clicked"));
+        testButtonClick("command_simplemod", "2", true, false, false, "SimpleCommandMod", Map.of("name", "Button 2 clicked"));
+        testButtonClick("command_simplemod", "3", true, false, false, "SimpleCommandMod", Map.of("name", "Button 3 clicked"));
     }
 
     @Test
     public void testButtonClickMessage() {
-        testButtonClick("message0", "1", true, false, false, "SimpleMessage", Map.of("name", "Button Clicked"));
+        testButtonClick("message_0", "1", true, false, false, "SimpleMessage", Map.of("name", "Button Clicked"));
     }
 }

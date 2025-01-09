@@ -13,4 +13,5 @@ public abstract class ButtonReceiver {
         getController().onCall(event, id, responseButton);
         return responseButton;
     }
+
 }

@@ -1,6 +1,6 @@
-package cases.slashcommands;
+package org.jdaextension.cases.slashcommands;
 
-import cases.MyType;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
@@ -20,31 +20,20 @@ public class SimpleCommandOptions extends SlashEvent {
         OptionString option1 = new OptionString("word", "word desc", false)
                 .addChoice("Option 1", "World")
                 .addChoice("Option 2", "Braga");
-        OptionCustom option2 = new OptionCustom("coords", "coords desc", true, MyType::new)
-                .addChoice("Option 1", "(1,1)")
-                .addChoice("Option 2", "(2,2)");
-        OptionCustom option3 = new OptionCustom("coords2", "coords no choice", true, MyType::new)
-                .setAutoComplete(this::onAutoComplete);
         slashCommand.setName("simpleoptions")
                 .setDescription("hello world")
-                .addOptions(option1, option2, option3)
-                .setEphemeral()
-                .setSendThinking();
+                .addOptions(option1);
     }
 
     @Override
     public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, Response response) {
         String word = (String) variables.get("word");
-        MyType myType = (MyType) variables.get("coords");
-        MyType myType2 = (MyType) variables.get("coords2");
-        response.setTemplate("SimpleCommandOptions")
-                .setVariable("word", word)
-                .setVariable("coords", myType.toString())
-                .setVariable("coords2", myType2.toString());
+        response.setTemplate("SimpleModal").setModal();
     }
 
-
-    public List<Choice> onAutoComplete(CommandAutoCompleteInteractionEvent event, String value) {
-        return Stream.of(new Choice("(1,1)", "(1,1)"), new Choice("(1,2)", "(2,2)")).filter(n -> n.getAsString().contains(value)).toList();
+    @Override
+    public void onCall(ModalInteractionEvent event, String id, Map<String, String> fields, Response response) {
+        System.out.println(fields);
+        response.setTemplate("SimpleCommandOptions").setVariable("word",fields.get("field1"));
     }
 }

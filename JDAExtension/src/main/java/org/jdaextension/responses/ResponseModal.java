@@ -1,32 +1,26 @@
 package org.jdaextension.responses;
 
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
-public class ResponseCommand extends Response {
-    private final CommandInteraction event;
-    private final String id;
+public class ResponseModal extends Response {
+    private final ModalInteractionEvent event;
     private final boolean sendThinking;
     private final boolean ephemeral;
 
-    public ResponseCommand(CommandInteraction event, String id, boolean sendThinking, boolean ephemeral) {
+    public ResponseModal(ModalInteractionEvent event, boolean sendThinking, boolean ephemeral) {
         this.event = event;
-        this.id = id;
         this.sendThinking = sendThinking;
         this.ephemeral = ephemeral;
     }
 
-
     @Override
     public void send() {
-        boolean hasFile = this.build(id + "_" + event.getName());
+        boolean hasFile = this.build(event.getModalId());
         if (hasFile) {
-            if (isModal) {
-                event.replyModal(modal).queue();
-            }
-            else if (sendThinking) {
+            if (sendThinking) {
                 WebhookMessageEditAction<Message> wmea = event.getHook().editOriginal(message.toString());
                 wmea = !this.embedBuilder.isEmpty() ? wmea.setEmbeds(embedBuilder.build()) : wmea;
                 wmea = buttons.isEmpty() ? wmea : wmea.setActionRow(buttons);

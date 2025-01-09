@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public abstract class Option<T> implements Comparable<Option<?>> {
     private final String name;
@@ -18,7 +18,7 @@ public abstract class Option<T> implements Comparable<Option<?>> {
     private final boolean required;
     private final OptionType type;
     private final List<Choice> choiceList;
-    private Function<CommandAutoCompleteInteractionEvent, List<Choice>> autoComplete;
+    private BiFunction<CommandAutoCompleteInteractionEvent, String, List<Choice>> autoComplete;
 
     protected Option(String name, String description, boolean required, OptionType type) {
         this.name = name;
@@ -29,7 +29,7 @@ public abstract class Option<T> implements Comparable<Option<?>> {
         this.type = type;
     }
 
-    public T setAutoComplete(Function<CommandAutoCompleteInteractionEvent, List<Choice>> autoComplete) {
+    public T setAutoComplete(BiFunction<CommandAutoCompleteInteractionEvent, String, List<Choice>> autoComplete) {
         this.autoComplete = autoComplete;
         return (T) this;
     }
@@ -73,7 +73,7 @@ public abstract class Option<T> implements Comparable<Option<?>> {
     }
 
     public void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
-        List<Choice> choices = this.autoComplete.apply(event);
+        List<Choice> choices = this.autoComplete.apply(event, event.getFocusedOption().getValue());
         event.replyChoices(choices).queue();
     }
 
