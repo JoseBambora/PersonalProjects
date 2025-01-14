@@ -7,11 +7,14 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
+import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jdaextension.configuration.Configuration;
@@ -24,6 +27,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public abstract class MockCommand extends MockResults {
+    private final ModalCallbackAction modalCallbackAction;
     private final User user;
     private final Member member;
     private final ReplyCallbackAction replyCallbackAction;
@@ -33,11 +37,13 @@ public abstract class MockCommand extends MockResults {
     private final TextChannel textChannel;
     private final WebhookMessageEditAction<Message> messageEditAction;
     private final Configuration configuration;
+    private ModalInteractionEvent modalInteractionEvent;
     private CommandInteraction event;
 
     public MockCommand(String mentionUser, String userName, Configuration configuration, boolean mod) {
 
         user = mock(User.class);
+        modalCallbackAction = mock(ModalCallbackAction.class);
         replyCallbackAction = mock(ReplyCallbackAction.class);
         interactionHook = mock(InteractionHook.class);
         messageEditAction = mock(WebhookMessageEditAction.class);
@@ -127,6 +133,24 @@ public abstract class MockCommand extends MockResults {
         return getResultFiles(consumer);
     }
 
+    public Modal getResultModal(boolean sendThinking) {
+        Consumer<ArgumentCaptor<Modal>> consumer;
+        if (sendThinking)
+            consumer = c -> verify(event, atMost(1)).replyModal(c.capture());
+        else
+            consumer = c -> verify(event, atMost(1)).replyModal(c.capture());
+        return getResultModal(consumer);
+    }
+
+    public String getResultModalMessage(boolean sendThinking) {
+        Consumer<ArgumentCaptor<String>> consumer;
+        if (sendThinking)
+            consumer = c -> verify(modalInteractionEvent, atMost(1)).reply(c.capture());
+        else
+            consumer = c -> verify(modalInteractionEvent, atMost(1)).reply(c.capture());
+        return getResultMessage(consumer);
+    }
+
     protected User getUser() {
         return user;
     }
@@ -137,6 +161,12 @@ public abstract class MockCommand extends MockResults {
 
     protected void setCommand(CommandInteraction event) {
         this.event = event;
+        when(this.event.replyModal(any())).thenReturn(modalCallbackAction);
+    }
+
+    protected void setCommand(ModalInteractionEvent event) {
+        modalInteractionEvent = event;
+        when(modalInteractionEvent.reply(anyString())).thenReturn(replyCallbackAction);
     }
 
     protected Configuration getConfiguration() {

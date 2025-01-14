@@ -19,7 +19,7 @@ public class TestMessage {
     public void testMessage() {
         MockMessage mockMessageCorrect = new MockMessage("Hello Bot", "teste", "teste", configuration);
         mockMessageCorrect.execute();
-        GenericTests.testMessage(mockMessageCorrect.getResultMessage(), "",true, mockMessageCorrect.getResultButtons(), true, mockMessageCorrect.getResultFiles(), false, mockMessageCorrect.getResultEmbed(), false, "message_0", "SimpleMessage", Map.of("name", "teste"));
+        GenericTests.testMessage(mockMessageCorrect.getResultMessage(), "", true, mockMessageCorrect.getResultButtons(), true, mockMessageCorrect.getResultFiles(), false, mockMessageCorrect.getResultEmbed(), false, "message_0", "SimpleMessage", Map.of("name", "teste"));
     }
 
     @Test

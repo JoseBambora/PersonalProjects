@@ -25,8 +25,7 @@ public class ResponseCommand extends Response {
         if (hasFile) {
             if (isModal) {
                 event.replyModal(modal).queue();
-            }
-            else if (sendThinking) {
+            } else if (sendThinking) {
                 WebhookMessageEditAction<Message> wmea = event.getHook().editOriginal(message.toString());
                 wmea = !this.embedBuilder.isEmpty() ? wmea.setEmbeds(embedBuilder.build()) : wmea;
                 wmea = buttons.isEmpty() ? wmea : wmea.setActionRow(buttons);

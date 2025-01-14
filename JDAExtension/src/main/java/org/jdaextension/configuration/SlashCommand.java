@@ -65,7 +65,7 @@ public class SlashCommand extends Command<SlashCommand> {
             if (optionEntry.getValue().isRequired() && parsed == null)
                 errorArgs.add(optionEntry.getKey());
         }
-        ResponseCommand responseSlashCommand = new ResponseCommand(event , "command", isSendThinking(), isEphemeral());
+        ResponseCommand responseSlashCommand = new ResponseCommand(event, "command", isSendThinking(), isEphemeral());
         if (errorArgs.isEmpty())
             controller.onCall((SlashCommandInteractionEvent) event, variables, responseSlashCommand);
         else

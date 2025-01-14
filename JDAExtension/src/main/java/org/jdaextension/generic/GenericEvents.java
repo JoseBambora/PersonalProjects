@@ -16,7 +16,7 @@ public abstract class GenericEvents {
         response.setTemplate("500");
     }
 
-    public void onCall(ModalInteractionEvent event, String id, Map<String,String> fields, Response response) {
+    public void onCall(ModalInteractionEvent event, String id, Map<String, String> fields, Response response) {
         log.error("The method onCall(ModalInteractionEvent event, String id, Response response) is not override.");
         response.setTemplate("500");
     }

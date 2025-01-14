@@ -2,9 +2,12 @@ import aux.GenericTests;
 import cases.slashcommands.SimpleCommand;
 import cases.slashcommands.SimpleCommandMod;
 import cases.slashcommands.SimpleCommandOptions;
+import cases.slashcommands.SimpleModal;
+import mocks.MockModalResult;
 import mocks.MockSlashCommand;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jdaextension.configuration.Configuration;
 import org.jdaextension.responses.Response;
@@ -25,6 +28,7 @@ public class TestSlashCommands {
         configuration.addCommand(new SimpleCommandOptions());
         configuration.addCommand(new SimpleCommandMod());
         configuration.addCommand(new SimpleCommand());
+        configuration.addCommand(new SimpleModal());
     }
 
     private void testCommandSucess(MockSlashCommand mockSlashCommand, String id, String template, Map<String, Object> variables, boolean hasButtons, boolean hasFile, boolean hasEmbed, boolean sendThinking) {
@@ -55,7 +59,7 @@ public class TestSlashCommands {
         String messageNoArgs = mockSlashCommandPermissionArgs.getResultMessage(sendThinking);
         Assertions.assertFalse(messageNoArgs.isBlank());
         emptyBody(mockSlashCommandPermissionArgs, sendThinking);
-        Assertions.assertEquals(Response.ResponseTests.getMessageTest(mockSlashCommandPermissionArgs.getCommand(), "","400", Map.of("errors", argumentsMissing.stream().map(s -> "Argument `" + s + "` is missing").sorted().toList())), messageNoArgs);
+        Assertions.assertEquals(Response.ResponseTests.getMessageTest(mockSlashCommandPermissionArgs.getCommand(), "", "400", Map.of("errors", argumentsMissing.stream().map(s -> "Argument `" + s + "` is missing").sorted().toList())), messageNoArgs);
     }
 
     @Test
@@ -102,5 +106,22 @@ public class TestSlashCommands {
         MockSlashCommand mockSlashCommandNoArgs2 = new MockSlashCommand("simpleoptions", "teste", "teste", configuration, arguments, false);
         mockSlashCommandNoArgs2.execute();
         test400(mockSlashCommandNoArgs2, true, List.of("coords2"));
+    }
+
+    @Test
+    public void testSimpleModal() {
+        MockSlashCommand mockSlashCommand = new MockSlashCommand("modal", "teste", "teste", configuration, new HashMap<>(), false);
+        mockSlashCommand.execute();
+        Modal modal = mockSlashCommand.getResultModal(false);
+        Assertions.assertEquals("command_modal", modal.getId());
+        Assertions.assertEquals("Title", modal.getTitle());
+        Assertions.assertFalse(modal.getComponents().isEmpty());
+        Assertions.assertEquals(2, modal.getComponents().size());
+
+        MockModalResult mockModalResult = new MockModalResult("modal", "teste", configuration, new HashMap<>());
+        mockModalResult.execute();
+        Assertions.assertEquals(Response.ResponseTests.getMessageTest("", "modal", "SimpleModalResponse", new HashMap<>()), mockModalResult.getResultModalMessage(false));
+        // System.out.println(mockModalResult.getResultModalMessage(false));
+
     }
 }

@@ -82,10 +82,10 @@ public abstract class Command<T> extends ButtonReceiver {
 
 
     public Response onModalInteraction(ModalInteractionEvent event, String id) {
-        Map<String,String> fields = new HashMap<>();
-        event.getValues().forEach(mm -> fields.put(mm.getId(),mm.getAsString()));
+        Map<String, String> fields = new HashMap<>();
+        event.getValues().forEach(mm -> fields.put(mm.getId(), mm.getAsString()));
         ResponseModal responseButton = new ResponseModal(event, sendThinking, ephemeral);
-        getController().onCall(event,id, fields, responseButton);
+        getController().onCall(event, id, fields, responseButton);
         return responseButton;
     }
 }

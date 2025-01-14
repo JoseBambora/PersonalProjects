@@ -14,7 +14,7 @@ public class ResponseButton extends Response {
 
     @Override
     public void send() {
-        String []split = event.getButton().getId().split("_");
+        String[] split = event.getButton().getId().split("_");
         String command = split[0] + "_" + split[1];
         boolean hasFile = this.build(command);
         this.sendReactions(event.getMessage());

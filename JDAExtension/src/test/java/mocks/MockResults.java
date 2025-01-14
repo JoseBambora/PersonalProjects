@@ -4,6 +4,7 @@ import aux.GenericTests;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.mockito.ArgumentCaptor;
 
@@ -41,5 +42,12 @@ public abstract class MockResults {
         ArgumentCaptor<List<FileUpload>> captor = ArgumentCaptor.forClass(List.class);
         consumer.accept(captor);
         return GenericTests.getValueCollection(captor);
+    }
+
+    protected Modal getResultModal(Consumer<ArgumentCaptor<Modal>> consumer) {
+        ArgumentCaptor<Modal> captor = ArgumentCaptor.forClass(Modal.class);
+        consumer.accept(captor);
+        return GenericTests.getValueSingle(captor);
+
     }
 }

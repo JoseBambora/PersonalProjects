@@ -3,7 +3,6 @@ package org.jdaextension.responses;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
@@ -28,10 +27,10 @@ public abstract class Response {
     protected final List<Emoji> emojis;
     protected final List<FileUpload> files;
     protected final EmbedBuilder embedBuilder;
-    protected Modal modal;
     private final Map<String, Object> variables;
-    private String file;
+    protected Modal modal;
     protected boolean isModal;
+    private String file;
 
     public Response() {
         this.file = "";
@@ -144,46 +143,45 @@ public abstract class Response {
     }
 
     private TextInputStyle getTextInputStyle(String string) {
-        if(string != null) {
-            if(string.equals("SHORT"))
+        if (string != null) {
+            if (string.equals("SHORT"))
                 return TextInputStyle.SHORT;
             else if (string.equals("PARAGRAPH"))
                 return TextInputStyle.PARAGRAPH;
             else
                 return TextInputStyle.UNKNOWN;
-        }
-        else
+        } else
             return TextInputStyle.UNKNOWN;
     }
 
     private void configModal(Document document, String id) {
         Element elementModal = document.getElementsByTag("modal").getFirst();
-        String title = getElementText(elementModal,"title");
+        String title = getElementText(elementModal, "title");
         Elements inputs = elementModal.getElementsByTag("input");
         List<TextInput> textInputs = inputs.stream().map(e -> {
             String idTI = getAttribute(e, "id", "-1");
             String label = getAttribute(e, "label", "-1");
-            TextInputStyle textInputStyle = getTextInputStyle(getAttribute(e,"class"));
-            TextInput.Builder builder = TextInput.create(idTI, label,textInputStyle );
+            TextInputStyle textInputStyle = getTextInputStyle(getAttribute(e, "class"));
+            TextInput.Builder builder = TextInput.create(idTI, label, textInputStyle);
             String min = getAttribute(e, "min");
             String max = getAttribute(e, "max");
             String placeHolder = getAttribute(e, "placeholder");
-            if(min != null)
+            if (min != null)
                 builder.setMinLength(Integer.parseInt(min));
-            if(max != null)
+            if (max != null)
                 builder.setMaxLength(Integer.parseInt(max));
             builder.setPlaceholder(placeHolder);
             builder.setRequired("true".equals(getAttribute(e, "required")));
             return builder.build();
         }).toList();
-        modal = Modal.create(id,title != null ? title : "").addComponents(textInputs.stream().map(ActionRow::of).toList()).build();
+        modal = Modal.create(id, title != null ? title : "").addComponents(textInputs.stream().map(ActionRow::of).toList()).build();
     }
 
     protected boolean build(String id) {
         if (this.file != null && !this.file.isBlank()) {
             String result = PreCompileTemplates.apply(file, variables);
             Document doc = Jsoup.parse(result, "", org.jsoup.parser.Parser.xmlParser());
-            if(isModal)
+            if (isModal)
                 configModal(doc, id);
             else {
                 configButtons(doc, id);
@@ -210,16 +208,16 @@ public abstract class Response {
             return responseCommand;
         }
 
-        public static String getMessageTest(String id, String command,String template, Map<String, Object> variables) {
+        public static String getMessageTest(String id, String command, String template, Map<String, Object> variables) {
             Response response = configureMessage(id, command, template, variables);
             return response.message.isEmpty() ? null : response.message.toString();
         }
 
-        public static List<Button> getButtonsTest(String id,String command, String template, Map<String, Object> variables) {
+        public static List<Button> getButtonsTest(String id, String command, String template, Map<String, Object> variables) {
             return configureMessage(id, command, template, variables).buttons;
         }
 
-        public static List<FileUpload> getFilesTest(String id,String command, String template, Map<String, Object> variables) {
+        public static List<FileUpload> getFilesTest(String id, String command, String template, Map<String, Object> variables) {
             return configureMessage(id, command, template, variables).files;
 
         }

@@ -2,5 +2,4 @@
 
 **TODO**:
 - Documentation (code + this markdown)
-- UserContext + MessageContext events buttons.
-- Modals, Select Menus and Capture Edit and Deleted messages.
+- Select Menus, Capture Edit and Deleted messages and add a simple CronJob manager.

@@ -22,13 +22,13 @@ public class TestUserCommands {
     public void testCommand() {
         MockUserCommand mockUserCommand = new MockUserCommand("Hello", "teste", "teste", configuration);
         mockUserCommand.execute();
-        GenericTests.testMessage(mockUserCommand.getResultMessage(true), "usercontext",true, mockUserCommand.getResultButtons(true), true, mockUserCommand.getResultFiles(true), false, mockUserCommand.getResultEmbed(true), false, "Hello", "SimpleMessage", Map.of("name", "teste"));
+        GenericTests.testMessage(mockUserCommand.getResultMessage(true), "usercontext", true, mockUserCommand.getResultButtons(true), true, mockUserCommand.getResultFiles(true), false, mockUserCommand.getResultEmbed(true), false, "Hello", "SimpleMessage", Map.of("name", "teste"));
     }
 
     @Test
     public void testCommandNoThinking() {
         MockUserCommand mockUserCommand = new MockUserCommand("Hello2", "teste", "teste", configuration);
         mockUserCommand.execute();
-        GenericTests.testMessage(mockUserCommand.getResultMessage(false), "usercontext",true, mockUserCommand.getResultButtons(false), true, mockUserCommand.getResultFiles(false), false, mockUserCommand.getResultEmbed(false), false, "Hello2", "SimpleMessage", Map.of("name", "teste"));
+        GenericTests.testMessage(mockUserCommand.getResultMessage(false), "usercontext", true, mockUserCommand.getResultButtons(false), true, mockUserCommand.getResultFiles(false), false, mockUserCommand.getResultEmbed(false), false, "Hello2", "SimpleMessage", Map.of("name", "teste"));
     }
 }
