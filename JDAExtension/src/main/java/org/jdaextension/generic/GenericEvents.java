@@ -2,6 +2,7 @@ package org.jdaextension.generic;
 
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import org.jdaextension.responses.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,5 +20,9 @@ public abstract class GenericEvents {
     public void onCall(ModalInteractionEvent event, String id, Map<String, String> fields, Response response) {
         log.error("The method onCall(ModalInteractionEvent event, String id, Response response) is not override.");
         response.setTemplate("500");
+    }
+
+    public void onShutDown(ShutdownEvent shutdownEvent) {
+
     }
 }

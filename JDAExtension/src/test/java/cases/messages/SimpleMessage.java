@@ -2,6 +2,7 @@ package cases.messages;
 
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import org.jdaextension.configuration.MessageReceiver;
 import org.jdaextension.generic.MessageReceiverEvent;
 import org.jdaextension.responses.Response;
@@ -17,7 +18,7 @@ public class SimpleMessage extends MessageReceiverEvent {
             v.put("name", e.getAuthor().getName());
             return true;
         };
-        messageReceiver.addToPipeline(p1).addToPipeline(p2);
+        messageReceiver.addToPipelineReceive(p1).addToPipelineReceive(p2);
     }
 
     private void onButton1(ButtonInteractionEvent event, Response response) {
@@ -27,6 +28,11 @@ public class SimpleMessage extends MessageReceiverEvent {
     @Override
     public void onCall(MessageReceivedEvent event, Map<String, Object> data, Response response) {
         response.setVariables(data).setTemplate("SimpleMessage");
+    }
+
+    @Override
+    public void onCall(MessageUpdateEvent event, Map<String, Object> data, Response response) {
+
     }
 
 

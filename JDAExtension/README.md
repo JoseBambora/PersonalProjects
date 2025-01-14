@@ -2,4 +2,4 @@
 
 **TODO**:
 - Documentation (code + this markdown)
-- Select Menus, Capture Edit and Deleted messages and add a simple CronJob manager.
+- Select Menus, Capture Edit and Deleted messages.

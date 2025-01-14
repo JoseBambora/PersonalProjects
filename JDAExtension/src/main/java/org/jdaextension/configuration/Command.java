@@ -2,6 +2,7 @@ package org.jdaextension.configuration;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jdaextension.responses.Response;
@@ -80,12 +81,15 @@ public abstract class Command<T> extends ButtonReceiver {
 
     protected abstract Response executeCommand(CommandInteraction event);
 
-
     public Response onModalInteraction(ModalInteractionEvent event, String id) {
         Map<String, String> fields = new HashMap<>();
         event.getValues().forEach(mm -> fields.put(mm.getId(), mm.getAsString()));
         ResponseModal responseButton = new ResponseModal(event, sendThinking, ephemeral);
         getController().onCall(event, id, fields, responseButton);
         return responseButton;
+    }
+
+    protected void onShutDown(ShutdownEvent shutdownEvent) {
+        getController().onShutDown(shutdownEvent);
     }
 }

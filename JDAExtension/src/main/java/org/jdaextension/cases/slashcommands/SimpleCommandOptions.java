@@ -2,6 +2,7 @@ package org.jdaextension.cases.slashcommands;
 
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.configuration.option.OptionString;
 import org.jdaextension.generic.SlashEvent;
@@ -30,5 +31,10 @@ public class SimpleCommandOptions extends SlashEvent {
     public void onCall(ModalInteractionEvent event, String id, Map<String, String> fields, Response response) {
         System.out.println(fields);
         response.setTemplate("SimpleCommandOptions").setVariable("word", fields.get("field1"));
+    }
+
+    @Override
+    public void onShutDown(ShutdownEvent shutdownEvent) {
+        System.out.println("Shutting down command word");
     }
 }

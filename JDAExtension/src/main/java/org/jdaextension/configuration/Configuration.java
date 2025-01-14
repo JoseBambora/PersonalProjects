@@ -7,20 +7,19 @@ import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionE
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jdaextension.generic.MessageContextEvent;
-import org.jdaextension.generic.MessageReceiverEvent;
-import org.jdaextension.generic.SlashEvent;
-import org.jdaextension.generic.UserContextEvent;
+import org.jdaextension.generic.*;
 import org.jdaextension.responses.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 public class Configuration extends ListenerAdapter {
@@ -29,12 +28,14 @@ public class Configuration extends ListenerAdapter {
     private final Map<String, UserCommand> userCommands;
     private final Map<String, MessageCommand> messageCommands;
     private final Map<Integer, MessageReceiver> messageReceivers;
+    private final List<OnReadyEvent> readyEvents;
 
     public Configuration() {
         slashCommands = new HashMap<>();
         userCommands = new HashMap<>();
         messageCommands = new HashMap<>();
         messageReceivers = new HashMap<>();
+        readyEvents = new ArrayList<>();
     }
 
     public void addCommand(SlashEvent slashCommandClass) {
@@ -59,6 +60,10 @@ public class Configuration extends ListenerAdapter {
         MessageReceiver messageReceiver = new MessageReceiver(messageReceiverInterface, messageReceivers.size());
         messageReceiverInterface.configure(messageReceiver);
         messageReceivers.put(messageReceivers.size(), messageReceiver);
+    }
+
+    public void addReadyEvent(OnReadyEvent readyEvent) {
+        readyEvents.add(readyEvent);
     }
 
     @Override
@@ -106,11 +111,10 @@ public class Configuration extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        Runnable runnable = () -> {
-            if (!event.getAuthor().isBot())
-                messageReceivers.values().stream().map(m -> m.messageReceived(event)).filter(Objects::nonNull).forEach(Response::send);
-        };
-        sendError(runnable, new ResponseMessage(event, -1));
+        if (!event.getAuthor().isBot()) {
+            Runnable runnable = () -> messageReceivers.values().stream().map(m -> m.messageReceived(event)).filter(Objects::nonNull).forEach(Response::send);
+            sendError(runnable, new ResponseMessage(event, -1));
+        }
     }
 
 
@@ -154,5 +158,31 @@ public class Configuration extends ListenerAdapter {
                 slashCommands.get(split[1]).onModalInteraction(event, split[1]).send();
         };
         sendError(runnable, new ResponseModal(event, false, false));
+    }
+
+    @Override
+    public void onReady(@NotNull ReadyEvent event) {
+        readyEvents.forEach(r -> r.onCall(event));
+    }
+
+    @Override
+    public void onShutdown(@NotNull ShutdownEvent event) {
+        slashCommands.values().forEach(sl -> sl.onShutDown(event));
+        messageCommands.values().forEach(mc -> mc.onShutDown(event));
+        userCommands.values().forEach(uc -> uc.onShutDown(event));
+        messageCommands.values().forEach(mc -> mc.onShutDown(event));
+    }
+
+    @Override
+    public void onMessageUpdate(@NotNull MessageUpdateEvent event) {
+        if (!event.getAuthor().isBot()) {
+            Runnable runnable = () -> messageReceivers.values().stream().map(m -> m.messageReceived(event)).filter(Objects::nonNull).forEach(Response::send);
+            // sendError(runnable, new ResponseMessage(event, -1));
+        }
+    }
+
+    @Override
+    public void onMessageDelete(@NotNull MessageDeleteEvent event) {
+
     }
 }
