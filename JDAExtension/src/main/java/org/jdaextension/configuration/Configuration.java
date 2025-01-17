@@ -75,13 +75,12 @@ public class Configuration extends ListenerAdapter {
                 .queue();
     }
 
-    private void sendError(Runnable runnable, Response response) {
+    private void sendError(Runnable runnable, Runnable error) {
         try {
             runnable.run();
         } catch (Exception e) {
             log.error("Error: ", e);
-            response.setTemplate("500")
-                    .send();
+            error.run();
         }
     }
 
@@ -106,14 +105,14 @@ public class Configuration extends ListenerAdapter {
                 responseButton.send();
             }
         };
-        sendError(runnable, new ResponseButton(event));
+        sendError(runnable, () -> new ResponseButton(event).setTemplate("500").send());
     }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (!event.getAuthor().isBot()) {
             Runnable runnable = () -> messageReceivers.values().stream().map(m -> m.messageReceived(event)).filter(Objects::nonNull).forEach(Response::send);
-            sendError(runnable, new ResponseMessageReceiver(event, -1));
+            sendError(runnable, () -> new ResponseMessageReceiver(event, -1).setTemplate("500").send());
         }
     }
 
@@ -122,7 +121,7 @@ public class Configuration extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         SlashCommand command = slashCommands.get(event.getName());
         Runnable runnable = () -> command.execute(event).send();
-        sendError(runnable, new ResponseCommand(event, "command", command.isSendThinking(), command.isEphemeral()));
+        sendError(runnable, () -> new ResponseCommand(event, "command", command.isSendThinking(), command.isEphemeral()).setTemplate("500").send());
     }
 
     @Override
@@ -134,14 +133,14 @@ public class Configuration extends ListenerAdapter {
     public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
         UserCommand userCommand = userCommands.get(event.getName());
         Runnable runnable = () -> userCommand.execute(event).send();
-        sendError(runnable, new ResponseCommand(event, "usercontext", userCommand.isSendThinking(), userCommand.isEphemeral()));
+        sendError(runnable, () -> new ResponseCommand(event, "usercontext", userCommand.isSendThinking(), userCommand.isEphemeral()).setTemplate("500").send());
     }
 
     @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         MessageCommand messageCommand = messageCommands.get(event.getName());
         Runnable runnable = () -> messageCommand.execute(event).send();
-        sendError(runnable, new ResponseCommand(event, "messagecontext", messageCommand.isSendThinking(), messageCommand.isEphemeral()));
+        sendError(runnable, () -> new ResponseCommand(event, "messagecontext", messageCommand.isSendThinking(), messageCommand.isEphemeral()).setTemplate("500").send());
     }
 
     @Override
@@ -157,7 +156,7 @@ public class Configuration extends ListenerAdapter {
             else
                 slashCommands.get(split[1]).onModalInteraction(event, split[1]).send();
         };
-        sendError(runnable, new ResponseModal(event, false, false));
+        sendError(runnable, () -> new ResponseModal(event, false, false).setTemplate("500").send());
     }
 
     @Override
@@ -177,7 +176,7 @@ public class Configuration extends ListenerAdapter {
     public void onMessageUpdate(@NotNull MessageUpdateEvent event) {
         if (!event.getAuthor().isBot()) {
             Runnable runnable = () -> messageReceivers.values().stream().map(m -> m.messageReceived(event)).filter(Objects::nonNull).forEach(Response::send);
-            sendError(runnable, new ResponseMessageUpdate(event, -1));
+            sendError(runnable, () -> new ResponseMessageUpdate(event, -1).setTemplate("500").send());
         }
     }
 

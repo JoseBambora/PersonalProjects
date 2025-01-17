@@ -22,7 +22,6 @@ public class SimpleMessage extends MessageReceiverEvent {
 
     @Override
     public void onCall(MessageUpdateEvent event, Map<String, Object> data, ResponseMessageUpdate response) {
-        response.addEmoji("U+1F504");
-        response.cleanReactions();
+        response.cleanReactions().addEmoji("U+1F504");
     }
 }

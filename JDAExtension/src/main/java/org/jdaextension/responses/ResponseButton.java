@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.requests.restaction.interactions.MessageEditCallbackA
 
 import java.util.Collections;
 
-public class ResponseButton extends Response {
+public class ResponseButton extends Response<ResponseButton> {
     private final ButtonInteractionEvent event;
 
     public ResponseButton(ButtonInteractionEvent event) {

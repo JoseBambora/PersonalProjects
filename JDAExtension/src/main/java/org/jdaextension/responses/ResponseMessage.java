@@ -3,7 +3,7 @@ package org.jdaextension.responses;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 
-public abstract class ResponseMessage extends Response {
+public abstract class ResponseMessage<T> extends Response<T> {
     protected final int id;
 
     protected ResponseMessage(int id) {

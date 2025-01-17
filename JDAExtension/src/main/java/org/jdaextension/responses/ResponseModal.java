@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
-public class ResponseModal extends Response {
+public class ResponseModal extends Response<ResponseModal> {
     private final ModalInteractionEvent event;
     private final boolean sendThinking;
     private final boolean ephemeral;

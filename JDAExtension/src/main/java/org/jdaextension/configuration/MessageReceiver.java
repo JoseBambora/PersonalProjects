@@ -34,7 +34,7 @@ public class MessageReceiver extends ButtonReceiver {
         return this;
     }
 
-    private <T> Map<String, Object> getData(List<BiFunction<T,Map<String,Object>, Boolean>> pipeline, T event) {
+    private <T> Map<String, Object> getData(List<BiFunction<T, Map<String, Object>, Boolean>> pipeline, T event) {
         Iterator<BiFunction<T, Map<String, Object>, Boolean>> iterator = pipeline.iterator();
         Map<String, Object> data = new HashMap<>();
         boolean b = true;

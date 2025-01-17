@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import org.jdaextension.configuration.MessageReceiver;
 import org.jdaextension.generic.MessageReceiverEvent;
-import org.jdaextension.responses.Response;
+import org.jdaextension.responses.ResponseButton;
 import org.jdaextension.responses.ResponseMessageReceiver;
 import org.jdaextension.responses.ResponseMessageUpdate;
 
@@ -23,7 +23,7 @@ public class SimpleMessage extends MessageReceiverEvent {
         messageReceiver.addToPipelineReceive(p1).addToPipelineReceive(p2);
     }
 
-    private void onButton1(ButtonInteractionEvent event, Response response) {
+    private void onButton1(ButtonInteractionEvent event, ResponseButton response) {
         response.setVariable("name", "Button Clicked").setTemplate("SimpleMessage");
     }
 
@@ -39,7 +39,7 @@ public class SimpleMessage extends MessageReceiverEvent {
 
 
     @Override
-    public void onCall(ButtonInteractionEvent event, String id, Response response) {
+    public void onCall(ButtonInteractionEvent event, String id, ResponseButton response) {
         switch (id) {
             case "1" -> onButton1(event, response);
             default -> response.setTemplate("400").setVariable("message", "Button does not exists");

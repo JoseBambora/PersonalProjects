@@ -6,7 +6,8 @@ import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.configuration.option.OptionString;
 import org.jdaextension.generic.SlashEvent;
-import org.jdaextension.responses.Response;
+import org.jdaextension.responses.ResponseCommand;
+import org.jdaextension.responses.ResponseModal;
 
 import java.util.Map;
 
@@ -22,13 +23,13 @@ public class SimpleCommandOptions extends SlashEvent {
     }
 
     @Override
-    public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, Response response) {
+    public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, ResponseCommand response) {
         String word = (String) variables.get("word");
         response.setTemplate("SimpleModal").setModal();
     }
 
     @Override
-    public void onCall(ModalInteractionEvent event, String id, Map<String, String> fields, Response response) {
+    public void onCall(ModalInteractionEvent event, String id, Map<String, String> fields, ResponseModal response) {
         System.out.println(fields);
         response.setTemplate("SimpleCommandOptions").setVariable("word", fields.get("field1"));
     }

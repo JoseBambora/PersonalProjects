@@ -2,7 +2,6 @@ package org.jdaextension.responses;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -12,7 +11,6 @@ import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
-import net.dv8tion.jda.api.requests.restaction.WebhookAction;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jsoup.Jsoup;
@@ -28,7 +26,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class Response {
+public abstract class Response<T> {
     protected final StringBuilder message;
     protected final List<Button> buttons;
     protected final List<Emoji> emojis;
@@ -38,7 +36,7 @@ public abstract class Response {
     protected Modal modal;
     protected boolean isModal;
     private String file;
-    private Runnable success;
+    private Consumer<Object> success;
     private Consumer<Throwable> failure;
 
     public Response() {
@@ -55,44 +53,44 @@ public abstract class Response {
         failure = null;
     }
 
-    public Response setSuccess(Runnable success) {
+    public T setSuccess(Consumer<Object> success) {
         this.success = success;
-        return this;
+        return (T) this;
     }
 
-    public Response setFailure(Consumer<Throwable> failure) {
+    public T setFailure(Consumer<Throwable> failure) {
         this.failure = failure;
-        return this;
+        return (T) this;
     }
 
-    public Response setModal() {
+    public T setModal() {
         isModal = true;
-        return this;
+        return (T) this;
     }
 
-    public Response setTemplate(String template) {
+    public T setTemplate(String template) {
         this.file = template;
-        return this;
+        return (T) this;
     }
 
-    public Response setVariables(Map<String, Object> variables) {
+    public T setVariables(Map<String, Object> variables) {
         this.variables.putAll(variables);
-        return this;
+        return (T) this;
     }
 
-    public Response setVariable(String name, Object value) {
+    public T setVariable(String name, Object value) {
         this.variables.put(name, value);
-        return this;
+        return (T) this;
     }
 
-    public Response addEmoji(Emoji emoji) {
+    public T addEmoji(Emoji emoji) {
         emojis.add(emoji);
-        return this;
+        return (T) this;
     }
 
-    public Response addEmoji(String code) {
-        emojis.add( Emoji.fromUnicode(code));
-        return this;
+    public T addEmoji(String code) {
+        emojis.add(Emoji.fromUnicode(code));
+        return (T) this;
     }
 
     private void configMessage(Document doc) {
@@ -226,6 +224,33 @@ public abstract class Response {
         emojis.forEach(e -> message.addReaction(e).queue());
     }
 
+    protected void sendIH(RestAction<InteractionHook> restAction) {
+        if (success == null)
+            restAction.queue();
+        else if (failure == null)
+            restAction.queue(ih -> success.accept(ih));
+        else
+            restAction.queue(ih -> success.accept(ih), failure);
+    }
+
+    protected void sendWA(WebhookMessageEditAction<Message> webhookMessageEditAction) {
+        if (success == null)
+            webhookMessageEditAction.queue();
+        else if (failure == null)
+            webhookMessageEditAction.queue(m -> success.accept(m));
+        else
+            webhookMessageEditAction.queue(m -> success.accept(m), failure);
+    }
+
+    protected void sendMCA(MessageCreateAction messageCreateAction) {
+        if (success == null)
+            messageCreateAction.queue();
+        else if (failure == null)
+            messageCreateAction.queue(m -> success.accept(m));
+        else
+            messageCreateAction.queue(m -> success.accept(m), failure);
+    }
+
     public static class ResponseTests {
         private static Response configureMessage(String id, String command, String template, Map<String, Object> variables) {
             Response responseCommand = new ResponseCommand(null, command, false, false).setTemplate(template);
@@ -247,32 +272,5 @@ public abstract class Response {
             return configureMessage(id, command, template, variables).files;
 
         }
-    }
-
-    protected void sendIH(RestAction<InteractionHook> restAction) {
-        if(success == null)
-            restAction.queue();
-        else if (failure == null)
-            restAction.queue(_ -> success.run());
-        else
-            restAction.queue(_ -> success.run(), failure);
-    }
-
-    protected void sendWA(WebhookMessageEditAction<Message> webhookMessageEditAction) {
-        if(success == null)
-            webhookMessageEditAction.queue();
-        else if (failure == null)
-            webhookMessageEditAction.queue(_ -> success.run());
-        else
-            webhookMessageEditAction.queue(_ -> success.run(), failure);
-    }
-
-    protected void sendMCA(MessageCreateAction messageCreateAction) {
-        if(success == null)
-            messageCreateAction.queue();
-        else if (failure == null)
-            messageCreateAction.queue(_ -> success.run());
-        else
-            messageCreateAction.queue(_ -> success.run(), failure);
     }
 }

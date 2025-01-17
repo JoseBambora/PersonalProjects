@@ -2,7 +2,7 @@ package org.jdaextension.responses;
 
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 
-public class ResponseMessageUpdate extends ResponseMessage {
+public class ResponseMessageUpdate extends ResponseMessage<ResponseMessageUpdate> {
     private final MessageUpdateEvent eventUpdate;
     private boolean cleanEmojis;
 
@@ -19,7 +19,7 @@ public class ResponseMessageUpdate extends ResponseMessage {
 
     @Override
     public void send() {
-        if(cleanEmojis)
+        if (cleanEmojis)
             eventUpdate.getMessage().clearReactions().queue(_ -> this.send(eventUpdate.getMessage()));
         else
             this.send(eventUpdate.getMessage());

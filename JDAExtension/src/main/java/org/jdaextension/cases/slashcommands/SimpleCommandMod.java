@@ -1,4 +1,4 @@
-package cases.slashcommands;
+package org.jdaextension.cases.slashcommands;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -37,22 +37,26 @@ public class SimpleCommandMod extends SlashEvent {
 
     public void onButton1(ButtonInteractionEvent event, ResponseButton response) {
         response.setTemplate("SimpleCommandMod")
-                .setVariable("name", "Button 1 clicked");
+                .setVariable("name", "Button 1 clicked")
+                .setVariable("number", 1);
     }
 
     public void onButton2(ButtonInteractionEvent event, ResponseButton response) {
         response.setTemplate("SimpleCommandMod")
-                .setVariable("name", "Button 2 clicked");
+                .setVariable("name", "Button 2 clicked")
+                .setVariable("number", 2);
     }
 
     public void onButton3(ButtonInteractionEvent event, ResponseButton response) {
         response.setTemplate("SimpleCommandMod")
-                .setVariable("name", "Button 3 clicked");
+                .setVariable("name", "Button 3 clicked")
+                .setVariable("number", 3);
     }
 
     public void onButton4(ButtonInteractionEvent event, ResponseButton response) {
         response.setTemplate("SimpleCommandMod")
-                .setVariable("name", "Button 4 clicked");
+                .setVariable("name", "Button 4 clicked")
+                .setVariable("number", 4);
     }
 
     @Override

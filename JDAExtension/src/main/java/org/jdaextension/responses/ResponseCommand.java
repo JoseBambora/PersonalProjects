@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
-public class ResponseCommand extends Response {
+public class ResponseCommand extends Response<ResponseCommand> {
     private final CommandInteraction event;
     private final String id;
     private final boolean sendThinking;
@@ -36,7 +36,6 @@ public class ResponseCommand extends Response {
                 rca = !this.embedBuilder.isEmpty() ? rca.setEmbeds(embedBuilder.build()) : rca;
                 rca = buttons.isEmpty() ? rca : rca.setActionRow(buttons);
                 rca = rca.setFiles(this.files);
-                rca.queue();
                 this.sendIH(rca);
             }
         }

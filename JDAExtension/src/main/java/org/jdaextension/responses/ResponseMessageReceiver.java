@@ -2,7 +2,7 @@ package org.jdaextension.responses;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class ResponseMessageReceiver extends ResponseMessage {
+public class ResponseMessageReceiver extends ResponseMessage<ResponseMessageReceiver> {
     private final MessageReceivedEvent eventReceive;
 
     public ResponseMessageReceiver(MessageReceivedEvent event, int id) {

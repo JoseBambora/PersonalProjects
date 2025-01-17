@@ -8,7 +8,7 @@ import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.configuration.option.OptionCustom;
 import org.jdaextension.configuration.option.OptionString;
 import org.jdaextension.generic.SlashEvent;
-import org.jdaextension.responses.Response;
+import org.jdaextension.responses.ResponseCommand;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class SimpleCommandOptions extends SlashEvent {
     }
 
     @Override
-    public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, Response response) {
+    public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, ResponseCommand response) {
         String word = (String) variables.get("word");
         MyType myType = (MyType) variables.get("coords");
         MyType myType2 = (MyType) variables.get("coords2");
