@@ -113,7 +113,7 @@ public class Configuration extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (!event.getAuthor().isBot()) {
             Runnable runnable = () -> messageReceivers.values().stream().map(m -> m.messageReceived(event)).filter(Objects::nonNull).forEach(Response::send);
-            sendError(runnable, new ResponseMessage(event, -1));
+            sendError(runnable, new ResponseMessageReceiver(event, -1));
         }
     }
 
@@ -177,7 +177,7 @@ public class Configuration extends ListenerAdapter {
     public void onMessageUpdate(@NotNull MessageUpdateEvent event) {
         if (!event.getAuthor().isBot()) {
             Runnable runnable = () -> messageReceivers.values().stream().map(m -> m.messageReceived(event)).filter(Objects::nonNull).forEach(Response::send);
-            // sendError(runnable, new ResponseMessage(event, -1));
+            sendError(runnable, new ResponseMessageUpdate(event, -1));
         }
     }
 

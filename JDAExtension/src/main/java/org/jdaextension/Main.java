@@ -2,6 +2,7 @@ package org.jdaextension;
 
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import org.jdaextension.cases.messages.SimpleMessage;
 import org.jdaextension.cases.slashcommands.SimpleCommand;
 import org.jdaextension.cases.slashcommands.SimpleCommandOptions;
 import org.jdaextension.configuration.Configuration;
@@ -18,6 +19,7 @@ public class Main {
         // configuration.addCommand(new HelloCommandMessage());
         // configuration.addMessageReceiver(new HelloMessage());
         configuration.addCommand(new SimpleCommandOptions());
+        configuration.addMessageReceiver(new SimpleMessage());
         JDABuilder.createLight(System.getenv("token"), EnumSet.of(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT))
                 .addEventListeners(configuration)
                 .build();

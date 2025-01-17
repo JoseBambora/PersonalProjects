@@ -23,7 +23,7 @@ public class ResponseButton extends Response {
             meca = !this.embedBuilder.isEmpty() ? meca.setEmbeds(embedBuilder.build()) : meca;
             meca = buttons.isEmpty() ? meca.setComponents(Collections.emptyList()) : meca.setActionRow(buttons);
             meca = meca.setFiles(this.files);
-            meca.queue();
+            this.sendIH(meca);
         }
     }
 }

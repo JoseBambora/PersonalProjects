@@ -16,6 +16,6 @@ public class SimpleCommand extends SlashEvent {
 
     @Override
     public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, Response response) {
-        event.getJDA().shutdownNow();
+        response.setSuccess(() -> event.getJDA().shutdownNow());
     }
 }

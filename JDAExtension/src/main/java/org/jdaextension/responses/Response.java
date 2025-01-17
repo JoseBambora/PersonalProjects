@@ -2,12 +2,18 @@ package org.jdaextension.responses;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,6 +25,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class Response {
@@ -31,6 +38,8 @@ public abstract class Response {
     protected Modal modal;
     protected boolean isModal;
     private String file;
+    private Runnable success;
+    private Consumer<Throwable> failure;
 
     public Response() {
         this.file = "";
@@ -42,6 +51,18 @@ public abstract class Response {
         embedBuilder = new EmbedBuilder();
         modal = null;
         isModal = false;
+        success = null;
+        failure = null;
+    }
+
+    public Response setSuccess(Runnable success) {
+        this.success = success;
+        return this;
+    }
+
+    public Response setFailure(Consumer<Throwable> failure) {
+        this.failure = failure;
+        return this;
     }
 
     public Response setModal() {
@@ -66,6 +87,11 @@ public abstract class Response {
 
     public Response addEmoji(Emoji emoji) {
         emojis.add(emoji);
+        return this;
+    }
+
+    public Response addEmoji(String code) {
+        emojis.add( Emoji.fromUnicode(code));
         return this;
     }
 
@@ -221,5 +247,32 @@ public abstract class Response {
             return configureMessage(id, command, template, variables).files;
 
         }
+    }
+
+    protected void sendIH(RestAction<InteractionHook> restAction) {
+        if(success == null)
+            restAction.queue();
+        else if (failure == null)
+            restAction.queue(_ -> success.run());
+        else
+            restAction.queue(_ -> success.run(), failure);
+    }
+
+    protected void sendWA(WebhookMessageEditAction<Message> webhookMessageEditAction) {
+        if(success == null)
+            webhookMessageEditAction.queue();
+        else if (failure == null)
+            webhookMessageEditAction.queue(_ -> success.run());
+        else
+            webhookMessageEditAction.queue(_ -> success.run(), failure);
+    }
+
+    protected void sendMCA(MessageCreateAction messageCreateAction) {
+        if(success == null)
+            messageCreateAction.queue();
+        else if (failure == null)
+            messageCreateAction.queue(_ -> success.run());
+        else
+            messageCreateAction.queue(_ -> success.run(), failure);
     }
 }

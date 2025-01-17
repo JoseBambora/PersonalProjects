@@ -30,13 +30,14 @@ public class ResponseCommand extends Response {
                 wmea = !this.embedBuilder.isEmpty() ? wmea.setEmbeds(embedBuilder.build()) : wmea;
                 wmea = buttons.isEmpty() ? wmea : wmea.setActionRow(buttons);
                 wmea = wmea.setFiles(this.files);
-                wmea.queue();
+                this.sendWA(wmea);
             } else {
                 ReplyCallbackAction rca = event.reply(message.toString()).setEphemeral(ephemeral);
                 rca = !this.embedBuilder.isEmpty() ? rca.setEmbeds(embedBuilder.build()) : rca;
                 rca = buttons.isEmpty() ? rca : rca.setActionRow(buttons);
                 rca = rca.setFiles(this.files);
                 rca.queue();
+                this.sendIH(rca);
             }
         }
     }
