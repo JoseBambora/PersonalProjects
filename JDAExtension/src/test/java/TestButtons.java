@@ -34,7 +34,6 @@ public class TestButtons {
         List<FileUpload> fileUploadList = buttonReaction.getResultFiles();
         MessageEmbed messageEmbed = buttonReaction.getResultEmbed();
         GenericTests.testMessage(message, "", true, buttonList, hasButtons, fileUploadList, hasFile, messageEmbed, hasEmbed, command, template, variables);
-
     }
 
     @Test

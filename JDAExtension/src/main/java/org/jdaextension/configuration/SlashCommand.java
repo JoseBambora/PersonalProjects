@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jdaextension.configuration.option.Option;
 import org.jdaextension.generic.GenericEvents;
 import org.jdaextension.generic.SlashEvent;
-import org.jdaextension.responses.Response;
 import org.jdaextension.responses.ResponseCommand;
 
 import java.util.*;
@@ -56,7 +55,7 @@ public class SlashCommand extends Command<SlashCommand> {
     }
 
     @Override
-    protected Response executeCommand(CommandInteraction event) {
+    protected ResponseCommand executeCommand(CommandInteraction event) {
         Map<String, Object> variables = new HashMap<>();
         List<String> errorArgs = new ArrayList<>();
         for (Map.Entry<String, Option<?>> optionEntry : options.entrySet()) {

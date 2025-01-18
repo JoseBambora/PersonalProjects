@@ -14,7 +14,7 @@ import org.jdaextension.responses.ResponseCommand;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class SimpleCommandMod extends SlashEvent {
+public class SimpleCommandMod implements SlashEvent {
     @Override
     public void configure(SlashCommand slashCommand) {
         OptionString option1 = new OptionString("name", "Name to appear in the message", true);

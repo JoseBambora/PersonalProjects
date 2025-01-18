@@ -6,7 +6,7 @@ import org.jdaextension.generic.MessageContextEvent;
 import org.jdaextension.responses.ResponseCommand;
 
 
-public class HelloCommandMessage2 extends MessageContextEvent {
+public class HelloCommandMessage2 implements MessageContextEvent {
     @Override
     public void configure(MessageCommand messageCommand) {
         messageCommand.setName("Hello2");

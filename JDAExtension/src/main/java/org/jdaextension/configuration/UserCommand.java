@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jdaextension.generic.GenericEvents;
 import org.jdaextension.generic.UserContextEvent;
-import org.jdaextension.responses.Response;
 import org.jdaextension.responses.ResponseCommand;
 
 public class UserCommand extends Command<UserCommand> {
@@ -23,7 +22,7 @@ public class UserCommand extends Command<UserCommand> {
     }
 
     @Override
-    protected Response executeCommand(CommandInteraction event) {
+    protected ResponseCommand executeCommand(CommandInteraction event) {
         ResponseCommand responseSlashCommand = new ResponseCommand(event, "usercontext", isSendThinking(), isEphemeral());
         controller.onCall((UserContextInteractionEvent) event, responseSlashCommand);
         return responseSlashCommand;

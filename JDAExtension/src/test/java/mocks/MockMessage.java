@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jdaextension.configuration.Configuration;
+import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
@@ -66,8 +67,10 @@ public class MockMessage extends MockResults {
         configuration.onMessageReceived(event);
     }
 
-    public Emoji getEmoji() {
-        return getEmoji(c -> verify(message, atMost(1)).addReaction(c.capture()));
+    public List<Emoji> getEmojis() {
+        ArgumentCaptor<Emoji> captor = ArgumentCaptor.forClass(Emoji.class);
+        verify(message, atLeast(0)).addReaction(captor.capture());
+        return captor.getAllValues();
     }
 
     public String getResultMessage() {

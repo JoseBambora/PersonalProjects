@@ -9,7 +9,7 @@ import org.jdaextension.responses.ResponseCommand;
 
 import java.util.Map;
 
-public class SimpleCommand extends SlashEvent {
+public class SimpleCommand implements SlashEvent {
     @Override
     public void configure(SlashCommand slashCommand) {
         slashCommand.setName("simple")

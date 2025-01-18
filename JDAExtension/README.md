@@ -2,4 +2,5 @@
 
 **TODO**:
 - Documentation (code + this markdown)
-- Select Menus, Capture Edit and Deleted messages.
+- Test updated and deleted messages
+- Test username update

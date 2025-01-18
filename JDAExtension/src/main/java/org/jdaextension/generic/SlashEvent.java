@@ -6,9 +6,9 @@ import org.jdaextension.responses.ResponseCommand;
 
 import java.util.Map;
 
-public abstract class SlashEvent extends GenericEvents {
+public interface SlashEvent extends GenericEvents {
 
-    abstract public void configure(SlashCommand slashCommand);
+    void configure(SlashCommand slashCommand);
 
-    abstract public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, ResponseCommand response);
+    void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, ResponseCommand response);
 }

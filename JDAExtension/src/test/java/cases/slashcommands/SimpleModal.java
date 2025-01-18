@@ -9,7 +9,7 @@ import org.jdaextension.responses.ResponseModal;
 
 import java.util.Map;
 
-public class SimpleModal extends SlashEvent {
+public class SimpleModal implements SlashEvent {
 
     @Override
     public void configure(SlashCommand slashCommand) {

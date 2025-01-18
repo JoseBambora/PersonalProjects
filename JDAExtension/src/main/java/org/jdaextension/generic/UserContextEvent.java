@@ -4,8 +4,8 @@ import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEven
 import org.jdaextension.configuration.UserCommand;
 import org.jdaextension.responses.ResponseCommand;
 
-public abstract class UserContextEvent extends GenericEvents {
-    abstract public void configure(UserCommand userCommand);
+public interface UserContextEvent extends GenericEvents {
+    void configure(UserCommand userCommand);
 
-    abstract public void onCall(UserContextInteractionEvent event, ResponseCommand response);
+    void onCall(UserContextInteractionEvent event, ResponseCommand response);
 }

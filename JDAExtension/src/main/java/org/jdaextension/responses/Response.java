@@ -270,7 +270,6 @@ public abstract class Response<T> {
 
         public static List<FileUpload> getFilesTest(String id, String command, String template, Map<String, Object> variables) {
             return configureMessage(id, command, template, variables).files;
-
         }
     }
 }

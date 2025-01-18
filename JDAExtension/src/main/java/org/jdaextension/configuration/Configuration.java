@@ -1,6 +1,7 @@
 package org.jdaextension.configuration;
 
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jdaextension.generic.*;
 import org.jdaextension.responses.*;
@@ -29,6 +31,8 @@ public class Configuration extends ListenerAdapter {
     private final Map<String, MessageCommand> messageCommands;
     private final Map<Integer, MessageReceiver> messageReceivers;
     private final List<OnReadyEvent> readyEvents;
+    private final List<UsernameUpdateEvent> usernameUpdateEvents;
+    private final List<UserRemovedEvent> userRemovedEvents;
 
     public Configuration() {
         slashCommands = new HashMap<>();
@@ -36,6 +40,8 @@ public class Configuration extends ListenerAdapter {
         messageCommands = new HashMap<>();
         messageReceivers = new HashMap<>();
         readyEvents = new ArrayList<>();
+        usernameUpdateEvents = new ArrayList<>();
+        userRemovedEvents = new ArrayList<>();
     }
 
     public void addCommand(SlashEvent slashCommandClass) {
@@ -56,10 +62,18 @@ public class Configuration extends ListenerAdapter {
         messageCommands.put(messageCommand.getName(), messageCommand);
     }
 
-    public void addMessageReceiver(MessageReceiverEvent messageReceiverInterface) {
+    public void addMessageReceiver(MessageEvent messageReceiverInterface) {
         MessageReceiver messageReceiver = new MessageReceiver(messageReceiverInterface, messageReceivers.size());
         messageReceiverInterface.configure(messageReceiver);
         messageReceivers.put(messageReceivers.size(), messageReceiver);
+    }
+
+    public void addUsernameUpdate(UsernameUpdateEvent usernameUpdateInterface) {
+        usernameUpdateEvents.add(usernameUpdateInterface);
+    }
+
+    public void addUserRemove(UserRemovedEvent userRemovedInterface) {
+        userRemovedEvents.add(userRemovedInterface);
     }
 
     public void addReadyEvent(OnReadyEvent readyEvent) {
@@ -175,13 +189,23 @@ public class Configuration extends ListenerAdapter {
     @Override
     public void onMessageUpdate(@NotNull MessageUpdateEvent event) {
         if (!event.getAuthor().isBot()) {
-            Runnable runnable = () -> messageReceivers.values().stream().map(m -> m.messageReceived(event)).filter(Objects::nonNull).forEach(Response::send);
+            Runnable runnable = () -> messageReceivers.values().stream().map(m -> m.messageUpdated(event)).filter(Objects::nonNull).forEach(Response::send);
             sendError(runnable, () -> new ResponseMessageUpdate(event, -1).setTemplate("500").send());
         }
     }
 
     @Override
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
+        messageReceivers.values().forEach(m -> m.messageDelete(event));
+    }
 
+    @Override
+    public void onUserUpdateName(@NotNull UserUpdateNameEvent event) {
+        usernameUpdateEvents.forEach(e -> e.onCall(event, event.getUser().getId(), event.getOldName(), event.getNewName()));
+    }
+
+    @Override
+    public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+        userRemovedEvents.forEach(e -> e.onCall(event, event.getUser().getId(), event.getUser().getName()));
     }
 }

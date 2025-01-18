@@ -1,6 +1,7 @@
 package aux;
 
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jdaextension.responses.Response;
@@ -30,6 +31,13 @@ public class GenericTests {
         Assertions.assertEquals(Response.ResponseTests.getMessageTest(id, command, template, variables), message);
         Assertions.assertEquals(Response.ResponseTests.getButtonsTest(id, command, template, variables), buttonList);
         Assertions.assertEquals(Response.ResponseTests.getFilesTest(id, command, template, variables).stream().map(GenericTests::getFileData).toList(), fileUploadList.stream().map(GenericTests::getFileData).toList());
+    }
+
+
+    public static void testMessage(String message, String command, boolean hasMessage, List<Button> buttonList, boolean hasButtons, List<FileUpload> fileUploadList, boolean hasFile, MessageEmbed messageEmbed, boolean hasEmbed, List<Emoji> emojiSent, List<Emoji> emojiExpected, String id, String template, Map<String, Object> variables) {
+        testMessage(message, command, hasMessage, buttonList, hasButtons, fileUploadList, hasFile, messageEmbed, hasEmbed, id, template, variables);
+        Assertions.assertEquals(emojiExpected.size(), emojiSent.size());
+        Assertions.assertEquals(emojiExpected, emojiSent);
     }
 
     public static <T> T getValueSingle(ArgumentCaptor<T> captor) {

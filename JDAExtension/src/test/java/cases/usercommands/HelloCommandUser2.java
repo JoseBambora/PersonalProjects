@@ -6,7 +6,7 @@ import org.jdaextension.generic.UserContextEvent;
 import org.jdaextension.responses.ResponseCommand;
 
 
-public class HelloCommandUser2 extends UserContextEvent {
+public class HelloCommandUser2 implements UserContextEvent {
     @Override
     public void configure(UserCommand userCommand) {
         userCommand.setName("Hello2");

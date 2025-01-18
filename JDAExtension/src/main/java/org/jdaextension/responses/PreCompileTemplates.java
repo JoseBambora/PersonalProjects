@@ -23,7 +23,6 @@ public class PreCompileTemplates {
         templates = new HashMap<>();
         compileDirectory(System.getenv("TEMPLATES_FOLDER"), System.getenv("PARTIALS_FOLDER"));
         compileDirectory(System.getenv("ERRORS_FOLDER"), System.getenv("PARTIALS_FOLDER"));
-        compileDirectory(System.getenv("EMBEDS_FOLDER"), System.getenv("PARTIALS_FOLDER"));
     }
 
     protected static String apply(String template, Map<String, Object> variables) {

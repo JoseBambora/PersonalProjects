@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class SimpleCommandOptions extends SlashEvent {
+public class SimpleCommandOptions implements SlashEvent {
     @Override
     public void configure(SlashCommand slashCommand) {
         OptionString option1 = new OptionString("word", "word desc", false)
