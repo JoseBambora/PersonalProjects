@@ -9,10 +9,10 @@ jobs:
   run_tests:
     runs-on: ubuntu-latest
     env:
-      TEMPLATES_FOLDER=views/messages/
-      FILES_FOLDER=files/
-      ERRORS_FOLDER=views/error/
-      PARTIALS_FOLDER=views/partials/
+      TEMPLATES_FOLDER: views/messages/
+      FILES_FOLDER: files/
+      ERRORS_FOLDER: views/error/
+      PARTIALS_FOLDER: views/partials/
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
