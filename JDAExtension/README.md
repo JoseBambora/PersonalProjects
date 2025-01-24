@@ -1,10 +1,10 @@
 # JDA Extension Library ![](https://github.com/JoseBambora/PersonalProjects/actions/workflows/run-jdaextension-tests.yml/badge.svg) ![Java](https://img.shields.io/badge/Java-ED8B00?style=flat&logo=openjdk&logoColor=white)
 
-This library is built on top of [JDA](https://github.com/discord-jda/JDA).
+This library serves as an extension of [JDA](https://github.com/discord-jda/JDA).
 
 The main goal of this library is to simplify the development of a discord bot, focusing on the requirements that I have
-for my discord bot, [Bot Gverreiro](https://github.com/JoseBambora/PersonalProjects/tree/main/BotDiscord). If you want 
-to reuse anything for your personal project, feel free to do so, by downloading this codebase.
+for my discord bot [Bot Gverreiro](https://github.com/JoseBambora/PersonalProjects/tree/main/BotDiscord). If you want 
+to reuse anything for your personal JDA Java Bots, feel free to do so, by downloading this codebase.
 
 ## Introduction
 
