@@ -9,9 +9,9 @@ to reuse anything for your personal JDA Java Bots, feel free to do so, by downlo
 ## Introduction
 
 As previously mentioned, I have a discord bot called [Bot Gverreiro](https://github.com/JoseBambora/PersonalProjects/tree/main/BotDiscord).
-I am very proud with the final product, but I identified an issue with my development process, if I want to keep making 
-updates, the codebase would start to be a mess and difficult to maintain. To address this issue and also to explore more 
-features from *JDA*, I decided to create this library, which requirements are **100%** based on my personal bot. 
+I am very proud of the final product, but I identified an issue with my development process, if I want to keep making 
+updates, the codebase will become a mess and difficult to maintain. To address this issue and explore more
+features from *JDA*, I created this library, whose requirements are **100%** based on my personal bot. 
 I tried to make this as generic as possible, so I can implement different for my bot in the future as well, but at the 
 end I focused on personal requirements. 
 
@@ -22,7 +22,7 @@ end I focused on personal requirements.
 
 ## Configuration steps
 
-This extension need some environmental variable defined at `.env` file. 
+This extension needs some environmental variable defined in `.env` file. 
 The information needed for this file is on the file `.env.default`.
 
 ## Features
@@ -32,7 +32,7 @@ The information needed for this file is on the file `.env.default`.
 Templates are just [Handle Bars](https://handlebarsjs.com/) files that are used to write messages and embeds, and attach
 files and buttons. The syntax is not that complicated and I tried to follow the HTML standard. Files can be reused by
 using partials. For more details about HandBars consult https://github.com/jknack/handlebars.java.
-So the syntax is that I have created is shown below. It is important to mention that none of these fields are obligatory,
+So the syntax that I have created is shown below. It is important to mention that none of these fields are obligatory,
 you can just use what you want. More examples can be found at [Tests Templates](src/test/resources/views).
 
 ```hbs
@@ -63,13 +63,13 @@ you can just use what you want. More examples can be found at [Tests Templates](
 
 ### 2. Register a slash command
 
-Usually to register a slash command, there is a need to "reinvent the wheel", since the process for all of them are the 
-same, only changing configuration information, such as command name, options, permissions, etc. The way I solve this was
+Usually, to register a slash command, there is a need to "reinvent the wheel", since the process for all of them is the 
+same, only changing configuration information, such as command name, options, permissions, etc. The way I solved this was by 
 creating a class called `SlashCommand`, which serves as a configuration class with a friendly interface. To create a slash 
 command, the user must define a new class implementing the interface `SlashEvent` which only contains two methods, to configure
 the `SlashCommand` object and the behaviour when this command is called. To not extend too much, the registration process 
 is done automatically by the class `Configuration` and also the options are handled automatically, including options with 
-custom type. The following snippet of code will summarize everything related with the slash command. More examples can 
+custom type. The following snippet of code will summarize everything related to the slash command. More examples can 
 be found within [Slash Command Tests](src/test/java/cases/slashcommands).
 
 ```java
@@ -141,10 +141,10 @@ public class HelloCommand implements SlashEvent {
 
 ### 3. Messages Receivers, Updates and Deletes
 
-The problem and the approach here is the same as the slash command, the only different that here there are no options
-and whatever that is specific to slash commands. To make this more usefully, there is pipeline configuration that basically
+The problem and the approach here are the same as the slash command, the only different that here there are no options
+and whatever is specific to slash commands. To make this more usefully, there is pipeline configuration that basically
 process each message event (received, updated or deleted) and return a boolean if the process must proceed or not. Additionally,
-there is a Map that will store any variables that will be navigated from the pipeline since when they joined until the 
+there is a Map that will store any variables that will be navigated from the pipeline from when they joined until the 
 message event is processed. There is an example below, but more examples can be found at [Message Tests](src/test/java/cases/messages).
 
 ```java
@@ -189,6 +189,6 @@ public class SimpleMessage implements MessageEvent {
 ### 4. Extra
 
 To not extend this documentation, I will not detail everything else that is implemented, but some examples can be found at 
-[Tests](src/test/java/cases). To sum up, message and user context events can be added, with similar process to slash
-commands. Configuration also enables to add behaviours when the bot is shut down, or when a user left a server for a reason
-and also when users update their discord username.
+[Tests](src/test/java/cases). To sum up, message and user context events can be added, with a similar process to slash
+commands. The configuration also enables additional behaviours when the bot is shut down, or when a user leaves a server for a reason
+and also when users update their Discord username.
