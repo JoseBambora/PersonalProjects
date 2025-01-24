@@ -1,4 +1,4 @@
-# JDA Extension Library
+# JDA Extension Library ![](https://github.com/JoseBambora/PersonalProjects/actions/workflows/run-jdaextension-tests.yml/badge.svg) ![Java](https://img.shields.io/badge/Java-ED8B00?style=flat&logo=openjdk&logoColor=white)
 
 This library is built on top of [JDA](https://github.com/discord-jda/JDA).
 
@@ -33,7 +33,7 @@ Templates are just [Handle Bars](https://handlebarsjs.com/) files that are used 
 files and buttons. The syntax is not that complicated and I tried to follow the HTML standard. Files can be reused by
 using partials. For more details about HandBars consult https://github.com/jknack/handlebars.java.
 So the syntax is that I have created is shown below. It is important to mention that none of these fields are obligatory,
-you can just use what you want. More examples can be found at [Tests Templates](/src/test/resources/views).
+you can just use what you want. More examples can be found at [Tests Templates](src/test/resources/views).
 
 ```hbs
 <main>
