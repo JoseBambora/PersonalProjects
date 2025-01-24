@@ -1,0 +1,29 @@
+name: JDA Extension Tests
+on: 
+  push: 
+    paths-ignore:
+      - '*.md'
+      - '*.txt'
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+    env:
+      TEMPLATES_FOLDER: views/messages/
+      FILES_FOLDER: files/
+      ERRORS_FOLDER: views/error/
+      PARTIALS_FOLDER: views/partials/
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 22
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '22'
+          cache: 'maven'
+
+      - name: Build and Run JDA Extension tests
+        working-directory: JDAExtension
+        run: mvn test

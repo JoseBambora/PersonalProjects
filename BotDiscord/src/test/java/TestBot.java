@@ -48,6 +48,8 @@ public class TestBot {
     private static final Facade facade = new Facade(true);
     private static Game game1;
     private static Game game2;
+    private static String currentSeason;
+    private static String nextNextSeason;
     private final MessageReceiveListener messageReceiveListener = new MessageReceiveListener(new BetCommands(facade));
 
     @BeforeAll
@@ -55,6 +57,9 @@ public class TestBot {
         MyLocks.getInstance().addTestLocks();
         RateLimiter.setRateLimitedTest();
         facade.newSeason();
+        LocalDate now = LocalDate.now();
+        currentSeason = String.format("%d/%d",now.getYear() % 100,(now.getYear() + 1) % 100);
+        nextNextSeason = String.format("%d/%d",(now.getYear() + 2) % 100,(now.getYear() + 3) % 100);
         game1 = Game.buildGame(Field.HOME, "SL Benfica", Mode.FOOTBALL, LocalDate.now().atTime(23, 58));
         game2 = Game.buildGame(Field.AWAY, "Sporting CP", Mode.FUTSAL, LocalDate.now().atTime(23, 59));
     }
@@ -141,8 +146,8 @@ public class TestBot {
     public void test03() {
         assertResultEmbed(
                 execWaitCommand("season", null),
-                "Estatísticas da temporada 24/25",
-                "Estas são as estatísticas da 24/25. Aqui contém o número total de previsões, acertos, jogos, golos marcados, sofridos para todas as modalidade.",
+                "Estatísticas da temporada " + currentSeason,
+                "Estas são as estatísticas da " + currentSeason + ". Aqui contém o número total de previsões, acertos, jogos, golos marcados, sofridos para todas as modalidade.",
                 "* Em todas as modalidades",
                 List.of(
                         new MessageEmbed.Field("Total de jogos *", "0", true),
@@ -318,9 +323,9 @@ public class TestBot {
         MockSlashCommand mock2 = execCommand("season", Map.of("modalidade", "F"));
         MockSlashCommand mock3 = execCommand("season", Map.of("modalidade", "I"));
         messageReceiveListener.waitFinish();
-        testSeason(mock1, "24/25", null, 2, 398, 9, 4, 1);
-        testSeason(mock2, "24/25", "Futebol", 1, 199, 5, 2, 0);
-        testSeason(mock3, "24/25", "Futsal", 1, 199, 4, 2, 1);
+        testSeason(mock1, currentSeason, null, 2, 398, 9, 4, 1);
+        testSeason(mock2, currentSeason, "Futebol", 1, 199, 5, 2, 0);
+        testSeason(mock3, currentSeason, "Futsal", 1, 199, 4, 2, 1);
     }
 
     private void testUserStat(MockSlashCommand mock, String name, int position, int points, String temporada) {
@@ -487,8 +492,10 @@ public class TestBot {
         messageReceiveListener.waitFinish();
         Assertions.assertEquals(mock1.getResultMessage(), "Operação 'Fim de temporada' realizada com sucesso.");
         Assertions.assertEquals(mock1.getMessageSent(), """
-                # Fim da temporada 24/25
-                A temporada **24/25** chegou ao fim. Nesta temporada houve um total de __398__ previsões, sendo que __9__ foram previsões corretas. (taxa de acerto: __2.26%__).
+                # Fim da temporada\s""" + currentSeason + """
+                
+                A temporada **""" + currentSeason + """
+                ** chegou ao fim. Nesta temporada houve um total de __398__ previsões, sendo que __9__ foram previsões corretas. (taxa de acerto: __2.26%__).
 
                 **Vencedores**:
                 - teste21 (6 pontos, 2 previsões).
@@ -513,11 +520,11 @@ public class TestBot {
         assertCommand("top", "Não há classificação para o modo X e temporada atual.");
         assertCommand("win", "Não há jogo para associar o resultado.", Map.of("modalidade", "F", "goloscasa", 3, "golosfora", 0));
 
-        MockSlashCommand mock1 = execCommand("stats", Map.of("temporada", "24/25"), "teste2", "teste2");
-        MockSlashCommand mock2 = execCommand("top", Map.of("temporada", "24/25"), "teste2", "teste2");
+        MockSlashCommand mock1 = execCommand("stats", Map.of("temporada", currentSeason), "teste2", "teste2");
+        MockSlashCommand mock2 = execCommand("top", Map.of("temporada", currentSeason), "teste2", "teste2");
         messageReceiveListener.waitFinish();
-        testUserStat(mock1, "teste2", 3, 2, "24/25");
-        testTop(mock2, "teste2", "24/25", "X", List.of(
+        testUserStat(mock1, "teste2", 3, 2, currentSeason);
+        testTop(mock2, "teste2", currentSeason, "X", List.of(
                 List.of(
                         List.of("1", "teste21", "6"),
                         List.of("1", "teste5", "6"),
@@ -721,8 +728,10 @@ public class TestBot {
 
         Assertions.assertEquals(slashCommand1.getResultMessage(), "Operação 'Fim de temporada' realizada com sucesso.");
         Assertions.assertEquals(slashCommand1.getMessageSent(), """
-                # Fim da temporada 26/27
-                A temporada **26/27** chegou ao fim. Nesta temporada houve um total de __0__ previsões, sendo que __0__ foram previsões corretas. (taxa de acerto: __0.00%__).
+                # Fim da temporada\s""" + nextNextSeason + """
+                
+                A temporada **""" + nextNextSeason + """
+                ** chegou ao fim. Nesta temporada houve um total de __0__ previsões, sendo que __0__ foram previsões corretas. (taxa de acerto: __0.00%__).
                 
                 **Vencedores**:
                 - jose (45 pontos, 0 previsões).
