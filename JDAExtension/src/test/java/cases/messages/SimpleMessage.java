@@ -20,7 +20,12 @@ public class SimpleMessage implements MessageEvent {
             v.put("name", e.getAuthor().getName());
             return true;
         };
-        messageReceiver.addToPipelineReceive(p1).addToPipelineReceive(p2);
+        BiFunction<MessageUpdateEvent, Map<String, Object>, Boolean> p1u = (e, v) -> e.getAuthor().getName().equals("teste");
+        BiFunction<MessageUpdateEvent, Map<String, Object>, Boolean> p2u = (e, v) -> {
+            v.put("name", e.getAuthor().getName());
+            return true;
+        };
+        messageReceiver.addToPipelineReceive(p1).addToPipelineReceive(p2).addToPipelineUpdate(p1u).addToPipelineUpdate(p2u).setUpdates(true);
     }
 
     private void onButton1(ButtonInteractionEvent event, ResponseButton response) {
@@ -34,7 +39,7 @@ public class SimpleMessage implements MessageEvent {
 
     @Override
     public void onCall(MessageUpdateEvent event, Map<String, Object> data, ResponseMessageUpdate response) {
-
+        response.setVariables(data).setTemplate("SimpleMessage");
     }
 
 

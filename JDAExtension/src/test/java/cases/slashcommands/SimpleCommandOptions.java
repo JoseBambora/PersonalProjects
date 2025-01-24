@@ -3,16 +3,14 @@ package cases.slashcommands;
 import cases.MyType;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.configuration.option.OptionCustom;
 import org.jdaextension.configuration.option.OptionString;
 import org.jdaextension.generic.SlashEvent;
 import org.jdaextension.responses.ResponseCommand;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class SimpleCommandOptions implements SlashEvent {
     @Override
@@ -44,7 +42,12 @@ public class SimpleCommandOptions implements SlashEvent {
     }
 
 
-    public List<Choice> onAutoComplete(CommandAutoCompleteInteractionEvent event, String value) {
-        return Stream.of(new Choice("(1,1)", "(1,1)"), new Choice("(1,2)", "(2,2)")).filter(n -> n.getAsString().contains(value)).toList();
+    public Map<String, String> onAutoComplete(CommandAutoCompleteInteractionEvent event, String value) {
+        Map<String, String> map = new HashMap<>();
+        Map.of("(1,1)", "(1,1)", "(1,2)", "(2,2)").entrySet()
+                .stream()
+                .filter(n -> n.getValue().contains(value))
+                .forEach(e -> map.put(e.getKey(), e.getValue()));
+        return map;
     }
 }

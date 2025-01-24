@@ -123,15 +123,6 @@ public class Configuration extends ListenerAdapter {
     }
 
     @Override
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (!event.getAuthor().isBot()) {
-            Runnable runnable = () -> messageReceivers.values().stream().map(m -> m.messageReceived(event)).filter(Objects::nonNull).forEach(Response::send);
-            sendError(runnable, () -> new ResponseMessageReceiver(event, -1).setTemplate("500").send());
-        }
-    }
-
-
-    @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         SlashCommand command = slashCommands.get(event.getName());
         Runnable runnable = () -> command.execute(event).send();
@@ -184,6 +175,15 @@ public class Configuration extends ListenerAdapter {
         messageCommands.values().forEach(mc -> mc.onShutDown(event));
         userCommands.values().forEach(uc -> uc.onShutDown(event));
         messageCommands.values().forEach(mc -> mc.onShutDown(event));
+    }
+
+
+    @Override
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (!event.getAuthor().isBot()) {
+            Runnable runnable = () -> messageReceivers.values().stream().map(m -> m.messageReceived(event)).filter(Objects::nonNull).forEach(Response::send);
+            sendError(runnable, () -> new ResponseMessageReceiver(event, -1).setTemplate("500").send());
+        }
     }
 
     @Override

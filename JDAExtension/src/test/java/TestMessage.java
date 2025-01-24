@@ -1,7 +1,8 @@
 import aux.GenericTests;
 import cases.messages.SimpleMessage;
 import cases.messages.SimpleMessageReactions;
-import mocks.MockMessage;
+import mocks.MockMessageReceived;
+import mocks.MockMessageUpdate;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.jdaextension.configuration.Configuration;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,14 +23,14 @@ public class TestMessage {
 
     @Test
     public void testMessage() {
-        MockMessage mockMessageCorrect = new MockMessage("Hello Bot", "teste", "teste", configuration);
+        MockMessageReceived mockMessageCorrect = new MockMessageReceived("Hello Bot", "teste", "teste", configuration);
         mockMessageCorrect.execute();
         GenericTests.testMessage(mockMessageCorrect.getResultMessage(), "", true, mockMessageCorrect.getResultButtons(), true, mockMessageCorrect.getResultFiles(), false, mockMessageCorrect.getResultEmbed(), false, mockMessageCorrect.getEmojis(), new ArrayList<>(), "message_0", "SimpleMessage", Map.of("name", "teste"));
     }
 
     @Test
     public void testMessageNoAnswer() {
-        MockMessage mockMessageNoAnswer = new MockMessage("Hello Bot", "teste2", "teste2", configuration);
+        MockMessageReceived mockMessageNoAnswer = new MockMessageReceived("Hello Bot", "teste2", "teste2", configuration);
         mockMessageNoAnswer.execute();
         GenericTests.testMessage(mockMessageNoAnswer.getResultMessage(), "", false, mockMessageNoAnswer.getResultButtons(), false, mockMessageNoAnswer.getResultFiles(), false, mockMessageNoAnswer.getResultEmbed(), false, mockMessageNoAnswer.getEmojis(), new ArrayList<>(), "message_0", null, Map.of());
     }
@@ -37,8 +38,16 @@ public class TestMessage {
 
     @Test
     public void testMessageReaction() {
-        MockMessage mockMessageReactions = new MockMessage("Hello Bot", "teste3", "teste3", configuration);
+        MockMessageReceived mockMessageReactions = new MockMessageReceived("Hello Bot", "teste3", "teste3", configuration);
         mockMessageReactions.execute();
         GenericTests.testMessage(mockMessageReactions.getResultMessage(), "", false, mockMessageReactions.getResultButtons(), false, mockMessageReactions.getResultFiles(), false, mockMessageReactions.getResultEmbed(), false, mockMessageReactions.getEmojis(), List.of(Emoji.fromUnicode("✅")), "message_0", null, Map.of());
+    }
+
+
+    @Test
+    public void testMessageUpdate() {
+        MockMessageUpdate mockMessageUpdate = new MockMessageUpdate("Hello Bot", "teste", "teste", configuration);
+        mockMessageUpdate.execute();
+        GenericTests.testMessage(mockMessageUpdate.getResultMessage(), "", true, mockMessageUpdate.getResultButtons(), true, mockMessageUpdate.getResultFiles(), false, mockMessageUpdate.getResultEmbed(), false, mockMessageUpdate.getEmojis(), new ArrayList<>(), "message_0", "SimpleMessage", Map.of("name", "teste"));
     }
 }
