@@ -15,6 +15,16 @@ features from *JDA*, I decided to create this library, which requirements are **
 I tried to make this as generic as possible, so I can implement different for my bot in the future as well, but at the 
 end I focused on personal requirements. 
 
+## Technologies
+
+- Java 22
+- JUnit
+
+## Configuration steps
+
+This extension need some environmental variable defined at `.env` file. 
+The information needed for this file is on the file `.env.default`.
+
 ## Features
 
 ### 1. Templates
