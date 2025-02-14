@@ -33,6 +33,7 @@ public class Configuration extends ListenerAdapter {
     private final List<OnReadyEvent> readyEvents;
     private final List<UsernameUpdateEvent> usernameUpdateEvents;
     private final List<UserRemovedEvent> userRemovedEvents;
+    private ThreadManager threadManager;
 
     public Configuration() {
         slashCommands = new HashMap<>();
@@ -42,6 +43,11 @@ public class Configuration extends ListenerAdapter {
         readyEvents = new ArrayList<>();
         usernameUpdateEvents = new ArrayList<>();
         userRemovedEvents = new ArrayList<>();
+        threadManager = new DefaultThreadManager();
+    }
+
+    public void addThreadManager(ThreadManager threadManager) {
+        this.threadManager = threadManager;
     }
 
     public void addCommand(SlashEvent slashCommandClass) {
@@ -91,7 +97,7 @@ public class Configuration extends ListenerAdapter {
 
     private void sendError(Runnable runnable, Runnable error) {
         try {
-            runnable.run();
+            threadManager.runRequest(runnable);
         } catch (Exception e) {
             log.error("Error: ", e);
             error.run();
@@ -131,7 +137,7 @@ public class Configuration extends ListenerAdapter {
 
     @Override
     public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event) {
-        slashCommands.get(event.getName()).onAutoComplete(event);
+        threadManager.runRequest(() -> slashCommands.get(event.getName()).onAutoComplete(event));
     }
 
     @Override
@@ -175,6 +181,7 @@ public class Configuration extends ListenerAdapter {
         messageCommands.values().forEach(mc -> mc.onShutDown(event));
         userCommands.values().forEach(uc -> uc.onShutDown(event));
         messageCommands.values().forEach(mc -> mc.onShutDown(event));
+        threadManager.shutDown();
     }
 
 
@@ -196,16 +203,16 @@ public class Configuration extends ListenerAdapter {
 
     @Override
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
-        messageReceivers.values().forEach(m -> m.messageDelete(event));
+        threadManager.runRequest(() -> messageReceivers.values().forEach(m -> m.messageDelete(event)));
     }
 
     @Override
     public void onUserUpdateName(@NotNull UserUpdateNameEvent event) {
-        usernameUpdateEvents.forEach(e -> e.onCall(event, event.getUser().getId(), event.getOldName(), event.getNewName()));
+        threadManager.runRequest(() -> usernameUpdateEvents.forEach(e -> e.onCall(event, event.getUser().getId(), event.getOldName(), event.getNewName())));
     }
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
-        userRemovedEvents.forEach(e -> e.onCall(event, event.getUser().getId(), event.getUser().getName()));
+        threadManager.runRequest(() -> userRemovedEvents.forEach(e -> e.onCall(event, event.getUser().getId(), event.getUser().getName())));
     }
 }
