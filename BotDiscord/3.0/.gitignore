@@ -1,0 +1,5 @@
+files/*.bin
+files/*/season_bets.csv
+.idea/*
+target/*
+.env
