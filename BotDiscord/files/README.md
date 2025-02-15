@@ -1,1 +1,0 @@
-# Folder with database file, configuration files and bot image.
