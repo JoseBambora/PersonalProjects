@@ -33,5 +33,5 @@ jobs:
           cache: 'maven'
 
       - name: Build and Run Bot tests
-        working-directory: BotDiscord
+        working-directory: BotDiscord/3.0
         run: mvn test
