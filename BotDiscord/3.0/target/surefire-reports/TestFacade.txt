@@ -1,0 +1,28 @@
+-------------------------------------------------------------------------------
+Test set: TestFacade
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 4, Errors: 2, Skipped: 0, Time elapsed: 0.206 s <<< FAILURE! - in TestFacade
+test2  Time elapsed: 0.039 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <1> but was: <0>
+	at TestFacade.test2(TestFacade.java:80)
+
+test3  Time elapsed: 0.001 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "java.util.List.size()" because the return value of "org.botgverreiro.facade.Facade.win(int, int, org.botgverreiro.model.enums.Mode)" is null
+	at TestFacade.test3(TestFacade.java:96)
+
+test4  Time elapsed: 0 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <2> but was: <0>
+	at TestFacade.test4(TestFacade.java:112)
+
+test5  Time elapsed: 0.014 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <0> but was: <2>
+	at TestFacade.test5(TestFacade.java:167)
+
+test6  Time elapsed: 0.001 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <0> but was: <12>
+	at TestFacade.test6(TestFacade.java:186)
+
+test7  Time elapsed: 0.1 s  <<< ERROR!
+java.lang.NullPointerException
+	at TestFacade.test7(TestFacade.java:208)
+

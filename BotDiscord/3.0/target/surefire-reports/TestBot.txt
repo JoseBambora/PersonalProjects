@@ -1,0 +1,72 @@
+-------------------------------------------------------------------------------
+Test set: TestBot
+-------------------------------------------------------------------------------
+Tests run: 17, Failures: 0, Errors: 17, Skipped: 0, Time elapsed: 0.057 s <<< FAILURE! - in TestBot
+test01  Time elapsed: 0.001 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test02  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test03  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test04  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test05  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test06  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test07  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test08  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test09  Time elapsed: 0.001 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test10  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test11  Time elapsed: 0.001 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test12  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test13  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test14  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test15  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test16  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+
+test17  Time elapsed: 0 s  <<< ERROR!
+java.lang.NumberFormatException: Cannot parse null string
+	at TestBot.<init>(TestBot.java:51)
+

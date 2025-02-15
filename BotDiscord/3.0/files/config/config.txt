@@ -1,0 +1,6 @@
+token (token real bot)
+token_test (token bot test)
+channelBets (real channel read bets ID)
+channelBetsTest (test channel read bets ID)
+channelReminder (channel reminder ID)
+threads (number of multithreading)

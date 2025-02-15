@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <jdbc>
+        <driver>org.sqlite.JDBC</driver> <!-- Use your DB driver -->
+        <url>jdbc:sqlite:files/db/dbteste.db</url> <!-- Your database URL -->
+        <user></user>
+        <password></password>
+    </jdbc>
+
+    <generator>
+        <database>
+            <!-- Specify your database dialect -->
+            <name>org.jooq.meta.sqlite.SQLiteDatabase</name>
+            <inputSchema>public</inputSchema> <!-- The schema to use (e.g., "public") -->
+        </database>
+
+        <generate>
+            <!-- You can enable or disable specific code generation options -->
+            <pojos>true</pojos>
+            <fluentSetters>true</fluentSetters>
+            <daos>false</daos>
+            <records>true</records>
+        </generate>
+
+        <target>
+            <!-- Where to place the generated code -->
+            <packageName>org.botgverreiro.models</packageName>
+            <directory>target/generated-sources/jooq</directory>
+        </target>
+    </generator>
+</configuration>
