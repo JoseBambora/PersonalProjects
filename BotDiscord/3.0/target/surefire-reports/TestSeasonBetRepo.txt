@@ -1,8 +1,0 @@
--------------------------------------------------------------------------------
-Test set: TestSeasonBetRepo
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0 s <<< FAILURE! - in TestSeasonBetRepo
-test1  Time elapsed: 0 s  <<< ERROR!
-java.lang.NullPointerException
-	at TestSeasonBetRepo.test1(TestSeasonBetRepo.java:16)
-
