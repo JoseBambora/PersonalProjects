@@ -106,7 +106,7 @@ public class HelloCommand implements SlashEvent {
          * name -> the name that the user wrote
          * number -> the choice selected (2 or 3).
          */
-        response.setTemplate("TemplateHello").setVariable("name", variables.get("name"));
+        response.setTemplate("TemplateHello").setVariable("name", variables.get("name")).send();
     }
 
 
@@ -118,7 +118,7 @@ public class HelloCommand implements SlashEvent {
     public void onCall(ButtonInteractionEvent event, String id, ResponseButton response) {
         switch (id) {
             case "1" -> onButton1(event, response);
-            default -> response.setTemplate("400").setVariable("message", "Button does not exists");
+            default -> response.setTemplate("400").setVariable("message", "Button does not exists").send();
         }
     }
 }
@@ -181,7 +181,7 @@ public class SimpleMessage implements MessageEvent {
          * data will contain:
          * name -> author name
          */
-        response.setVariables(data).setTemplate("SimpleMessage");
+        response.setVariables(data).setTemplate("SimpleMessage").send();
     }
 }
 ```
