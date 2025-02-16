@@ -14,7 +14,7 @@ public class Mode {
 
     @Override
     public String toString() {
-        return "("  +modeName  + ")";
+        return modeName ;
     }
 
 
@@ -32,6 +32,13 @@ public class Mode {
                 .selectFrom(Modes.MODES)
                 .fetchAsync()
                 .thenApply(r -> r.into(Mode.class));
+    }
+
+    public static List<Mode> getAllModesSync(DSLContext context) {
+        return context
+                .selectFrom(Modes.MODES)
+                .fetch()
+                .into(Mode.class);
     }
 
     /**

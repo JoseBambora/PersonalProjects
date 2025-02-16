@@ -17,6 +17,6 @@ public class Help implements SlashEvent {
 
     @Override
     public void onCall(SlashCommandInteractionEvent slashCommandInteractionEvent, Map<String, Object> map, ResponseCommand responseCommand) {
-        responseCommand.setTemplate("Help");
+        responseCommand.setTemplate("Help").send();
     }
 }

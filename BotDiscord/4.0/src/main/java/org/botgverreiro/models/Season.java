@@ -124,4 +124,8 @@ public class Season {
                 .where(Seasons.SEASONS.SEASON_ID.eq(season))
                 .executeAsync();
     }
+
+    public int getSeasonId() {
+        return seasonId;
+    }
 }

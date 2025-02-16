@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Settings {
@@ -34,6 +35,10 @@ public class Settings {
 
     public static <T> T commitTransaction(Function<DSLContext,T> function) {
         return getContext().transactionResult(c -> function.apply(DSL.using(c)));
+    }
+
+    public static void commitTransactionNoResult(Consumer<DSLContext> function) {
+        getContext().transaction(c -> function.accept(DSL.using(c)));
     }
 
     public static void commit() {
