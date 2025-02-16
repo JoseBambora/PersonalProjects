@@ -14,6 +14,6 @@ public class HelloCommandUser implements UserContextEvent {
 
     @Override
     public void onCall(UserContextInteractionEvent event, ResponseCommand response) {
-        response.setTemplate("SimpleMessage").setVariable("name", event.getUser().getName());
+        response.setTemplate("SimpleMessage").setVariable("name", event.getUser().getName()).send();
     }
 }

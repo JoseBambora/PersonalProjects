@@ -14,6 +14,6 @@ public class HelloCommandMessage implements MessageContextEvent {
 
     @Override
     public void onCall(MessageContextInteractionEvent event, ResponseCommand response) {
-        response.setTemplate("SimpleMessage").setVariable("name", event.getUser().getName());
+        response.setTemplate("SimpleMessage").setVariable("name", event.getUser().getName()).send();
     }
 }

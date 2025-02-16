@@ -65,21 +65,22 @@ public abstract class Command<T> extends ButtonReceiver {
         return name;
     }
 
-    protected Response execute(CommandInteraction event) {
+    protected void execute(CommandInteraction event) {
         if (permissions.isEmpty() || (event.getMember() != null && event.getMember().hasPermission(permissions))) {
             if (isSendThinking())
                 event.deferReply(isEphemeral()).queue();
-            return executeCommand(event);
+            executeCommand(event);
         } else {
-            return new ResponseCommand(event, "", false, false)
+            new ResponseCommand(event, "", false, false)
                     .setTemplate("403")
-                    .setVariable("message", "You do not have access to this command");
+                    .setVariable("message", "You do not have access to this command")
+                    .send();
         }
     }
 
     protected abstract CommandData build();
 
-    protected abstract Response executeCommand(CommandInteraction event);
+    protected abstract void executeCommand(CommandInteraction event);
 
     public Response onModalInteraction(ModalInteractionEvent event, String id) {
         Map<String, String> fields = new HashMap<>();

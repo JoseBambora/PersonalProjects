@@ -58,28 +58,24 @@ public class MessageReceiver extends ButtonReceiver {
         return b ? data : null;
     }
 
-    protected ResponseMessageReceiver messageReceived(MessageReceivedEvent event) {
+    protected void messageReceived(MessageReceivedEvent event) {
         if (received) {
             Map<String, Object> data = getData(pipelineReceiver, event);
             if (data != null) {
                 ResponseMessageReceiver responseMessage = new ResponseMessageReceiver(event, id);
                 controller.onCall(event, data, responseMessage);
-                return responseMessage;
             }
         }
-        return null;
     }
 
-    protected ResponseMessageUpdate messageUpdated(MessageUpdateEvent event) {
+    protected void messageUpdated(MessageUpdateEvent event) {
         if (updates) {
             Map<String, Object> data = getData(pipelineUpdate, event);
             if (data != null) {
                 ResponseMessageUpdate responseMessage = new ResponseMessageUpdate(event, id);
                 controller.onCall(event, data, responseMessage);
-                return responseMessage;
             }
         }
-        return null;
     }
 
     protected void messageDelete(MessageDeleteEvent event) {

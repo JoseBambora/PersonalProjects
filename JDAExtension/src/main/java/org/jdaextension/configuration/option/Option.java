@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.apache.commons.lang3.function.TriConsumer;
+import org.jdaextension.responses.ResponseAutoComplete;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ public abstract class Option<T> implements Comparable<Option<?>> {
     private final boolean required;
     private final OptionType type;
     private final List<Choice> choiceList;
+    private TriConsumer<CommandAutoCompleteInteractionEvent, String, ResponseAutoComplete> autoComplete;
 
     protected Option(String name, String description, boolean required, OptionType type) {
         this.name = name;
@@ -49,7 +52,9 @@ public abstract class Option<T> implements Comparable<Option<?>> {
 
     protected abstract Object parseOption(OptionMapping optionMapping);
 
-    protected abstract boolean hasAutoComplete();
+    protected boolean hasAutoComplete() {
+        return autoComplete != null;
+    }
 
     public OptionData buildOption() {
         OptionData optionData = new OptionData(type, name, description, required, hasAutoComplete()).addChoices(this.choiceList);
@@ -66,7 +71,14 @@ public abstract class Option<T> implements Comparable<Option<?>> {
         return required;
     }
 
-    public abstract void onAutoComplete(CommandAutoCompleteInteractionEvent event);
+    public void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
+        this.autoComplete.accept(event, event.getFocusedOption().getValue(), new ResponseAutoComplete(event));
+    }
+
+    public T setAutoComplete(TriConsumer<CommandAutoCompleteInteractionEvent, String, ResponseAutoComplete> autoComplete) {
+        this.autoComplete = autoComplete;
+        return (T) this;
+    }
 
     @Override
     public int compareTo(@NotNull Option<?> other) {

@@ -18,12 +18,12 @@ public class SimpleModal implements SlashEvent {
 
     @Override
     public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, ResponseCommand response) {
-        response.setTemplate("SimpleModal").setModal();
+        response.setTemplate("SimpleModal").setModal().send();
 
     }
 
     @Override
     public void onCall(ModalInteractionEvent event, String id, Map<String, String> fields, ResponseModal response) {
-        response.setTemplate("SimpleModalResponse");
+        response.setTemplate("SimpleModalResponse").send();
     }
 }

@@ -21,7 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class Configuration extends ListenerAdapter {
@@ -112,13 +115,13 @@ public class Configuration extends ListenerAdapter {
                 String[] split = idButton.split("_");
                 String command = split[0];
                 if (command.contains("message"))
-                    messageReceivers.get(Integer.parseInt(split[1])).onButtonClicked(event, split[2]).send();
+                    messageReceivers.get(Integer.parseInt(split[1])).onButtonClicked(event, split[2]);
                 else if (command.contains("usercontext"))
-                    userCommands.get(split[1]).onButtonClicked(event, split[2]).send();
+                    userCommands.get(split[1]).onButtonClicked(event, split[2]);
                 else if (command.contains("messagecontext"))
-                    messageCommands.get(split[1]).onButtonClicked(event, split[2]).send();
+                    messageCommands.get(split[1]).onButtonClicked(event, split[2]);
                 else
-                    slashCommands.get(split[1]).onButtonClicked(event, split[2]).send();
+                    slashCommands.get(split[1]).onButtonClicked(event, split[2]);
             } else {
                 ResponseButton responseButton = new ResponseButton(event);
                 responseButton.setTemplate("404").setVariable("message", "Button");
@@ -131,7 +134,7 @@ public class Configuration extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         SlashCommand command = slashCommands.get(event.getName());
-        Runnable runnable = () -> command.execute(event).send();
+        Runnable runnable = () -> command.execute(event);
         sendError(runnable, () -> new ResponseCommand(event, "command", command.isSendThinking(), command.isEphemeral()).setTemplate("500").send());
     }
 
@@ -143,14 +146,14 @@ public class Configuration extends ListenerAdapter {
     @Override
     public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
         UserCommand userCommand = userCommands.get(event.getName());
-        Runnable runnable = () -> userCommand.execute(event).send();
+        Runnable runnable = () -> userCommand.execute(event);
         sendError(runnable, () -> new ResponseCommand(event, "usercontext", userCommand.isSendThinking(), userCommand.isEphemeral()).setTemplate("500").send());
     }
 
     @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         MessageCommand messageCommand = messageCommands.get(event.getName());
-        Runnable runnable = () -> messageCommand.execute(event).send();
+        Runnable runnable = () -> messageCommand.execute(event);
         sendError(runnable, () -> new ResponseCommand(event, "messagecontext", messageCommand.isSendThinking(), messageCommand.isEphemeral()).setTemplate("500").send());
     }
 
@@ -161,11 +164,11 @@ public class Configuration extends ListenerAdapter {
             String[] split = idModal.split("_");
             String command = split[0];
             if (command.contains("usercontext"))
-                userCommands.get(split[1]).onModalInteraction(event, split[1]).send();
+                userCommands.get(split[1]).onModalInteraction(event, split[1]);
             else if (command.contains("messagecontext"))
-                messageCommands.get(split[1]).onModalInteraction(event, split[1]).send();
+                messageCommands.get(split[1]).onModalInteraction(event, split[1]);
             else
-                slashCommands.get(split[1]).onModalInteraction(event, split[1]).send();
+                slashCommands.get(split[1]).onModalInteraction(event, split[1]);
         };
         sendError(runnable, () -> new ResponseModal(event, false, false).setTemplate("500").send());
     }
@@ -188,7 +191,7 @@ public class Configuration extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (!event.getAuthor().isBot()) {
-            Runnable runnable = () -> messageReceivers.values().stream().map(m -> m.messageReceived(event)).filter(Objects::nonNull).forEach(Response::send);
+            Runnable runnable = () -> messageReceivers.values().forEach(m -> m.messageReceived(event));
             sendError(runnable, () -> new ResponseMessageReceiver(event, -1).setTemplate("500").send());
         }
     }
@@ -196,7 +199,7 @@ public class Configuration extends ListenerAdapter {
     @Override
     public void onMessageUpdate(@NotNull MessageUpdateEvent event) {
         if (!event.getAuthor().isBot()) {
-            Runnable runnable = () -> messageReceivers.values().stream().map(m -> m.messageUpdated(event)).filter(Objects::nonNull).forEach(Response::send);
+            Runnable runnable = () -> messageReceivers.values().forEach(m -> m.messageUpdated(event));
             sendError(runnable, () -> new ResponseMessageUpdate(event, -1).setTemplate("500").send());
         }
     }

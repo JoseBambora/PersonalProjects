@@ -32,22 +32,26 @@ public class SimpleCommandMod implements SlashEvent {
         Integer integer = (Integer) variables.get("number");
         response.setTemplate("SimpleCommandMod")
                 .setVariable("name", name)
-                .setVariable("items", IntStream.range(0, integer).boxed().toList());
+                .setVariable("items", IntStream.range(0, integer).boxed().toList())
+                .send();
     }
 
     public void onButton1(ButtonInteractionEvent event, ResponseButton response) {
         response.setTemplate("SimpleCommandMod")
-                .setVariable("name", "Button 1 clicked");
+                .setVariable("name", "Button 1 clicked")
+                .send();
     }
 
     public void onButton2(ButtonInteractionEvent event, ResponseButton response) {
         response.setTemplate("SimpleCommandMod")
-                .setVariable("name", "Button 2 clicked");
+                .setVariable("name", "Button 2 clicked")
+                .send();
     }
 
     public void onButton3(ButtonInteractionEvent event, ResponseButton response) {
         response.setTemplate("SimpleCommandMod")
-                .setVariable("name", "Button 3 clicked");
+                .setVariable("name", "Button 3 clicked")
+                .send();
     }
 
     public void onButton4(ButtonInteractionEvent event, ResponseButton response) {
@@ -62,7 +66,7 @@ public class SimpleCommandMod implements SlashEvent {
             case "2" -> onButton2(event, response);
             case "3" -> onButton3(event, response);
             case "4" -> onButton4(event, response);
-            default -> response.setTemplate("400").setVariable("message", "Button does not exists");
+            default -> response.setTemplate("400").setVariable("message", "Button does not exists").send();
         }
     }
 }

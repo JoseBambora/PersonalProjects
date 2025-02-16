@@ -3,10 +3,12 @@ package cases.slashcommands;
 import cases.MyType;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.configuration.option.OptionCustom;
 import org.jdaextension.configuration.option.OptionString;
 import org.jdaextension.generic.SlashEvent;
+import org.jdaextension.responses.ResponseAutoComplete;
 import org.jdaextension.responses.ResponseCommand;
 
 import java.util.HashMap;
@@ -38,16 +40,17 @@ public class SimpleCommandOptions implements SlashEvent {
         response.setTemplate("SimpleCommandOptions")
                 .setVariable("word", word)
                 .setVariable("coords", myType.toString())
-                .setVariable("coords2", myType2.toString());
+                .setVariable("coords2", myType2.toString())
+                .send();
     }
 
 
-    public Map<String, String> onAutoComplete(CommandAutoCompleteInteractionEvent event, String value) {
+    public void onAutoComplete(CommandAutoCompleteInteractionEvent event, String value, ResponseAutoComplete responseAutoComplete) {
         Map<String, String> map = new HashMap<>();
         Map.of("(1,1)", "(1,1)", "(1,2)", "(2,2)").entrySet()
                 .stream()
                 .filter(n -> n.getValue().contains(value))
-                .forEach(e -> map.put(e.getKey(), e.getValue()));
-        return map;
+                .forEach(e -> responseAutoComplete.addChoice(new Command.Choice(e.getKey(),e.getValue())));
+        responseAutoComplete.send();
     }
 }

@@ -19,11 +19,11 @@ public class SimpleMessageReactions implements MessageEvent {
 
     @Override
     public void onCall(MessageReceivedEvent event, Map<String, Object> data, ResponseMessageReceiver response) {
-        response.addEmoji("✅");
+        response.addEmoji("✅").send();
     }
 
     @Override
     public void onCall(MessageUpdateEvent event, Map<String, Object> data, ResponseMessageUpdate response) {
-        response.cleanReactions().addEmoji("U+1F504");
+        response.cleanReactions().addEmoji("U+1F504").send();
     }
 }

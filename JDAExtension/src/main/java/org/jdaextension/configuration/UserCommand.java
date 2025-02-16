@@ -22,10 +22,9 @@ public class UserCommand extends Command<UserCommand> {
     }
 
     @Override
-    protected ResponseCommand executeCommand(CommandInteraction event) {
+    protected void executeCommand(CommandInteraction event) {
         ResponseCommand responseSlashCommand = new ResponseCommand(event, "usercontext", isSendThinking(), isEphemeral());
         controller.onCall((UserContextInteractionEvent) event, responseSlashCommand);
-        return responseSlashCommand;
     }
 
     @Override

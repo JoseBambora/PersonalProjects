@@ -55,7 +55,7 @@ public class SlashCommand extends Command<SlashCommand> {
     }
 
     @Override
-    protected ResponseCommand executeCommand(CommandInteraction event) {
+    protected void executeCommand(CommandInteraction event) {
         Map<String, Object> variables = new HashMap<>();
         List<String> errorArgs = new ArrayList<>();
         for (Map.Entry<String, Option<?>> optionEntry : options.entrySet()) {
@@ -68,8 +68,7 @@ public class SlashCommand extends Command<SlashCommand> {
         if (errorArgs.isEmpty())
             controller.onCall((SlashCommandInteractionEvent) event, variables, responseSlashCommand);
         else
-            responseSlashCommand.setTemplate("400").setVariable("errors", errorArgs.stream().sorted().map(s -> "Argument `" + s + "` is missing").toList());
-        return responseSlashCommand;
+            responseSlashCommand.setTemplate("400").setVariable("errors", errorArgs.stream().sorted().map(s -> "Argument `" + s + "` is missing").toList()).send();
     }
 
     protected void onAutoComplete(CommandAutoCompleteInteractionEvent event) {

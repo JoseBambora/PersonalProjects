@@ -29,17 +29,17 @@ public class SimpleMessage implements MessageEvent {
     }
 
     private void onButton1(ButtonInteractionEvent event, ResponseButton response) {
-        response.setVariable("name", "Button Clicked").setTemplate("SimpleMessage");
+        response.setVariable("name", "Button Clicked").setTemplate("SimpleMessage").send();
     }
 
     @Override
     public void onCall(MessageReceivedEvent event, Map<String, Object> data, ResponseMessageReceiver response) {
-        response.setVariables(data).setTemplate("SimpleMessage");
+        response.setVariables(data).setTemplate("SimpleMessage").send();
     }
 
     @Override
     public void onCall(MessageUpdateEvent event, Map<String, Object> data, ResponseMessageUpdate response) {
-        response.setVariables(data).setTemplate("SimpleMessage");
+        response.setVariables(data).setTemplate("SimpleMessage").send();
     }
 
 
@@ -47,7 +47,7 @@ public class SimpleMessage implements MessageEvent {
     public void onCall(ButtonInteractionEvent event, String id, ResponseButton response) {
         switch (id) {
             case "1" -> onButton1(event, response);
-            default -> response.setTemplate("400").setVariable("message", "Button does not exists");
+            default -> response.setTemplate("400").setVariable("message", "Button does not exists").send();
         }
     }
 

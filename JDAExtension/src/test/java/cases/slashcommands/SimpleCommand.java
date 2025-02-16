@@ -18,19 +18,19 @@ public class SimpleCommand implements SlashEvent {
 
     @Override
     public void onCall(SlashCommandInteractionEvent event, Map<String, Object> variables, ResponseCommand response) {
-        response.setTemplate("SimpleCommand").setVariable("counter", "1");
+        response.setTemplate("SimpleCommand").setVariable("counter", "1").send();
     }
 
 
     public void onButton1(ButtonInteractionEvent event, ResponseButton response) {
-        response.setTemplate("SimpleCommand").setVariable("counter", "2");
+        response.setTemplate("SimpleCommand").setVariable("counter", "2").send();
     }
 
     @Override
     public void onCall(ButtonInteractionEvent event, String id, ResponseButton response) {
         switch (id) {
             case "1" -> onButton1(event, response);
-            default -> response.setTemplate("400").setVariable("message", "Button does not exists");
+            default -> response.setTemplate("400").setVariable("message", "Button does not exists").send();
         }
     }
 }
