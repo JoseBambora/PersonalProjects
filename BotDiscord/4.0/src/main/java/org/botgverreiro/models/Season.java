@@ -3,6 +3,7 @@ package org.botgverreiro.models;
 import jakarta.persistence.*;
 import org.botgverreiro.tables.Seasons;
 import org.jooq.DSLContext;
+import org.jooq.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,32 +14,29 @@ import java.util.stream.Stream;
 
 public class Season {
     private static final Logger log = LoggerFactory.getLogger(Season.class);
+
     @Column(name = "SEASON_ID")
     private int seasonId;
 
-    @Column(name = "SEASON_NAME")
-    private String seasonName;
-
     public Season() {
         this.seasonId = -1;
-        this.seasonName = "";
     }
 
-    public Season(String seasonName) {
-        this.seasonId = -1;
-        this.seasonName = seasonName;
+    public Season(int seasonId) {
+        this.seasonId = seasonId;
     }
 
     @Override
     public String toString() {
-        return "("  + seasonId + "," + seasonName  + ")";
+        int y2 = seasonId % 100;
+        int y1 = seasonId / 100;
+        return y1 + "-" + y2;
     }
 
     public Season nextSeason() {
-        String[] parts = this.seasonName.split("/");
-        int firstNumber = Integer.parseInt(parts[0]) + 1;
-        int secondNumber = Integer.parseInt(parts[1]) + 1;
-        return new Season(String.format("%s/%s", firstNumber, secondNumber));
+        int y2 = (seasonId % 100) + 1;
+        int y1 = (seasonId / 100) + 1;
+        return new Season(y1+y2);
     }
 
     /*
@@ -64,10 +62,10 @@ public class Season {
      * @param season Season name that we want to get the similar.
      * @return A list of similar seasons.
      */
-    public static CompletionStage<List<Season>> getSimilarSeasons(DSLContext context,String season) {
+    public static CompletionStage<List<Season>> getSimilarSeasons(DSLContext context,int season) {
         return context
                 .selectFrom(Seasons.SEASONS)
-                .where(Seasons.SEASONS.SEASON_NAME.contains(season))
+                .where(Seasons.SEASONS.SEASON_ID.contains(season))
                 .fetchAsync()
                 .thenApply(Collection::stream)
                 .thenApply(r -> r.map(record -> record.into(Season.class)))
@@ -82,7 +80,7 @@ public class Season {
     private static CompletionStage<Integer> insertSeason(DSLContext context,Season season) {
         return context
                 .insertInto(Seasons.SEASONS)
-                .set(Seasons.SEASONS.SEASON_NAME, season.seasonName)
+                .set(Seasons.SEASONS.SEASON_ID, season.seasonId)
                 .executeAsync();
     }
 
@@ -110,7 +108,7 @@ public class Season {
      */
     public static CompletionStage<Season> newSeason(DSLContext context) {
         return getLastSeason(context)
-                .thenApply(s -> s != null ? s.nextSeason() : new Season(System.getenv("SEASON")))
+                .thenApply(s -> s != null ? s.nextSeason() : new Season(Integer.parseInt(System.getenv("SEASON"))))
                 .thenCompose(ns -> Season.insertSeason(context,ns))
                 .thenCompose(_ -> getLastSeason(context));
     }

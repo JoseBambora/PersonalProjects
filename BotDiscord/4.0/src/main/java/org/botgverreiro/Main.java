@@ -15,7 +15,7 @@ public class Main {
         });
         Thread.sleep(5000);
         Settings.commitTransaction(c -> {
-            User.updatePoints(c, List.of("Olá","Olá 2"),1,1,2,2);
+            User.updatePoints(c, List.of("Olá","Olá 2"),2425,"Futebol",2,2);
             return 0;
         });
         Thread.sleep(5000);

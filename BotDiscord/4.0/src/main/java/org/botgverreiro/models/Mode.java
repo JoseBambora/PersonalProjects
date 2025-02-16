@@ -8,14 +8,13 @@ import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 public class Mode {
-    @Column(name = "MODE_ID")
-    private int modeId;
+
     @Column(name = "MODE_NAME")
     private String modeName;
 
     @Override
     public String toString() {
-        return "("  + modeId+ "," + modeName  + ")";
+        return "("  +modeName  + ")";
     }
 
 
@@ -44,6 +43,7 @@ public class Mode {
         return context
                 .insertInto(Modes.MODES)
                 .set(Modes.MODES.MODE_NAME, mode)
+                .onConflictDoNothing()
                 .executeAsync();
     }
 }

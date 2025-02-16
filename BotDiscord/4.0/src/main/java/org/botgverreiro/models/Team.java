@@ -8,14 +8,12 @@ import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 public class Team {
-    @Column(name = "TEAM_ID")
-    private int teamId;
     @Column(name = "TEAM_NAME")
     private String teamName;
 
     @Override
     public String toString() {
-        return "Team(" + teamId + "," + teamName + ")";
+        return "Team(" + teamName + ")";
     }
 
     /*
@@ -44,6 +42,11 @@ public class Team {
         return context
                 .insertInto(Teams.TEAMS)
                 .set(Teams.TEAMS.TEAM_NAME, team)
+                .onConflictDoNothing()
                 .executeAsync();
+    }
+
+    public String getTeamName() {
+        return teamName;
     }
 }

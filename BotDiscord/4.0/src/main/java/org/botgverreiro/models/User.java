@@ -50,7 +50,7 @@ public class User {
         return context
                 .select()
                 .from(Users.USERS)
-                .join(Modes.MODES).on(Users.USERS.MODE_ID.eq(Modes.MODES.MODE_ID))
+                .join(Modes.MODES).on(Users.USERS.MODE_NAME.eq(Modes.MODES.MODE_NAME))
                 .join(Seasons.SEASONS).on(Users.USERS.SEASON_ID.eq(Seasons.SEASONS.SEASON_ID))
                 .where(Users.USERS.SEASON_ID.eq(season))
                 .fetchAsync()
@@ -60,15 +60,15 @@ public class User {
 
     }
 
-    private static List<Record3<String,Integer,Integer>> combineValues(DSLContext context, Collection<String> users, int season, int mode) {
+    private static List<Record3<String,Integer,String>> combineValues(DSLContext context, Collection<String> users, int season, String mode) {
         return users.stream()
-                .map(n -> context.newRecord(Users.USERS.USER_ID,Users.USERS.SEASON_ID, Users.USERS.MODE_ID).value1(n).value2(season).value3(mode))
+                .map(n -> context.newRecord(Users.USERS.USER_ID,Users.USERS.SEASON_ID, Users.USERS.MODE_NAME).value1(n).value2(season).value3(mode))
                 .toList();
     }
 
-    public static CompletionStage<Integer> updatePoints(DSLContext context, Collection<String> users, int season, int mode, int points, int predictions) {
+    public static CompletionStage<Integer> updatePoints(DSLContext context, Collection<String> users, int season, String mode, int points, int predictions) {
         return context
-                .insertInto(Users.USERS, Users.USERS.USER_ID,Users.USERS.SEASON_ID, Users.USERS.MODE_ID)
+                .insertInto(Users.USERS, Users.USERS.USER_ID,Users.USERS.SEASON_ID, Users.USERS.MODE_NAME)
                 .valuesOfRecords(combineValues(context,users,season,mode))
                 .onDuplicateKeyUpdate()
                 .set(Users.USERS.POINTS, Users.USERS.POINTS.plus(points))
