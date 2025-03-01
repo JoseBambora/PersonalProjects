@@ -6,12 +6,12 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.botgverreiro.models.Game;
 import org.botgverreiro.models.Settings;
 import org.botgverreiro.utils.Cache;
-import org.jdaextension.configuration.SlashCommand;
-import org.jdaextension.configuration.option.Number;
-import org.jdaextension.configuration.option.OptionNumber;
-import org.jdaextension.generic.SlashEvent;
-import org.jdaextension.responses.ResponseAutoComplete;
-import org.jdaextension.responses.ResponseCommand;
+import com.github.josebambora.configuration.SlashCommand;
+import com.github.josebambora.configuration.option.Number;
+import com.github.josebambora.configuration.option.OptionNumber;
+import com.github.josebambora.generic.SlashEvent;
+import com.github.josebambora.responses.ResponseAutoComplete;
+import com.github.josebambora.responses.ResponseCommand;
 
 import java.util.Map;
 

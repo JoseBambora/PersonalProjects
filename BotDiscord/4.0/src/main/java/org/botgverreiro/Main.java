@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.botgverreiro.controllers.slashcommands.GameAdd;
 import org.botgverreiro.controllers.slashcommands.GameDel;
 import org.botgverreiro.controllers.slashcommands.Help;
-import org.jdaextension.configuration.Configuration;
+import com.github.josebambora.configuration.Configuration;
 
 import java.util.EnumSet;
 
