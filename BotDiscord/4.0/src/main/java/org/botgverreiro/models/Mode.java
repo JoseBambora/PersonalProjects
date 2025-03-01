@@ -12,9 +12,23 @@ public class Mode {
     @Column(name = "MODE_NAME")
     private String modeName;
 
+    @Override
+    public String toString() {
+        return modeName;
+    }
+
+
+
+    /*
+     * ===================
+     * Repository Methods
+     * ===================
+     */
+
     /**
      * Get all the available modes.
      *
+     * @param context Database context.
      * @return A list containing all the modes.
      */
     public static CompletionStage<List<Mode>> getAllModes(DSLContext context) {
@@ -24,13 +38,12 @@ public class Mode {
                 .thenApply(r -> r.into(Mode.class));
     }
 
-
-    /*
-     * ===================
-     * Repository Methods
-     * ===================
+    /**
+     * Get all the available modes but not Async. It is only when the bot starts.
+     *
+     * @param context Database context.
+     * @return A list containing all the modes.
      */
-
     public static List<Mode> getAllModesSync(DSLContext context) {
         return context
                 .selectFrom(Modes.MODES)
@@ -41,6 +54,7 @@ public class Mode {
     /**
      * Inserts a new mode.
      *
+     * @param context Database context.
      * @param mode Mode name to insert.
      * @return 1 if success, 0 otherwise.
      */
@@ -50,10 +64,5 @@ public class Mode {
                 .set(Modes.MODES.MODE_NAME, mode)
                 .onConflictDoNothing()
                 .executeAsync();
-    }
-
-    @Override
-    public String toString() {
-        return modeName;
     }
 }

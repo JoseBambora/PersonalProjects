@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.botgverreiro.models.Game;
 import org.botgverreiro.models.Settings;
 import org.botgverreiro.utils.Cache;
-import org.botgverreiro.utils.LimitList;
 import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.configuration.option.Number;
 import org.jdaextension.configuration.option.OptionNumber;
@@ -14,17 +13,14 @@ import org.jdaextension.generic.SlashEvent;
 import org.jdaextension.responses.ResponseAutoComplete;
 import org.jdaextension.responses.ResponseCommand;
 
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletionStage;
 
 public class GameDel implements SlashEvent {
 
-    private final Cache<String, Game> cacheGames = new Cache<>(this::fetchGames);
+    private final Cache<String, Game> cacheGames;
 
-    private CompletionStage<List<Game>> fetchGames(String input) {
-        return Settings.commitTransaction(c -> Game.getGames(c, input))
-                .thenApply(l -> LimitList.subList(l, 25));
+    public GameDel() {
+        cacheGames = new Cache<>(s -> Settings.commitTransaction(c -> Game.getGames(c, s)));
     }
 
     @Override

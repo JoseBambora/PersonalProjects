@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.botgverreiro.models.*;
 import org.botgverreiro.utils.Cache;
-import org.botgverreiro.utils.LimitList;
 import org.jdaextension.configuration.SlashCommand;
 import org.jdaextension.configuration.option.Number;
 import org.jdaextension.configuration.option.OptionNumber;
@@ -14,25 +13,18 @@ import org.jdaextension.generic.SlashEvent;
 import org.jdaextension.responses.ResponseAutoComplete;
 import org.jdaextension.responses.ResponseCommand;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 
 public class GameAdd implements SlashEvent {
 
     // Cache Results from AutoCompleteOptions
-    private final Cache<String, Team> cacheTeams = new Cache<>(this::fetchTeams);
-    private final Cache<Integer, Season> cacheSeason = new Cache<>(this::fetchSeasons);
+    private final Cache<String, Team> cacheTeams;
+    private final Cache<Integer, Season> cacheSeason;
 
-    private CompletionStage<List<Team>> fetchTeams(String input) {
-        return Settings.commitTransaction(c -> Team.getSimilarTeams(c, input))
-                .thenApply(l -> LimitList.subList(l, 25));
-    }
-
-    private CompletionStage<List<Season>> fetchSeasons(Integer input) {
-        return Settings.commitTransaction(c -> Season.getSimilarSeasons(c, input))
-                .thenApply(l -> LimitList.subList(l, 25));
+    public GameAdd() {
+        cacheTeams = new Cache<>(s -> Settings.commitTransaction(c -> Team.getSimilarTeams(c, s)));
+        cacheSeason = new Cache<>(s -> Settings.commitTransaction(c -> Season.getSimilarSeasons(c, s)));
     }
 
     @Override
@@ -62,16 +54,16 @@ public class GameAdd implements SlashEvent {
 
     private void teamsList(CommandAutoCompleteInteractionEvent event, String input, ResponseAutoComplete responseAutoComplete) {
         cacheTeams.get(input)
-                .thenAccept(l -> l.forEach(t -> responseAutoComplete.addChoice(t.toChoice())))
-                .thenAccept(_ -> responseAutoComplete.send());
+                .thenApply(l -> responseAutoComplete.addChoice(l.stream().map(Team::toChoice).toList()))
+                .thenAccept(ResponseAutoComplete::send);
     }
 
     private void seasonList(CommandAutoCompleteInteractionEvent event, String input, ResponseAutoComplete responseAutoComplete) {
         try {
             int season = Integer.parseInt(input);
             cacheSeason.get(season)
-                    .thenAccept(l -> l.forEach(t -> responseAutoComplete.addChoice(t.toChoice())))
-                    .thenAccept(_ -> responseAutoComplete.send());
+                    .thenApply(l -> responseAutoComplete.addChoice(l.stream().map(Season::toChoice).toList()))
+                    .thenAccept(ResponseAutoComplete::send);
         } catch (NumberFormatException e) {
             responseAutoComplete.send();
         }
@@ -87,7 +79,8 @@ public class GameAdd implements SlashEvent {
         int day = (Integer) map.get("dia");
         int hours = (Integer) map.get("hora");
         int minutes = (Integer) map.get("minuto");
-        Settings.commitTransaction(c -> Team.insertTeam(c, team)
+        Settings.commitTransaction(c ->
+                        Team.insertTeam(c, team)
                         .thenCompose(_ -> season == null ? Season.getLastSeason(c).thenApply(Season::getSeasonId) : CompletableFuture.completedFuture(season))
                         .thenCompose(res -> Game.insertGame(c, res, mode, field, month, day, hours, minutes, team)))
                 .thenApply(r -> r == 1 ? responseCommand.setTemplate("Success").setVariable("op", "Adicionar Jogo.") : responseCommand.setTemplate("500"))
