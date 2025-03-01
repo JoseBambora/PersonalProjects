@@ -7,7 +7,7 @@ import mocks.MockButtonReaction;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
-import org.jdaextension.configuration.Configuration;
+import com.github.josebambora.configuration.Configuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

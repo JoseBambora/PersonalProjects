@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import net.dv8tion.jda.api.utils.FileUpload;
-import org.jdaextension.configuration.Configuration;
+import com.github.josebambora.configuration.Configuration;
 import org.mockito.ArgumentCaptor;
 
 import java.util.List;

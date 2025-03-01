@@ -2,7 +2,7 @@ import aux.GenericTests;
 import cases.usercommands.HelloCommandUser;
 import cases.usercommands.HelloCommandUser2;
 import mocks.MockUserCommand;
-import org.jdaextension.configuration.Configuration;
+import com.github.josebambora.configuration.Configuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

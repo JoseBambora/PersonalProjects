@@ -1,7 +1,7 @@
 package mocks;
 
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
-import org.jdaextension.configuration.Configuration;
+import com.github.josebambora.configuration.Configuration;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

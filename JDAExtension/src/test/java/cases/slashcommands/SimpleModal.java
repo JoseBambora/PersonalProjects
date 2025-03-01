@@ -2,10 +2,10 @@ package cases.slashcommands;
 
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.jdaextension.configuration.SlashCommand;
-import org.jdaextension.generic.SlashEvent;
-import org.jdaextension.responses.ResponseCommand;
-import org.jdaextension.responses.ResponseModal;
+import com.github.josebambora.configuration.SlashCommand;
+import com.github.josebambora.generic.SlashEvent;
+import com.github.josebambora.responses.ResponseCommand;
+import com.github.josebambora.responses.ResponseModal;
 
 import java.util.Map;
 

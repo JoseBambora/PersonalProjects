@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.requests.restaction.interactions.MessageEditCallbackAction;
 import net.dv8tion.jda.api.utils.FileUpload;
-import org.jdaextension.configuration.Configuration;
+import com.github.josebambora.configuration.Configuration;
 
 import java.util.List;
 import java.util.Map;

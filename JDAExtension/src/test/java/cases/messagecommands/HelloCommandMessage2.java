@@ -1,9 +1,9 @@
 package cases.messagecommands;
 
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
-import org.jdaextension.configuration.MessageCommand;
-import org.jdaextension.generic.MessageContextEvent;
-import org.jdaextension.responses.ResponseCommand;
+import com.github.josebambora.configuration.MessageCommand;
+import com.github.josebambora.generic.MessageContextEvent;
+import com.github.josebambora.responses.ResponseCommand;
 
 
 public class HelloCommandMessage2 implements MessageContextEvent {

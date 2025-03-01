@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
-import org.jdaextension.responses.Response;
+import com.github.josebambora.responses.Response;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.ArgumentCaptor;
 

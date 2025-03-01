@@ -1,9 +1,9 @@
 package cases.usercommands;
 
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
-import org.jdaextension.configuration.UserCommand;
-import org.jdaextension.generic.UserContextEvent;
-import org.jdaextension.responses.ResponseCommand;
+import com.github.josebambora.configuration.UserCommand;
+import com.github.josebambora.generic.UserContextEvent;
+import com.github.josebambora.responses.ResponseCommand;
 
 
 public class HelloCommandUser2 implements UserContextEvent {

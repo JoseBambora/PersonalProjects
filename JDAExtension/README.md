@@ -74,16 +74,17 @@ be found within [Slash Command Tests](src/test/java/cases/slashcommands).
 
 ```java
 // HelloCommand.java
-import org.jdaextension.configuration.SlashCommand;
-import org.jdaextension.configuration.option.Number;
-import org.jdaextension.configuration.option.OptionNumber;
-import org.jdaextension.configuration.option.OptionString;
+
+import configuration.com.github.josebambora.SlashCommand;
+import option.configuration.com.github.josebambora.Number;
+import option.configuration.com.github.josebambora.OptionNumber;
+import option.configuration.com.github.josebambora.OptionString;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import org.jdaextension.generic.SlashEvent;
-import org.jdaextension.responses.ResponseButton;
-import org.jdaextension.responses.ResponseCommand;
+import generic.com.github.josebambora.SlashEvent;
+import responses.com.github.josebambora.ResponseButton;
+import responses.com.github.josebambora.ResponseCommand;
 
 // Slash command /hello name:(string option) number:(option integer)
 public class HelloCommand implements SlashEvent {
@@ -151,14 +152,10 @@ message event is processed. There is an example below, but more examples can be 
 
 package cases.messages;
 
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
-import org.jdaextension.configuration.MessageReceiver;
-import org.jdaextension.generic.MessageEvent;
-import org.jdaextension.responses.ResponseButton;
-import org.jdaextension.responses.ResponseMessageReceiver;
-import org.jdaextension.responses.ResponseMessageUpdate;
+import configuration.com.github.josebambora.MessageReceiver;
+import generic.com.github.josebambora.MessageEvent;
+import responses.com.github.josebambora.ResponseMessageReceiver;
 
 import java.util.Map;
 import java.util.function.BiFunction;

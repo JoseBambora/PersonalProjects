@@ -2,10 +2,10 @@ package cases.messages;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
-import org.jdaextension.configuration.MessageReceiver;
-import org.jdaextension.generic.MessageEvent;
-import org.jdaextension.responses.ResponseMessageReceiver;
-import org.jdaextension.responses.ResponseMessageUpdate;
+import com.github.josebambora.configuration.MessageReceiver;
+import com.github.josebambora.generic.MessageEvent;
+import com.github.josebambora.responses.ResponseMessageReceiver;
+import com.github.josebambora.responses.ResponseMessageUpdate;
 
 import java.util.Map;
 import java.util.function.BiFunction;

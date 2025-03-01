@@ -2,7 +2,7 @@ package mocks;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import org.jdaextension.configuration.Configuration;
+import com.github.josebambora.configuration.Configuration;
 
 import java.util.Map;
 

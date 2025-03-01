@@ -4,7 +4,7 @@ import cases.messages.SimpleMessageReactions;
 import mocks.MockMessageReceived;
 import mocks.MockMessageUpdate;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import org.jdaextension.configuration.Configuration;
+import com.github.josebambora.configuration.Configuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
