@@ -12,19 +12,9 @@ public class Mode {
     @Column(name = "MODE_NAME")
     private String modeName;
 
-    @Override
-    public String toString() {
-        return modeName ;
-    }
-
-
-    /*
-     * ===================
-     * Repository Methods
-     * ===================
-     */
     /**
      * Get all the available modes.
+     *
      * @return A list containing all the modes.
      */
     public static CompletionStage<List<Mode>> getAllModes(DSLContext context) {
@@ -33,6 +23,13 @@ public class Mode {
                 .fetchAsync()
                 .thenApply(r -> r.into(Mode.class));
     }
+
+
+    /*
+     * ===================
+     * Repository Methods
+     * ===================
+     */
 
     public static List<Mode> getAllModesSync(DSLContext context) {
         return context
@@ -43,14 +40,20 @@ public class Mode {
 
     /**
      * Inserts a new mode.
+     *
      * @param mode Mode name to insert.
      * @return 1 if success, 0 otherwise.
      */
-    public static CompletionStage<Integer> insertMode(DSLContext context,String mode) {
+    public static CompletionStage<Integer> insertMode(DSLContext context, String mode) {
         return context
                 .insertInto(Modes.MODES)
                 .set(Modes.MODES.MODE_NAME, mode)
                 .onConflictDoNothing()
                 .executeAsync();
+    }
+
+    @Override
+    public String toString() {
+        return modeName;
     }
 }

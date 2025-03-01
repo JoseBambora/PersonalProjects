@@ -5,12 +5,8 @@ import org.botgverreiro.tables.Modes;
 import org.botgverreiro.tables.Seasons;
 import org.botgverreiro.tables.Users;
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.jooq.Record3;
-import org.jooq.impl.DSL;
-import org.jooq.impl.QOM;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -30,23 +26,12 @@ public class User {
     @Column(name = "PREDICTIONS")
     private int userPredictions;
 
-    public User setMode(Mode mode) {
-        this.mode = mode;
-        return this;
-    }
-
-    public User setSeason(Season season) {
-        this.season = season;
-        return this;
-    }
-
-
     /*
      * ===================
      * Repository Methods
      * ===================
      */
-    public static CompletionStage<List<User>> getClassificationSeason(DSLContext context,int season)  {
+    public static CompletionStage<List<User>> getClassificationSeason(DSLContext context, int season) {
         return context
                 .select()
                 .from(Users.USERS)
@@ -60,16 +45,16 @@ public class User {
 
     }
 
-    private static List<Record3<String,Integer,String>> combineValues(DSLContext context, Collection<String> users, int season, String mode) {
+    private static List<Record3<String, Integer, String>> combineValues(DSLContext context, Collection<String> users, int season, String mode) {
         return users.stream()
-                .map(n -> context.newRecord(Users.USERS.USER_ID,Users.USERS.SEASON_ID, Users.USERS.MODE_NAME).value1(n).value2(season).value3(mode))
+                .map(n -> context.newRecord(Users.USERS.USER_ID, Users.USERS.SEASON_ID, Users.USERS.MODE_NAME).value1(n).value2(season).value3(mode))
                 .toList();
     }
 
     public static CompletionStage<Integer> updatePoints(DSLContext context, Collection<String> users, int season, String mode, int points, int predictions) {
         return context
-                .insertInto(Users.USERS, Users.USERS.USER_ID,Users.USERS.SEASON_ID, Users.USERS.MODE_NAME)
-                .valuesOfRecords(combineValues(context,users,season,mode))
+                .insertInto(Users.USERS, Users.USERS.USER_ID, Users.USERS.SEASON_ID, Users.USERS.MODE_NAME)
+                .valuesOfRecords(combineValues(context, users, season, mode))
                 .onDuplicateKeyUpdate()
                 .set(Users.USERS.POINTS, Users.USERS.POINTS.plus(points))
                 .set(Users.USERS.PREDICTIONS, Users.USERS.PREDICTIONS.plus(predictions))
@@ -84,10 +69,20 @@ public class User {
                 .thenApply(r -> r.into(User.class));
     }
 
-    public static CompletionStage<Integer> deleteUser(DSLContext context,String user) {
+    public static CompletionStage<Integer> deleteUser(DSLContext context, String user) {
         return context
                 .deleteFrom(Users.USERS)
                 .where(Users.USERS.USER_ID.eq(user))
                 .executeAsync();
+    }
+
+    public User setMode(Mode mode) {
+        this.mode = mode;
+        return this;
+    }
+
+    public User setSeason(Season season) {
+        this.season = season;
+        return this;
     }
 }

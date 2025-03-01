@@ -1,6 +1,5 @@
 package org.botgverreiro.models;
 
-import org.jooq.Context;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
@@ -28,12 +27,12 @@ public class Settings {
     }
 
     private static DSLContext getContext() {
-        if(connection == null)
+        if (connection == null)
             start();
         return context;
     }
 
-    public static <T> T commitTransaction(Function<DSLContext,T> function) {
+    public static <T> T commitTransaction(Function<DSLContext, T> function) {
         return getContext().transactionResult(c -> function.apply(DSL.using(c)));
     }
 
