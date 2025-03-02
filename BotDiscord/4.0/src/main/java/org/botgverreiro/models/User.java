@@ -36,17 +36,17 @@ public class User {
         return this;
     }
 
-    private static User fromRecordToUser(Record record) {
-        return record.into(User.class)
-                .setSeason(record.into(Season.class))
-                .setMode(record.into(Mode.class));
-    }
-
     /*
      * ===================
      * Repository Methods
      * ===================
      */
+
+    private static User fromRecordToUser(Record record) {
+        return record.into(User.class)
+                .setSeason(record.into(Season.class))
+                .setMode(record.into(Mode.class));
+    }
 
     /**
      * Get classification for a specific Season for all Modes.

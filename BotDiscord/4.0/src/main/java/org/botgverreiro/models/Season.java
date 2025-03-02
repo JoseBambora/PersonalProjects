@@ -34,7 +34,7 @@ public class Season {
     }
 
     public Command.Choice toChoice() {
-        return new Command.Choice(String.valueOf(this), this.getSeasonId());
+        return new Command.Choice(String.valueOf(this), this.seasonId);
     }
 
     public Season nextSeason() {

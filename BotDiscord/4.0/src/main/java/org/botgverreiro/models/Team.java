@@ -19,7 +19,7 @@ public class Team {
     }
 
     public Command.Choice toChoice() {
-        return new Command.Choice(this.getTeamName(), this.getTeamName());
+        return new Command.Choice(this.teamName, this.teamName);
     }
 
     public String getTeamName() {
@@ -31,7 +31,6 @@ public class Team {
      * Repository Methods
      * ===================
      */
-
 
     /**
      * Get all the available teams whose names contains a certain string.

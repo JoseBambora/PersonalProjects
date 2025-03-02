@@ -3,6 +3,7 @@ package org.botgverreiro;
 
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import org.botgverreiro.controllers.messagereceivers.Bet;
 import org.botgverreiro.controllers.slashcommands.GameAdd;
 import org.botgverreiro.controllers.slashcommands.GameDel;
 import org.botgverreiro.controllers.slashcommands.Help;
@@ -17,6 +18,7 @@ public class Main {
         configuration.addCommand(new Help());
         configuration.addCommand(new GameAdd());
         configuration.addCommand(new GameDel());
+        configuration.addMessageReceiver(new Bet());
         JDABuilder.createLight(System.getenv("TOKEN"), EnumSet.of(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT))
                 .addEventListeners(configuration)
                 .build();
