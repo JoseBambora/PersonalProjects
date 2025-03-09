@@ -8,8 +8,10 @@ import com.github.josebambora.responses.ResponseMessageReceiver;
 import com.github.josebambora.responses.ResponseMessageUpdate;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
+import org.botgverreiro.models.Game;
 import org.botgverreiro.models.Prediction;
 import org.botgverreiro.models.Settings;
+import org.botgverreiro.utils.GamesOpenedCache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +29,8 @@ public class Bet implements MessageEvent {
     @Override
     public void configure(MessageReceiver messageReceiver) {
         messageReceiver
-                .addToPipelineReceive((e,_) -> e.getChannel().getId().equals("806887861172568094"))
-                .addToPipelineUpdate((e,_) -> e.getChannel().getId().equals("806887861172568094"))
+                .addToPipelineReceive((e,_) -> e.getChannel().getId().equals(System.getenv("CHANNEL_PREDICTIONS")))
+                .addToPipelineUpdate((e,_) -> e.getChannel().getId().equals(System.getenv("CHANNEL_PREDICTIONS")))
                 .setReceived(true)
                 .setUpdates(true);
     }
@@ -47,9 +49,9 @@ public class Bet implements MessageEvent {
     private CompletionStage<Boolean> addPrediction(String userId, List<Integer>[] goals) {
         List<Integer> homeGoals = goals[0];
         List<Integer> awayGoals = goals[1];
-        if (!homeGoals.isEmpty() && !awayGoals.isEmpty() && awayGoals.size() == homeGoals.size()) {
-            // TODO: Get open Games.
-            return Settings.commitTransaction(c -> Prediction.insertPredictions(c,userId,homeGoals,homeGoals,awayGoals))
+        List<Integer> gamesOpened = GamesOpenedCache.getInstance().getOpenGamesIds();
+        if (!gamesOpened.isEmpty() && !homeGoals.isEmpty() && !awayGoals.isEmpty() && gamesOpened.size() == homeGoals.size() && awayGoals.size() == homeGoals.size()) {
+            return Settings.commitTransaction(c -> Prediction.insertPredictions(c,userId,gamesOpened,homeGoals,awayGoals))
                     .thenApply(n -> n > 0);
         }
         else

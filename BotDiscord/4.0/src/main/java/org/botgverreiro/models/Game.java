@@ -8,11 +8,15 @@ import org.botgverreiro.tables.Seasons;
 import org.botgverreiro.tables.Teams;
 import org.jooq.DSLContext;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Game {
@@ -37,6 +41,8 @@ public class Game {
     private Season season;
     private Mode mode;
 
+    private static final DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
 
     @Override
     public String toString() {
@@ -59,9 +65,32 @@ public class Game {
         return this;
     }
 
+    public LocalDateTime getDateTime() {
+        return LocalDateTime.parse(this.gameDay,pattern);
+    }
+
+    public LocalDateTime getFinishTime() {
+        return getDateTime().plusHours(3);
+    }
+
     public Game setMode(Mode mode) {
         this.mode = mode;
         return this;
+    }
+
+    public int getGameId() {
+        return gameId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Game game)) return false;
+        return gameId == game.gameId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(gameId);
     }
 
     /*
@@ -73,7 +102,7 @@ public class Game {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime gameDay = LocalDateTime.of(now.getYear(), month, day, hour, minute);
         int year = gameDay.isBefore(now) ? now.getYear() + 1 : now.getYear();
-        return LocalDateTime.of(year, month, day, hour, minute).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        return LocalDateTime.of(year, month, day, hour, minute).format(pattern);
     }
 
     public static CompletionStage<Integer> insertGame(DSLContext context, int season, String mode, int field, int month, int day, int hour, int minute, String opponent) {
@@ -101,10 +130,33 @@ public class Game {
                 .thenApply(Stream::toList);
     }
 
+    public static CompletionStage<List<Game>> getGamesNotOpened(DSLContext context) {
+        return context
+                .select()
+                .from(Games.GAMES)
+                .join(Teams.TEAMS).on(Teams.TEAMS.TEAM_NAME.eq(Games.GAMES.OPPONENT_ID))
+                .join(Modes.MODES).on(Modes.MODES.MODE_NAME.eq(Games.GAMES.MODE_NAME))
+                .join(Seasons.SEASONS).on(Seasons.SEASONS.SEASON_ID.eq(Games.GAMES.SEASON_ID))
+                .where(Games.GAMES.GAME_STATUS.eq(0))
+                .fetchAsync()
+                .thenApply(Collection::stream)
+                .thenApply(l -> l.map(g -> g.into(Game.class).setGameOpponent(g.into(Team.class)).setMode(g.into(Mode.class)).setSeason(g.into(Season.class))))
+                .thenApply(Stream::toList);
+    }
+
     public static CompletionStage<Integer> deleteGame(DSLContext context, int game) {
         return context
                 .deleteFrom(Games.GAMES)
                 .where(Games.GAMES.GAME_ID.eq(game))
+                .executeAsync();
+    }
+
+    public static CompletionStage<Integer> closeGames(DSLContext context, List<Game> games) {
+        Set<Integer> ids = games.stream().map(g -> g.gameId).collect(Collectors.toSet());
+        return context
+                .update(Games.GAMES)
+                .set(Games.GAMES.GAME_STATUS,1)
+                .where(Games.GAMES.GAME_ID.in(ids))
                 .executeAsync();
     }
 }
