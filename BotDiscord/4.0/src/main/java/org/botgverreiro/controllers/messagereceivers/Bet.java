@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import org.botgverreiro.models.Game;
 import org.botgverreiro.models.Prediction;
 import org.botgverreiro.models.Settings;
+import org.botgverreiro.utils.ExceptionsHandler;
 import org.botgverreiro.utils.GamesOpenedCache;
 
 import java.util.ArrayList;
@@ -65,7 +66,8 @@ public class Bet implements MessageEvent {
         List<Integer>[] goals = readMessage(message);
         addPrediction(userId,goals)
                 .thenApply(b -> b ? response.addEmoji("✅") : response.addEmoji("❌"))
-                .thenAccept(ResponseMessageReceiver::send);
+                .thenAccept(ResponseMessageReceiver::send)
+                .exceptionally(ExceptionsHandler::storeException);
     }
 
     @Override
@@ -75,6 +77,7 @@ public class Bet implements MessageEvent {
         List<Integer>[] goals = readMessage(message);
         addPrediction(userId,goals)
                 .thenApply(b -> b ? response.addEmoji("U+1F504") : response.addEmoji("❌"))
-                .thenAccept(ResponseMessageUpdate::send);
+                .thenAccept(ResponseMessageUpdate::send)
+                .exceptionally(ExceptionsHandler::storeException);;
     }
 }

@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import org.botgverreiro.models.Game;
 import org.botgverreiro.models.Settings;
+import org.botgverreiro.utils.ExceptionsHandler;
 import org.botgverreiro.utils.GamesOpenedCache;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ public class GameClose implements OnReadyEvent {
     private void closeGamesSend(List<Game> games){
         List<String> gamesStr = games.stream().map(Game::toString).toList();
         ResponseTextChannel responseTextChannel = new ResponseTextChannel(textChannel);
-        responseTextChannel.setTemplate("CloseGames")
+        responseTextChannel.setTemplate("GamesClose")
                 .setVariable("games",gamesStr)
                 .send();
     }
@@ -33,10 +34,11 @@ public class GameClose implements OnReadyEvent {
                 .filter(g -> g.getFinishTime().isBefore(now))
                 .toList();
         Settings.commitTransaction(c -> Game.closeGames(c,gamesFinished))
-                        .thenAccept(_ -> {
-                            GamesOpenedCache.getInstance().removeOpenGames(gamesFinished);
-                            closeGamesSend(gamesFinished);
-                        });
+                .thenAccept(_ -> {
+                    GamesOpenedCache.getInstance().removeOpenGames(gamesFinished);
+                    closeGamesSend(gamesFinished);
+                })
+                .exceptionally(ExceptionsHandler::storeException);
     }
     @Override
     public void onCall(ReadyEvent readyEvent) {

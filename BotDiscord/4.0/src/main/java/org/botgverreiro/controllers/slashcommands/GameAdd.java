@@ -12,6 +12,7 @@ import com.github.josebambora.configuration.option.OptionString;
 import com.github.josebambora.generic.SlashEvent;
 import com.github.josebambora.responses.ResponseAutoComplete;
 import com.github.josebambora.responses.ResponseCommand;
+import org.botgverreiro.utils.ExceptionsHandler;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +38,19 @@ public class GameAdd implements SlashEvent {
                 .addChoice("Casa", 0)
                 .addChoice("Fora", 1)
                 .addChoice("Neutro", 2);
-        OptionNumber optionMonth = new OptionNumber("mes", "Mês do jogo", true, Number.INTEGER);
+        OptionNumber optionMonth = new OptionNumber("mes", "Mês do jogo", true, Number.INTEGER)
+                .addChoice("Jan",1)
+                .addChoice("Fev",2)
+                .addChoice("Mar",3)
+                .addChoice("Abr",4)
+                .addChoice("Mai",5)
+                .addChoice("Jun",6)
+                .addChoice("Jul",7)
+                .addChoice("Ago",8)
+                .addChoice("Set",9)
+                .addChoice("Out",10)
+                .addChoice("Nov",11)
+                .addChoice("Dez",12);
         OptionNumber optionDay = new OptionNumber("dia", "Dia do jogo", true, Number.INTEGER);
         OptionNumber optionHour = new OptionNumber("hora", "Hora do jogo", true, Number.INTEGER);
         OptionNumber optionMinute = new OptionNumber("minuto", "Minutos do jogo", true, Number.INTEGER);
@@ -84,6 +97,7 @@ public class GameAdd implements SlashEvent {
                         .thenCompose(_ -> season == null ? Season.getLastSeason(c).thenApply(Season::getSeasonId) : CompletableFuture.completedFuture(season))
                         .thenCompose(res -> Game.insertGame(c, res, mode, field, month, day, hours, minutes, team)))
                 .thenApply(r -> r == 1 ? responseCommand.setTemplate("Success").setVariable("op", "Adicionar Jogo.") : responseCommand.setTemplate("500"))
-                .thenAccept(ResponseCommand::send);
+                .thenAccept(ResponseCommand::send)
+                .exceptionally(ExceptionsHandler::storeException);
     }
 }

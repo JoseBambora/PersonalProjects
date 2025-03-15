@@ -12,9 +12,18 @@ public class Mode {
     @Column(name = "MODE_NAME")
     private String modeName;
 
+    public String getModeId() {
+        return  modeName;
+    }
+
     @Override
     public String toString() {
         return modeName;
+    }
+
+    public Mode() {}
+    public Mode(String modeName) {
+        this.modeName = modeName;
     }
 
 

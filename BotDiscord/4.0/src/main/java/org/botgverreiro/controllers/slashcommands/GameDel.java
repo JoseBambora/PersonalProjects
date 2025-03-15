@@ -12,6 +12,7 @@ import com.github.josebambora.configuration.option.OptionNumber;
 import com.github.josebambora.generic.SlashEvent;
 import com.github.josebambora.responses.ResponseAutoComplete;
 import com.github.josebambora.responses.ResponseCommand;
+import org.botgverreiro.utils.ExceptionsHandler;
 
 import java.util.Map;
 
@@ -46,6 +47,7 @@ public class GameDel implements SlashEvent {
         Integer gameId = (Integer) map.get("jogo");
         Settings.commitTransaction(c -> Game.deleteGame(c, gameId))
                 .thenApply(r -> r == 1 ? responseCommand.setTemplate("Success").setVariable("op", "Remover Jogo.") : responseCommand.setTemplate("500"))
-                .thenAccept(ResponseCommand::send);
+                .thenAccept(ResponseCommand::send)
+                .exceptionally(ExceptionsHandler::storeException);
     }
 }

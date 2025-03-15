@@ -2,13 +2,10 @@ package org.botgverreiro.models;
 
 import jakarta.persistence.Column;
 import net.dv8tion.jda.api.interactions.commands.Command;
-import org.botgverreiro.tables.Games;
-import org.botgverreiro.tables.Modes;
-import org.botgverreiro.tables.Seasons;
-import org.botgverreiro.tables.Teams;
+import org.botgverreiro.tables.*;
 import org.jooq.DSLContext;
+import org.jooq.Record5;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -41,14 +38,21 @@ public class Game {
     private Season season;
     private Mode mode;
 
-    private static final DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm");
 
+    public Game() {}
+    public Game(Season season, Mode mode, int field, String day, String time, Team opponent) {
+        this.gameField = field;
+        this.gameDay = day + " " + time.replace(".",":");
+        this.season = season;
+        this.gameOpponent = opponent;
+        this.mode = mode;
+    }
 
     @Override
     public String toString() {
-        String modeName = this.mode.toString();
-        String gameStr = gameField == 1 ? gameOpponent.getTeamName() + "x SC Braga" : "SC Braga x " + gameOpponent.getTeamName();
-        return gameStr + "(" + modeName + ")";
+        String gameStr = gameField == 1 ? gameOpponent.getTeamName() + " x SC Braga" : "SC Braga x " + gameOpponent.getTeamName();
+        return gameStr + ", " + gameDay;
     }
 
     public Command.Choice toChoice() {
@@ -105,6 +109,17 @@ public class Game {
         return LocalDateTime.of(year, month, day, hour, minute).format(pattern);
     }
 
+    private static List<Record5<Integer,String, Integer, String, String>> combineValues(DSLContext context, List<Game> games) {
+        return games.stream()
+                .map(game -> context.newRecord(Games.GAMES.SEASON_ID, Games.GAMES.MODE_NAME, Games.GAMES.GAME_FIELD, Games.GAMES.GAME_DAY, Games.GAMES.OPPONENT_ID)
+                        .value1(game.season.getSeasonId())
+                        .value2(game.mode.getModeId())
+                        .value3(game.gameField)
+                        .value4(game.gameDay)
+                        .value5(game.gameOpponent.getTeamName()))
+                .toList();
+    }
+
     public static CompletionStage<Integer> insertGame(DSLContext context, int season, String mode, int field, int month, int day, int hour, int minute, String opponent) {
         return context
                 .insertInto(Games.GAMES)
@@ -113,6 +128,13 @@ public class Game {
                 .set(Games.GAMES.GAME_FIELD, field)
                 .set(Games.GAMES.GAME_DAY, dateConverter(month, day, hour, minute))
                 .set(Games.GAMES.OPPONENT_ID, opponent)
+                .executeAsync();
+    }
+
+    public static CompletionStage<Integer> insertGames(DSLContext context, List<Game> games) {
+        return context
+                .insertInto(Games.GAMES)
+                .set(combineValues(context,games))
                 .executeAsync();
     }
 

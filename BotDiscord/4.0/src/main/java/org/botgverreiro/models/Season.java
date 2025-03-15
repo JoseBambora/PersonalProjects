@@ -16,7 +16,7 @@ public class Season {
     private static final Logger log = LoggerFactory.getLogger(Season.class);
 
     @Column(name = "SEASON_ID")
-    private final int seasonId;
+    private int seasonId;
 
     public Season() {
         this.seasonId = -1;
