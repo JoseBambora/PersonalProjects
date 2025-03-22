@@ -8,10 +8,7 @@ import org.botgverreiro.controllers.services.GameClose;
 import org.botgverreiro.controllers.services.GameOpen;
 import org.botgverreiro.controllers.services.GetGamesWeb;
 import org.botgverreiro.controllers.services.MainService;
-import org.botgverreiro.controllers.slashcommands.GameAdd;
-import org.botgverreiro.controllers.slashcommands.GameDel;
-import org.botgverreiro.controllers.slashcommands.GameList;
-import org.botgverreiro.controllers.slashcommands.Help;
+import org.botgverreiro.controllers.slashcommands.*;
 import com.github.josebambora.configuration.Configuration;
 
 import java.util.EnumSet;
@@ -33,6 +30,7 @@ public class Main {
         configuration.addCommand(new GameAdd());
         configuration.addCommand(new GameDel());
         configuration.addCommand(new GameList());
+        configuration.addCommand(new GameInfo());
         configuration.addMessageReceiver(new Bet());
         setUpService(configuration);
 

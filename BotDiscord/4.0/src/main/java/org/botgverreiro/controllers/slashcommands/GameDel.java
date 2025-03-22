@@ -28,7 +28,7 @@ public class GameDel implements SlashEvent {
     public void configure(SlashCommand slashCommand) {
         OptionNumber optionGame = new OptionNumber("jogo", "Jogo a remover", true, Number.INTEGER)
                 .setAutoComplete(this::gameList);
-        slashCommand.setName("game_del")
+        slashCommand.setName("game-del")
                 .setDescription("Remover um jogo do calendário")
                 .setSendThinking()
                 .setEphemeral()

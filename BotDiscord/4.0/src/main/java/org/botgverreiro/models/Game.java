@@ -138,6 +138,19 @@ public class Game {
                 .executeAsync();
     }
 
+    public static CompletionStage<Game> getGame(DSLContext context, int gameId) {
+        return context.
+                select()
+                .from(Games.GAMES)
+                .join(Teams.TEAMS).on(Teams.TEAMS.TEAM_NAME.eq(Games.GAMES.OPPONENT_ID))
+                .join(Modes.MODES).on(Modes.MODES.MODE_NAME.eq(Games.GAMES.MODE_NAME))
+                .join(Seasons.SEASONS).on(Seasons.SEASONS.SEASON_ID.eq(Games.GAMES.SEASON_ID))
+                .where(Games.GAMES.GAME_ID.eq(gameId))
+                .fetchAsync()
+                .thenApply(r -> r.isEmpty() ? null : Wrappers.toGame(r.getFirst()));
+
+    }
+
     public static CompletionStage<List<Game>> getGames(DSLContext context, String opponent) {
         return context
                 .select()
@@ -148,7 +161,7 @@ public class Game {
                 .where(Games.GAMES.GAME_STATUS.eq(0), Games.GAMES.OPPONENT_ID.contains(opponent))
                 .fetchAsync()
                 .thenApply(Collection::stream)
-                .thenApply(l -> l.map(g -> g.into(Game.class).setGameOpponent(g.into(Team.class)).setMode(g.into(Mode.class)).setSeason(g.into(Season.class))))
+                .thenApply(l -> l.map(Wrappers::toGame))
                 .thenApply(Stream::toList);
     }
 
@@ -162,7 +175,7 @@ public class Game {
                 .where(Games.GAMES.GAME_STATUS.eq(0))
                 .fetchAsync()
                 .thenApply(Collection::stream)
-                .thenApply(l -> l.map(g -> g.into(Game.class).setGameOpponent(g.into(Team.class)).setMode(g.into(Mode.class)).setSeason(g.into(Season.class))))
+                .thenApply(l -> l.map(Wrappers::toGame))
                 .thenApply(Stream::toList);
     }
 
@@ -180,5 +193,45 @@ public class Game {
                 .set(Games.GAMES.GAME_STATUS,1)
                 .where(Games.GAMES.GAME_ID.in(ids))
                 .executeAsync();
+    }
+
+    public String getGameStatus() {
+        return gameStatus == 0 ? "✅ por abrir / aberto" : "❌ terminado";
+    }
+
+    public String getGameField() {
+        return gameField == 1 ? "Fora" : gameField == 0 ? "Casa" : "Neutro";
+    }
+
+    public String getGameDay() {
+        return gameDay;
+    }
+
+    public int getGamePredictions() {
+        return gamePredictions;
+    }
+
+    public int getGameWinners() {
+        return gameWinners;
+    }
+
+    public int getGameGoalsScored() {
+        return gameGoalsScored;
+    }
+
+    public int getGameGoalsSuffered() {
+        return gameGoalsSuffered;
+    }
+
+    public Team getGameOpponent() {
+        return gameOpponent;
+    }
+
+    public Season getSeason() {
+        return season;
+    }
+
+    public Mode getMode() {
+        return mode;
     }
 }

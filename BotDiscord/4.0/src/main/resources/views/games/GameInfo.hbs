@@ -1,0 +1,21 @@
+<main>
+    {{#if gameExists}}
+        # Detalhes do jogo
+
+        - **Adversário**: {{opponent}}
+        - **Data e Hora**: {{dateTime}}
+        - **Estado**: {{status}}
+        - **Modalidade**: {{mode}}
+        - **Campo**: {{field}}
+        - **Golos marcados**: {{scored}}
+        - **Golos sofridos**: {{suffered}}
+
+        # Detalhes das previsões
+
+        - **Número de previsões**: {{predictions}}
+        - **Número de vencedores**: {{correct}}
+
+    {{else}}
+        Este jogo não existe
+    {{/if}}
+</main>

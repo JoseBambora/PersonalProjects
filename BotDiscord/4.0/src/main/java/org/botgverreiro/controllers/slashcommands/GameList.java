@@ -14,7 +14,7 @@ import java.util.Map;
 public class GameList implements SlashEvent {
     @Override
     public void configure(SlashCommand slashCommand) {
-        slashCommand.setName("game_list")
+        slashCommand.setName("game-list")
                 .setDescription("Jogos agendados do bot")
                 .setEphemeral()
                 .setSendThinking();

@@ -57,7 +57,7 @@ public class GameAdd implements SlashEvent {
         OptionString optionTeam = new OptionString("adversario", "Adversário", true)
                 .setAutoComplete(this::teamsList);
 
-        slashCommand.setName("game_add")
+        slashCommand.setName("game-add")
                 .setDescription("Calendarizar um jogo")
                 .setSendThinking()
                 .setEphemeral()

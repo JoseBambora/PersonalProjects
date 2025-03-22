@@ -1,10 +1,8 @@
 package org.botgverreiro.controllers.services;
 
-import com.github.josebambora.responses.ResponseCommand;
 import org.botgverreiro.models.*;
 import org.botgverreiro.utils.ExceptionsHandler;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import retrofit2.Call;
@@ -14,11 +12,8 @@ import retrofit2.Retrofit;
 import retrofit2.http.GET;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class GetGamesWeb {
     public interface Requests {
@@ -44,7 +39,7 @@ public class GetGamesWeb {
     }
 
     public void call() {
-        Call<String> html = requests.getResults();
+        Call<String> html = requests.getNextGames();
         html.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
