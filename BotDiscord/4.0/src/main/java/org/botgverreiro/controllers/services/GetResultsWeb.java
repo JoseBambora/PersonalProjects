@@ -60,21 +60,21 @@ public class GetResultsWeb implements OnReadyEvent {
                             .thenCompose(g -> deletePredictions.thenApply(g::setGamePredictions))
                             .thenCompose(g -> Settings.commitTransaction(c -> Game.updateGame(c,g)));
 
-                    // ResponseTextChannel responseTextChannel = new ResponseTextChannel(textChannel);
-                    // responseTextChannel.setTemplate("games/GameWinners");
-                    // game.thenApply(g -> responseTextChannel.setVariable("opponent",g.getGameOpponent().getTeamName()));
-                    // addPointsWinners.thenApply(s -> responseTextChannel.setVariable("winnersSize",s));
-                    // deletePredictions.thenApply(s -> responseTextChannel.setVariable("predictions",s));
-                    // winners.thenApply(w -> responseTextChannel.setVariable("winners", w.stream().map(User::getUserId)));
+                    ResponseTextChannel responseTextChannel = new ResponseTextChannel(textChannel);
+                    responseTextChannel.setTemplate("games/GameWinners");
+                    game.thenApply(g -> responseTextChannel.setVariable("opponent",g.getGameOpponent().getTeamName()));
+                    addPointsWinners.thenApply(s -> responseTextChannel.setVariable("winnersSize",s));
+                    deletePredictions.thenApply(s -> responseTextChannel.setVariable("predictions",s));
+                    winners.thenApply(w -> responseTextChannel.setVariable("winners", w.stream().map(User::getUserId)));
 
-                    // game.thenCompose(_ -> predictions)
-                    //         .thenCompose(_ -> winners)
-                    //         .thenCompose(_ -> losers)
-                    //                 .thenCompose(_ -> addPointsWinners)
-                    //                         .thenCompose(_ -> addPointsLosers)
-                    //                                 .thenCompose(_ -> deletePredictions)
-                    //                                         .thenCompose(_ -> updateGame)
-                    //                                                 .thenAccept(_ -> responseTextChannel.send());
+                    game.thenCompose(_ -> predictions)
+                            .thenCompose(_ -> winners)
+                            .thenCompose(_ -> losers)
+                                    .thenCompose(_ -> addPointsWinners)
+                                            .thenCompose(_ -> addPointsLosers)
+                                                    .thenCompose(_ -> deletePredictions)
+                                                            .thenCompose(_ -> updateGame)
+                                                                    .thenAccept(_ -> responseTextChannel.send());
                 }
             }
 
