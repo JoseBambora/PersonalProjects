@@ -35,6 +35,7 @@ public class GameClose implements OnReadyEvent {
                 .toList();
         Settings.commitTransaction(c -> Game.closeGames(c,gamesFinished))
                 .thenAccept(_ -> {
+                    MainService.getInstance().addServiceScheduled(() -> GetResultsWeb.getInstance().call(),gamesFinished.stream().map(Game::getFinishTime).toList());
                     GamesOpenedCache.getInstance().removeOpenGames(gamesFinished);
                     closeGamesSend(gamesFinished);
                 })

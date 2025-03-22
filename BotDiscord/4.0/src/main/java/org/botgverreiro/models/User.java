@@ -79,9 +79,9 @@ public class User {
      * @param mode The associated mode.
      * @return A list containing the association of users-season-mode.
      */
-    private static List<Record3<String, Integer, String>> combineValues(DSLContext context, Collection<String> users, int season, String mode) {
-        return users.stream()
-                .map(n -> context.newRecord(Users.USERS.USER_ID, Users.USERS.SEASON_ID, Users.USERS.MODE_NAME).value1(n).value2(season).value3(mode))
+    private static List<Record3<String, Integer, String>> combineValues(DSLContext context, String userId, List<Game> games) {
+        return games.stream()
+                .map(g -> context.newRecord(Users.USERS.USER_ID, Users.USERS.SEASON_ID, Users.USERS.MODE_NAME).value1(userId).value2(g.getSeason().getSeasonId()).value3(g.getMode().getModeId()))
                 .toList();
     }
 
@@ -96,13 +96,21 @@ public class User {
      * @param predictions Predictions to increment.
      * @return An integer containing the number of affected rows.
      */
-    public static CompletionStage<Integer> updatePoints(DSLContext context, Collection<String> users, int season, String mode, int points, int predictions) {
+    public static CompletionStage<Integer> updatePoints(DSLContext context, List<User> users, boolean areWinners) {
+        List<String> userIds = users.stream().map(u -> u.userId).toList();
         return context
-                .insertInto(Users.USERS, Users.USERS.USER_ID, Users.USERS.SEASON_ID, Users.USERS.MODE_NAME)
-                .valuesOfRecords(combineValues(context, users, season, mode))
-                .onDuplicateKeyUpdate()
-                .set(Users.USERS.POINTS, Users.USERS.POINTS.plus(points))
-                .set(Users.USERS.PREDICTIONS, Users.USERS.PREDICTIONS.plus(predictions))
+                .update(Users.USERS)
+                .set(Users.USERS.POINTS, Users.USERS.POINTS.plus(areWinners ? 3 : 1))
+                .set(Users.USERS.PREDICTIONS, Users.USERS.PREDICTIONS.plus(1))
+                .where(Users.USERS.USER_ID.in(userIds))
+                .executeAsync();
+    }
+
+    public static CompletionStage<Integer> insertUser(DSLContext context, String userId, List<Game> games) {
+        return context
+                .insertInto(Users.USERS)
+                .set(combineValues(context,userId,games))
+                .onConflictDoNothing()
                 .executeAsync();
     }
 
@@ -136,5 +144,9 @@ public class User {
                 .deleteFrom(Users.USERS)
                 .where(Users.USERS.USER_ID.eq(user))
                 .executeAsync();
+    }
+
+    public String getUserId() {
+        return userId;
     }
 }

@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import org.botgverreiro.models.Game;
 import org.botgverreiro.models.Prediction;
 import org.botgverreiro.models.Settings;
+import org.botgverreiro.models.User;
 import org.botgverreiro.utils.ExceptionsHandler;
 import org.botgverreiro.utils.GamesOpenedCache;
 
@@ -50,9 +51,10 @@ public class Bet implements MessageEvent {
     private CompletionStage<Boolean> addPrediction(String userId, List<Integer>[] goals) {
         List<Integer> homeGoals = goals[0];
         List<Integer> awayGoals = goals[1];
-        List<Integer> gamesOpened = GamesOpenedCache.getInstance().getOpenGamesIds();
+        List<Game> gamesOpened = GamesOpenedCache.getInstance().getOpenGames();
         if (!gamesOpened.isEmpty() && !homeGoals.isEmpty() && !awayGoals.isEmpty() && gamesOpened.size() == homeGoals.size() && awayGoals.size() == homeGoals.size()) {
-            return Settings.commitTransaction(c -> Prediction.insertPredictions(c,userId,gamesOpened,homeGoals,awayGoals))
+            return Settings.commitTransaction(c -> User.insertUser(c,userId,gamesOpened))
+                    .thenCompose(_ -> Settings.commitTransaction(c -> Prediction.insertPredictions(c,userId,gamesOpened,homeGoals,awayGoals)))
                     .thenApply(n -> n > 0);
         }
         else

@@ -33,7 +33,7 @@ public class GameOpen implements OnReadyEvent {
                  .thenApply(l -> l.filter(g -> g.getDateTime().toLocalDate().equals(today)))
                  .thenApply(Stream::toList)
                  .thenAccept(games -> {
-                     MainService.getInstance().addServiceScheduled(() -> GameClose.getInstance().call(),games.stream().map(Game::getFinishTime).toList());
+                     MainService.getInstance().addServiceScheduled(() -> GameClose.getInstance().call(),games.stream().map(Game::getStartTime).toList());
                      openGameSend(games);
                      GamesOpenedCache.getInstance().addOpenGames(games);
                  })

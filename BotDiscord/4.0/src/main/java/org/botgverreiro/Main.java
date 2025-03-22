@@ -4,10 +4,7 @@ package org.botgverreiro;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.botgverreiro.controllers.messagereceivers.Bet;
-import org.botgverreiro.controllers.services.GameClose;
-import org.botgverreiro.controllers.services.GameOpen;
-import org.botgverreiro.controllers.services.GetGamesWeb;
-import org.botgverreiro.controllers.services.MainService;
+import org.botgverreiro.controllers.services.*;
 import org.botgverreiro.controllers.slashcommands.*;
 import com.github.josebambora.configuration.Configuration;
 
@@ -18,11 +15,15 @@ public class Main {
     private static void setUpService(Configuration configuration) {
         MainService mainService = MainService.getInstance();
         GetGamesWeb getGamesWeb = GetGamesWeb.getInstance();
+        GetResultsWeb getResultsWeb = GetResultsWeb.getInstance();
         GameClose gameClose = GameClose.getInstance();
         GameOpen gameOpen = GameOpen.getInstance();
+
         mainService.addServiceDaily(gameOpen::call,Integer.parseInt(System.getenv("RUN_DAILY_TIME")));
         mainService.addServiceDaily(getGamesWeb::call, Integer.parseInt(System.getenv("RUN_DAILY_TIME")));
         configuration.addReadyEvent(gameOpen);
+        configuration.addReadyEvent(gameClose);
+        configuration.addReadyEvent(getResultsWeb);
     }
     private static void startBot() {
         Configuration configuration = new Configuration();
@@ -41,6 +42,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        startBot();
+        // startBot();
+        GetResultsWeb.getInstance().call();
     }
 }

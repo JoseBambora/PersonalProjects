@@ -73,6 +73,9 @@ public class Game {
         return LocalDateTime.parse(this.gameDay,pattern);
     }
 
+    public LocalDateTime getStartTime() {
+        return getDateTime();
+    }
     public LocalDateTime getFinishTime() {
         return getDateTime().plusHours(3);
     }
@@ -138,6 +141,17 @@ public class Game {
                 .executeAsync();
     }
 
+    public static CompletionStage<Integer> updateGame(DSLContext context, Game game) {
+        return context
+                .update(Games.GAMES)
+                .set(Games.GAMES.GOALS_SCORED, game.gameGoalsScored)
+                .set(Games.GAMES.GOALS_SUFFERED, game.gameGoalsSuffered)
+                .set(Games.GAMES.PREDICTIONS, game.gamePredictions)
+                .set(Games.GAMES.WINNERS, game.gameWinners)
+                .where(Games.GAMES.GAME_ID.eq(game.gameId))
+                .executeAsync();
+    }
+
     public static CompletionStage<Game> getGame(DSLContext context, int gameId) {
         return context.
                 select()
@@ -149,6 +163,19 @@ public class Game {
                 .fetchAsync()
                 .thenApply(r -> r.isEmpty() ? null : Wrappers.toGame(r.getFirst()));
 
+    }
+
+    public static CompletionStage<Game> getLastGame(DSLContext context, Mode mode) {
+        return context.
+                select()
+                .from(Games.GAMES)
+                .join(Teams.TEAMS).on(Teams.TEAMS.TEAM_NAME.eq(Games.GAMES.OPPONENT_ID))
+                .join(Modes.MODES).on(Modes.MODES.MODE_NAME.eq(Games.GAMES.MODE_NAME))
+                .join(Seasons.SEASONS).on(Seasons.SEASONS.SEASON_ID.eq(Games.GAMES.SEASON_ID))
+                .where(Games.GAMES.GAME_STATUS.eq(1), Games.GAMES.MODE_NAME.eq(mode.getModeId()))
+                .orderBy(Games.GAMES.GAME_ID.desc())
+                .fetchAsync()
+                .thenApply(r -> r.isEmpty() ? null : Wrappers.toGame(r.getFirst()));
     }
 
     public static CompletionStage<List<Game>> getGames(DSLContext context, String opponent) {
@@ -233,5 +260,25 @@ public class Game {
 
     public Mode getMode() {
         return mode;
+    }
+
+    public Game setGameGoalsScored(int gameGoalsScored) {
+        this.gameGoalsScored = gameGoalsScored;
+        return this;
+    }
+
+    public Game setGameGoalsSuffered(int gameGoalsSuffered) {
+        this.gameGoalsSuffered = gameGoalsSuffered;
+        return this;
+    }
+
+    public Game setGameWinners(int gameWinners) {
+        this.gameWinners = gameWinners;
+        return this;
+    }
+
+    public Game setGamePredictions(int gamePredictions) {
+        this.gamePredictions = gamePredictions;
+        return this;
     }
 }

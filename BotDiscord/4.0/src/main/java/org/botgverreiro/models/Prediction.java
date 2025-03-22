@@ -28,23 +28,27 @@ public class Prediction {
         return this;
     }
 
+    public boolean isWinner(int homeGoals, int awayGoals) {
+        return this.homeGoals == homeGoals && this.awayGoals == awayGoals;
+    }
+
     /*
      * ===================
      * Repository Methods
      * ===================
      */
 
-    private static List<Record4<Integer,String, Integer, Integer>> combineValues(DSLContext context, String user, List<Integer> games, List<Integer> homeGoals, List<Integer> awayGoals) {
+    private static List<Record4<Integer,String, Integer, Integer>> combineValues(DSLContext context, String user, List<Game> games, List<Integer> homeGoals, List<Integer> awayGoals) {
         return IntStream.range(0, games.size())
                 .mapToObj(g -> context.newRecord(Predictions.PREDICTIONS.GAME_ID,Predictions.PREDICTIONS.USER_ID, Predictions.PREDICTIONS.GOALS_HOME, Predictions.PREDICTIONS.GOALS_AWAY)
-                        .value1(games.get(g))
+                        .value1(games.get(g).getGameId())
                         .value2(user)
                         .value3(homeGoals.get(g))
                         .value4(awayGoals.get(g)))
                 .toList();
     }
 
-    public static CompletionStage<Integer> insertPredictions(DSLContext context, String user, List<Integer> games, List<Integer> homeGoals, List<Integer> awayGoals) {
+    public static CompletionStage<Integer> insertPredictions(DSLContext context, String user, List<Game> games, List<Integer> homeGoals, List<Integer> awayGoals) {
         return context
                 .insertInto(Predictions.PREDICTIONS)
                 .set(combineValues(context,user,games,homeGoals,awayGoals))
@@ -71,5 +75,13 @@ public class Prediction {
                 .deleteFrom(Predictions.PREDICTIONS)
                 .where(Predictions.PREDICTIONS.GAME_ID.eq(game))
                 .executeAsync();
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

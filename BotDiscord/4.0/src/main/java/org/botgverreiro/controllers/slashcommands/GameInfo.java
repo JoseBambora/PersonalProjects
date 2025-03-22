@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.botgverreiro.models.Game;
 import org.botgverreiro.models.Settings;
 import org.botgverreiro.utils.Cache;
+import org.botgverreiro.utils.ExceptionsHandler;
 
 import java.util.Map;
 
@@ -56,6 +57,7 @@ public class GameInfo implements SlashEvent {
                                 .setVariable("correct",g.getGameWinners())
                         : responseCommand.setVariable("gameExists", false))
                 .thenApply(r -> r.setTemplate("games/GameInfo"))
-                .thenAccept(ResponseCommand::send);
+                .thenAccept(ResponseCommand::send)
+                .exceptionally(ExceptionsHandler::storeException);
     }
 }
