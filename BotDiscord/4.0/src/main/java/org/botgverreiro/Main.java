@@ -1,12 +1,12 @@
 package org.botgverreiro;
 
 
+import com.github.josebambora.configuration.Configuration;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.botgverreiro.controllers.messagereceivers.Bet;
 import org.botgverreiro.controllers.services.*;
 import org.botgverreiro.controllers.slashcommands.*;
-import com.github.josebambora.configuration.Configuration;
 
 import java.util.EnumSet;
 
@@ -19,12 +19,13 @@ public class Main {
         GameClose gameClose = GameClose.getInstance();
         GameOpen gameOpen = GameOpen.getInstance();
 
-        mainService.addServiceDaily(gameOpen::call,Integer.parseInt(System.getenv("RUN_DAILY_TIME")));
+        mainService.addServiceDaily(gameOpen::call, Integer.parseInt(System.getenv("RUN_DAILY_TIME")));
         mainService.addServiceDaily(getGamesWeb::call, Integer.parseInt(System.getenv("RUN_DAILY_TIME")));
         configuration.addReadyEvent(gameOpen);
         configuration.addReadyEvent(gameClose);
         configuration.addReadyEvent(getResultsWeb);
     }
+
     private static void startBot() {
         Configuration configuration = new Configuration();
         configuration.addCommand(new Help());
@@ -42,7 +43,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        // startBot();
-        GetResultsWeb.getInstance().call();
+        startBot();
+        // GetResultsWeb.getInstance().call();
     }
 }

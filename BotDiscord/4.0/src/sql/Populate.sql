@@ -8,7 +8,7 @@ INSERT INTO USERS VALUES
     ("4",2425,"Futebol",40,10);
 
 INSERT INTO GAMES VALUES
-    (45,2425,"Futebol",1,1,"16 mar. 15:30","Farense",0,0,0,0);
+    (45,2425,"Futebol",2,1,"16 mar. 15:30","Farense",0,0,0,0);
 
 
 INSERT INTO PREDICTIONS VALUES

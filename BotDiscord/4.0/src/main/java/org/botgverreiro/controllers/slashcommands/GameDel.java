@@ -1,18 +1,19 @@
 package org.botgverreiro.controllers.slashcommands;
 
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.botgverreiro.models.Game;
-import org.botgverreiro.models.Settings;
-import org.botgverreiro.utils.Cache;
 import com.github.josebambora.configuration.SlashCommand;
 import com.github.josebambora.configuration.option.Number;
 import com.github.josebambora.configuration.option.OptionNumber;
 import com.github.josebambora.generic.SlashEvent;
 import com.github.josebambora.responses.ResponseAutoComplete;
 import com.github.josebambora.responses.ResponseCommand;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.botgverreiro.models.Game;
+import org.botgverreiro.models.Settings;
+import org.botgverreiro.utils.Cache;
 import org.botgverreiro.utils.ExceptionsHandler;
+import org.botgverreiro.utils.GameStatus;
 
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class GameDel implements SlashEvent {
     private final Cache<String, Game> cacheGames;
 
     public GameDel() {
-        cacheGames = new Cache<>(s -> Settings.commitTransaction(c -> Game.getGames(c, s)));
+        cacheGames = new Cache<>(s -> Settings.commitTransaction(c -> Game.selectGames(c, s, GameStatus.TO_OPEN.ordinal())));
     }
 
     @Override

@@ -4,6 +4,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RequestsClass {
+    private static Requests instance = null;
+
     private static Requests buildRequests() {
         return new Retrofit.Builder()
                 .baseUrl(System.getenv("URL_SITE"))
@@ -11,7 +13,6 @@ public class RequestsClass {
                 .build()
                 .create(Requests.class);
     }
-    private static Requests instance = null;
 
     public static Requests getRequests() {
         if (instance == null)

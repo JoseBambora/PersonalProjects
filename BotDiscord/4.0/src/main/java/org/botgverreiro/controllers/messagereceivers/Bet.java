@@ -2,8 +2,6 @@ package org.botgverreiro.controllers.messagereceivers;
 
 import com.github.josebambora.configuration.MessageReceiver;
 import com.github.josebambora.generic.MessageEvent;
-import com.github.josebambora.responses.Response;
-import com.github.josebambora.responses.ResponseMessage;
 import com.github.josebambora.responses.ResponseMessageReceiver;
 import com.github.josebambora.responses.ResponseMessageUpdate;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -25,14 +23,16 @@ import java.util.regex.Pattern;
 
 public class Bet implements MessageEvent {
     private final Pattern pattern;
+
     public Bet() {
         pattern = Pattern.compile("(\\d+) *[x\\-] *(\\d+)");
     }
+
     @Override
     public void configure(MessageReceiver messageReceiver) {
         messageReceiver
-                .addToPipelineReceive((e,_) -> e.getChannel().getId().equals(System.getenv("CHANNEL_PREDICTIONS")))
-                .addToPipelineUpdate((e,_) -> e.getChannel().getId().equals(System.getenv("CHANNEL_PREDICTIONS")))
+                .addToPipelineReceive((e, _) -> e.getChannel().getId().equals(System.getenv("CHANNEL_PREDICTIONS")))
+                .addToPipelineUpdate((e, _) -> e.getChannel().getId().equals(System.getenv("CHANNEL_PREDICTIONS")))
                 .setReceived(true)
                 .setUpdates(true);
     }
@@ -45,7 +45,7 @@ public class Bet implements MessageEvent {
             homeGoals.add(Integer.parseInt(matcher.group(1)));
             awayGoals.add(Integer.parseInt(matcher.group(2)));
         }
-        return new List[]{homeGoals,awayGoals};
+        return new List[]{homeGoals, awayGoals};
     }
 
     private CompletionStage<Boolean> addPrediction(String userId, List<Integer>[] goals) {
@@ -53,20 +53,20 @@ public class Bet implements MessageEvent {
         List<Integer> awayGoals = goals[1];
         List<Game> gamesOpened = GamesOpenedCache.getInstance().getOpenGames();
         if (!gamesOpened.isEmpty() && !homeGoals.isEmpty() && !awayGoals.isEmpty() && gamesOpened.size() == homeGoals.size() && awayGoals.size() == homeGoals.size()) {
-            return Settings.commitTransaction(c -> User.insertUser(c,userId,gamesOpened))
-                    .thenCompose(_ -> Settings.commitTransaction(c -> Prediction.insertPredictions(c,userId,gamesOpened,homeGoals,awayGoals)))
+            return Settings.commitTransaction(c -> User.insertUser(c, userId, gamesOpened))
+                    .thenCompose(_ -> Settings.commitTransaction(c -> Prediction.insertPredictions(c, userId, gamesOpened, homeGoals, awayGoals)))
                     .thenApply(n -> n > 0);
-        }
-        else
+        } else
             return CompletableFuture.completedFuture(false);
 
     }
+
     @Override
     public void onCall(MessageReceivedEvent event, Map<String, Object> data, ResponseMessageReceiver response) {
         String userId = event.getAuthor().getId();
         String message = event.getMessage().getContentDisplay();
         List<Integer>[] goals = readMessage(message);
-        addPrediction(userId,goals)
+        addPrediction(userId, goals)
                 .thenApply(b -> b ? response.addEmoji("✅") : response.addEmoji("❌"))
                 .thenAccept(ResponseMessageReceiver::send)
                 .exceptionally(ExceptionsHandler::storeException);
@@ -77,9 +77,9 @@ public class Bet implements MessageEvent {
         String userId = event.getAuthor().getId();
         String message = event.getMessage().getContentDisplay();
         List<Integer>[] goals = readMessage(message);
-        addPrediction(userId,goals)
+        addPrediction(userId, goals)
                 .thenApply(b -> b ? response.addEmoji("U+1F504") : response.addEmoji("❌"))
                 .thenAccept(ResponseMessageUpdate::send)
-                .exceptionally(ExceptionsHandler::storeException);;
+                .exceptionally(ExceptionsHandler::storeException);
     }
 }

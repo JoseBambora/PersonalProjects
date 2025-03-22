@@ -20,12 +20,12 @@ public class GameInfo implements SlashEvent {
     private final Cache<String, Game> cacheGames;
 
     public GameInfo() {
-        cacheGames = new Cache<>(s -> Settings.commitTransaction(c -> Game.getGames(c, s)));
+        cacheGames = new Cache<>(s -> Settings.commitTransaction(c -> Game.selectGames(c, s)));
     }
 
     @Override
     public void configure(SlashCommand slashCommand) {
-        OptionNumber optionNumber = new OptionNumber("jogo","Jogo a consultar",true, Number.INTEGER)
+        OptionNumber optionNumber = new OptionNumber("jogo", "Jogo a consultar", true, Number.INTEGER)
                 .setAutoComplete(this::gameList);
         slashCommand
                 .setName("game-inf")
@@ -40,21 +40,22 @@ public class GameInfo implements SlashEvent {
                 .thenAccept(l -> l.forEach(g -> responseAutoComplete.addChoice(g.toChoice())))
                 .thenAccept(_ -> responseAutoComplete.send());
     }
+
     @Override
     public void onCall(SlashCommandInteractionEvent slashCommandInteractionEvent, Map<String, Object> map, ResponseCommand responseCommand) {
         Integer gameId = (Integer) map.get("jogo");
-        Settings.commitTransaction(c -> Game.getGame(c,gameId))
+        Settings.commitTransaction(c -> Game.selectGame(c, gameId))
                 .thenApply(g -> g != null ?
                         responseCommand.setVariable("gameExists", true)
-                                .setVariable("opponent",g.getGameOpponent().getTeamName())
-                                .setVariable("dateTime",g.getGameDay())
+                                .setVariable("opponent", g.getGameOpponent().getTeamName())
+                                .setVariable("dateTime", g.getGameDay())
                                 .setVariable("status", g.getGameStatus())
                                 .setVariable("mode", g.getMode().toString())
-                                .setVariable("field",g.getGameField())
+                                .setVariable("field", g.getGameField())
                                 .setVariable("scored", g.getGameGoalsScored())
                                 .setVariable("suffered", g.getGameGoalsSuffered())
                                 .setVariable("predictions", g.getGamePredictions())
-                                .setVariable("correct",g.getGameWinners())
+                                .setVariable("correct", g.getGameWinners())
                         : responseCommand.setVariable("gameExists", false))
                 .thenApply(r -> r.setTemplate("games/GameInfo"))
                 .thenAccept(ResponseCommand::send)

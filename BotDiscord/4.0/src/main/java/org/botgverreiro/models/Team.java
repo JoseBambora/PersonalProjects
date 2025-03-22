@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import org.botgverreiro.tables.Teams;
 import org.jooq.DSLContext;
-import org.jooq.Record1;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -13,34 +12,18 @@ public class Team {
     @Column(name = "TEAM_NAME")
     private String teamName;
 
-    public Team() {}
+    public Team() {
+    }
+
     public Team(String teamName) {
         this.teamName = teamName;
     }
-    @Override
-    public String toString() {
-        return "Team(" + teamName + ")";
-    }
-
-    public Command.Choice toChoice() {
-        return new Command.Choice(this.teamName, this.teamName);
-    }
-
-    public String getTeamName() {
-        return teamName;
-    }
-
-    /*
-     * ===================
-     * Repository Methods
-     * ===================
-     */
 
     /**
      * Get all the available teams whose names contains a certain string.
      *
      * @param context Database context.
-     * @param name Team name.
+     * @param name    Team name.
      * @return A list containing all the teams that are similar to a certain name.
      */
     public static CompletionStage<List<Team>> getSimilarTeams(DSLContext context, String name) {
@@ -54,7 +37,7 @@ public class Team {
      * Inserts a new team.
      *
      * @param context Database context.
-     * @param team Team name to insert.
+     * @param team    Team name to insert.
      * @return 1 if success, 0 otherwise.
      */
     public static CompletionStage<Integer> insertTeam(DSLContext context, String team) {
@@ -69,7 +52,7 @@ public class Team {
      * Inserts new teams.
      *
      * @param context Database context.
-     * @param teams Teams name to insert.
+     * @param teams   Teams name to insert.
      * @return size of the list teams if success, 0 otherwise.
      */
     public static CompletionStage<Integer> insertTeams(DSLContext context, List<Team> teams) {
@@ -78,5 +61,24 @@ public class Team {
                 .set(teams.stream().map(t -> context.newRecord(Teams.TEAMS.TEAM_NAME).value1(t.teamName)).toList())
                 .onConflictDoNothing()
                 .executeAsync();
+    }
+
+    /*
+     * ===================
+     * Repository Methods
+     * ===================
+     */
+
+    @Override
+    public String toString() {
+        return "Team(" + teamName + ")";
+    }
+
+    public Command.Choice toChoice() {
+        return new Command.Choice(this.teamName, this.teamName);
+    }
+
+    public String getTeamName() {
+        return teamName;
     }
 }

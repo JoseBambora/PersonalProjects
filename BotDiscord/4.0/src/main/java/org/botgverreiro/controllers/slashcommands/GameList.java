@@ -22,8 +22,8 @@ public class GameList implements SlashEvent {
 
     @Override
     public void onCall(SlashCommandInteractionEvent slashCommandInteractionEvent, Map<String, Object> map, ResponseCommand responseCommand) {
-        Settings.commitTransaction(Game::getGamesNotOpened)
-                .thenApply(g -> responseCommand.setTemplate("games/GamesList").setVariable("games", ListUtils.subList(g,15)))
+        Settings.commitTransaction(Game::selectGamesNotOpened)
+                .thenApply(g -> responseCommand.setTemplate("games/GamesList").setVariable("games", ListUtils.subList(g, 15)))
                 .thenAccept(ResponseCommand::send)
                 .exceptionally(ExceptionsHandler::storeException);
     }

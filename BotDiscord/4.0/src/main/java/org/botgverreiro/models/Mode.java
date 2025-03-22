@@ -12,27 +12,12 @@ public class Mode {
     @Column(name = "MODE_NAME")
     private String modeName;
 
-    public String getModeId() {
-        return  modeName;
+    public Mode() {
     }
 
-    @Override
-    public String toString() {
-        return modeName;
-    }
-
-    public Mode() {}
     public Mode(String modeName) {
         this.modeName = modeName;
     }
-
-
-
-    /*
-     * ===================
-     * Repository Methods
-     * ===================
-     */
 
     /**
      * Get all the available modes.
@@ -60,11 +45,19 @@ public class Mode {
                 .into(Mode.class);
     }
 
+
+
+    /*
+     * ===================
+     * Repository Methods
+     * ===================
+     */
+
     /**
      * Inserts a new mode.
      *
      * @param context Database context.
-     * @param mode Mode name to insert.
+     * @param mode    Mode name to insert.
      * @return 1 if success, 0 otherwise.
      */
     public static CompletionStage<Integer> insertMode(DSLContext context, String mode) {
@@ -73,5 +66,14 @@ public class Mode {
                 .set(Modes.MODES.MODE_NAME, mode)
                 .onConflictDoNothing()
                 .executeAsync();
+    }
+
+    public String getModeId() {
+        return modeName;
+    }
+
+    @Override
+    public String toString() {
+        return modeName;
     }
 }

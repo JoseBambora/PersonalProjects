@@ -15,9 +15,10 @@ public class ExceptionsHandler {
                     "\n\n";
             out.println(stringBuilder);
         } catch (FileNotFoundException e) {
-            System.out.println(e.toString());
+            System.out.println(e);
         }
     }
+
     public static Void storeException(Throwable throwable) {
         write(throwable);
         return null;

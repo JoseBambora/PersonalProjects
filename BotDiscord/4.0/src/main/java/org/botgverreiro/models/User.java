@@ -25,23 +25,6 @@ public class User {
     @Column(name = "PREDICTIONS")
     private int userPredictions;
 
-
-    public User setMode(Mode mode) {
-        this.mode = mode;
-        return this;
-    }
-
-    public User setSeason(Season season) {
-        this.season = season;
-        return this;
-    }
-
-    /*
-     * ===================
-     * Repository Methods
-     * ===================
-     */
-
     private static User fromRecordToUser(Record record) {
         return record.into(User.class)
                 .setSeason(record.into(Season.class))
@@ -52,7 +35,7 @@ public class User {
      * Get classification for a specific Season for all Modes.
      *
      * @param context Database context.
-     * @param season Season in question.
+     * @param season  Season in question.
      * @return Sorted list of users by points.
      */
     public static CompletionStage<List<User>> getClassificationSeason(DSLContext context, int season) {
@@ -62,7 +45,7 @@ public class User {
                 .join(Modes.MODES).on(Users.USERS.MODE_NAME.eq(Modes.MODES.MODE_NAME))
                 .join(Seasons.SEASONS).on(Users.USERS.SEASON_ID.eq(Seasons.SEASONS.SEASON_ID))
                 .where(Users.USERS.SEASON_ID.eq(season))
-                .orderBy(Users.USERS.MODE_NAME,Users.USERS.POINTS.desc())
+                .orderBy(Users.USERS.MODE_NAME, Users.USERS.POINTS.desc())
                 .fetchAsync()
                 .thenApply(Collection::stream)
                 .thenApply(r -> r.map(User::fromRecordToUser))
@@ -74,9 +57,9 @@ public class User {
      * Auxiliary function to update the points, by combining a list of users for the same season and mode.
      *
      * @param context Database context.
-     * @param users Users to update points.
-     * @param season Season to update points.
-     * @param mode The associated mode.
+     * @param users   Users to update points.
+     * @param season  Season to update points.
+     * @param mode    The associated mode.
      * @return A list containing the association of users-season-mode.
      */
     private static List<Record3<String, Integer, String>> combineValues(DSLContext context, String userId, List<Game> games) {
@@ -85,14 +68,20 @@ public class User {
                 .toList();
     }
 
+    /*
+     * ===================
+     * Repository Methods
+     * ===================
+     */
+
     /**
      * Method that updates the classification points.
      *
-     * @param context Database context.
-     * @param users Users to update points.
-     * @param season Season in the context.
-     * @param mode Mode in the context.
-     * @param points Points to increment.
+     * @param context     Database context.
+     * @param users       Users to update points.
+     * @param season      Season in the context.
+     * @param mode        Mode in the context.
+     * @param points      Points to increment.
      * @param predictions Predictions to increment.
      * @return An integer containing the number of affected rows.
      */
@@ -109,7 +98,7 @@ public class User {
     public static CompletionStage<Integer> insertUser(DSLContext context, String userId, List<Game> games) {
         return context
                 .insertInto(Users.USERS)
-                .set(combineValues(context,userId,games))
+                .set(combineValues(context, userId, games))
                 .onConflictDoNothing()
                 .executeAsync();
     }
@@ -118,7 +107,7 @@ public class User {
      * Method that returns user statistics.
      *
      * @param context Database context.
-     * @param user User to see their stats.
+     * @param user    User to see their stats.
      * @return User statistics.
      */
     public static CompletionStage<User> getUserStats(DSLContext context, String user) {
@@ -136,7 +125,7 @@ public class User {
      * Delete information of a user.
      *
      * @param context Database context.
-     * @param user User to delete.
+     * @param user    User to delete.
      * @return All the affected rows, 1 if success, 0 otherwise.
      */
     public static CompletionStage<Integer> deleteUser(DSLContext context, String user) {
@@ -144,6 +133,16 @@ public class User {
                 .deleteFrom(Users.USERS)
                 .where(Users.USERS.USER_ID.eq(user))
                 .executeAsync();
+    }
+
+    public User setMode(Mode mode) {
+        this.mode = mode;
+        return this;
+    }
+
+    public User setSeason(Season season) {
+        this.season = season;
+        return this;
     }
 
     public String getUserId() {

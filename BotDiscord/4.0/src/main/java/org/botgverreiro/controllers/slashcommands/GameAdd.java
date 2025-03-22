@@ -1,10 +1,5 @@
 package org.botgverreiro.controllers.slashcommands;
 
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.botgverreiro.models.*;
-import org.botgverreiro.utils.Cache;
 import com.github.josebambora.configuration.SlashCommand;
 import com.github.josebambora.configuration.option.Number;
 import com.github.josebambora.configuration.option.OptionNumber;
@@ -12,10 +7,14 @@ import com.github.josebambora.configuration.option.OptionString;
 import com.github.josebambora.generic.SlashEvent;
 import com.github.josebambora.responses.ResponseAutoComplete;
 import com.github.josebambora.responses.ResponseCommand;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.botgverreiro.models.*;
+import org.botgverreiro.utils.Cache;
 import org.botgverreiro.utils.ExceptionsHandler;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public class GameAdd implements SlashEvent {
 
@@ -39,18 +38,18 @@ public class GameAdd implements SlashEvent {
                 .addChoice("Fora", 1)
                 .addChoice("Neutro", 2);
         OptionNumber optionMonth = new OptionNumber("mes", "Mês do jogo", true, Number.INTEGER)
-                .addChoice("Jan",1)
-                .addChoice("Fev",2)
-                .addChoice("Mar",3)
-                .addChoice("Abr",4)
-                .addChoice("Mai",5)
-                .addChoice("Jun",6)
-                .addChoice("Jul",7)
-                .addChoice("Ago",8)
-                .addChoice("Set",9)
-                .addChoice("Out",10)
-                .addChoice("Nov",11)
-                .addChoice("Dez",12);
+                .addChoice("Jan", 1)
+                .addChoice("Fev", 2)
+                .addChoice("Mar", 3)
+                .addChoice("Abr", 4)
+                .addChoice("Mai", 5)
+                .addChoice("Jun", 6)
+                .addChoice("Jul", 7)
+                .addChoice("Ago", 8)
+                .addChoice("Set", 9)
+                .addChoice("Out", 10)
+                .addChoice("Nov", 11)
+                .addChoice("Dez", 12);
         OptionNumber optionDay = new OptionNumber("dia", "Dia do jogo", true, Number.INTEGER);
         OptionNumber optionHour = new OptionNumber("hora", "Hora do jogo", true, Number.INTEGER);
         OptionNumber optionMinute = new OptionNumber("minuto", "Minutos do jogo", true, Number.INTEGER);
@@ -94,8 +93,8 @@ public class GameAdd implements SlashEvent {
         int minutes = (Integer) map.get("minuto");
         Settings.commitTransaction(c ->
                         Team.insertTeam(c, team)
-                        .thenCompose(_ -> season == null ? Season.getLastSeason(c).thenApply(Season::getSeasonId) : CompletableFuture.completedFuture(season))
-                        .thenCompose(res -> Game.insertGame(c, res, mode, field, month, day, hours, minutes, team)))
+                                .thenCompose(_ -> season == null ? Season.getLastSeason(c) : Season.getSeason(c, season))
+                                .thenCompose(res -> Game.insertGame(c, new Game(res, new Mode(mode), field, month, day, hours, minutes, new Team(team)))))
                 .thenApply(r -> r == 1 ? responseCommand.setTemplate("Success").setVariable("op", "Adicionar Jogo.") : responseCommand.setTemplate("500"))
                 .thenAccept(ResponseCommand::send)
                 .exceptionally(ExceptionsHandler::storeException);

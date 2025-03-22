@@ -26,33 +26,6 @@ public class Season {
         this.seasonId = seasonId;
     }
 
-    @Override
-    public String toString() {
-        int y2 = seasonId % 100;
-        int y1 = seasonId / 100;
-        return y1 + "-" + y2;
-    }
-
-    public Command.Choice toChoice() {
-        return new Command.Choice(String.valueOf(this), this.seasonId);
-    }
-
-    public Season nextSeason() {
-        int y2 = (seasonId % 100) + 1;
-        int y1 = (seasonId / 100) + 1;
-        return new Season(y1 + y2);
-    }
-
-    public int getSeasonId() {
-        return seasonId;
-    }
-
-    /*
-     * ===================
-     * Repository Methods
-     * ===================
-     */
-
     /**
      * Get all the season from the database and stores them into a stream.
      *
@@ -71,7 +44,7 @@ public class Season {
      * Returns a list containing seasons in which season name is similar to the string given.
      *
      * @param context Database context.
-     * @param season Season name that we want to get the similar.
+     * @param season  Season name that we want to get the similar.
      * @return A list of similar seasons.
      */
     public static CompletionStage<List<Season>> getSimilarSeasons(DSLContext context, int season) {
@@ -86,7 +59,7 @@ public class Season {
      * Insert a season into the database.
      *
      * @param context Database context.
-     * @param season Season to insert.
+     * @param season  Season to insert.
      * @return 1 if everything went alright, 0 otherwise.
      */
     private static CompletionStage<Integer> insertSeason(DSLContext context, Season season) {
@@ -95,6 +68,7 @@ public class Season {
                 .set(Seasons.SEASONS.SEASON_ID, season.seasonId)
                 .executeAsync();
     }
+
     /**
      * Return a list of all seasons within the database.
      *
@@ -104,6 +78,12 @@ public class Season {
     public static CompletionStage<List<Season>> getAllSeason(DSLContext context) {
         return getAllSeasonStream(context).thenApply(Stream::toList);
     }
+
+    /*
+     * ===================
+     * Repository Methods
+     * ===================
+     */
 
     /**
      * Get the latest season.
@@ -115,6 +95,14 @@ public class Season {
         return getAllSeasonStream(context)
                 .thenApply(l -> l.sorted((s1, s2) -> s2.seasonId - s1.seasonId).toList())
                 .thenApply(l -> l.isEmpty() ? null : l.getFirst());
+    }
+
+    public static CompletionStage<Season> getSeason(DSLContext context, int seasonId) {
+        return context
+                .selectFrom(Seasons.SEASONS)
+                .where(Seasons.SEASONS.SEASON_ID.eq(seasonId))
+                .fetchAsync()
+                .thenApply(r -> r.isEmpty() ? null : r.getFirst().into(Season.class));
     }
 
     /**
@@ -134,7 +122,7 @@ public class Season {
      * Deletes a specific season from the database.
      *
      * @param context Database context.
-     * @param season Season Name to delete.
+     * @param season  Season Name to delete.
      * @return 1 if season was successfully deleted, 0 otherwise.
      */
     public static CompletionStage<Integer> deleteSeason(DSLContext context, int season) {
@@ -142,5 +130,26 @@ public class Season {
                 .deleteFrom(Seasons.SEASONS)
                 .where(Seasons.SEASONS.SEASON_ID.eq(season))
                 .executeAsync();
+    }
+
+    @Override
+    public String toString() {
+        int y2 = seasonId % 100;
+        int y1 = seasonId / 100;
+        return y1 + "-" + y2;
+    }
+
+    public Command.Choice toChoice() {
+        return new Command.Choice(String.valueOf(this), this.seasonId);
+    }
+
+    public Season nextSeason() {
+        int y2 = (seasonId % 100) + 1;
+        int y1 = (seasonId / 100) + 1;
+        return new Season(y1 + y2);
+    }
+
+    public int getSeasonId() {
+        return seasonId;
     }
 }

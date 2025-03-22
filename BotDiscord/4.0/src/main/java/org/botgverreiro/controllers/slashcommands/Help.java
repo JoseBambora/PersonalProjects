@@ -1,9 +1,9 @@
 package org.botgverreiro.controllers.slashcommands;
 
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import com.github.josebambora.configuration.SlashCommand;
 import com.github.josebambora.generic.SlashEvent;
 import com.github.josebambora.responses.ResponseCommand;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.Map;
 

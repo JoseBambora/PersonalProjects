@@ -9,11 +9,19 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class GamesOpenedCache {
+    private static GamesOpenedCache gamesOpenedCache;
     private final ReadWriteLock readWriteLock;
     private final List<Game> gamesList;
+
     private GamesOpenedCache() {
         gamesList = new ArrayList<>();
         readWriteLock = new ReentrantReadWriteLock();
+    }
+
+    public static GamesOpenedCache getInstance() {
+        if (gamesOpenedCache == null)
+            gamesOpenedCache = new GamesOpenedCache();
+        return gamesOpenedCache;
     }
 
     public void addOpenGames(List<Game> gameList) {
@@ -40,13 +48,5 @@ public class GamesOpenedCache {
         List<Game> res = new ArrayList<>(gamesList);
         readWriteLock.readLock().unlock();
         return res;
-    }
-
-
-    private static GamesOpenedCache gamesOpenedCache;
-    public static GamesOpenedCache getInstance() {
-        if(gamesOpenedCache == null)
-            gamesOpenedCache = new GamesOpenedCache();
-        return gamesOpenedCache;
     }
 }
