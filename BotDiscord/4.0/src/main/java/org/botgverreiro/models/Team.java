@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import org.botgverreiro.tables.Teams;
 import org.jooq.DSLContext;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
@@ -40,12 +41,8 @@ public class Team {
      * @param team    Team name to insert.
      * @return 1 if success, 0 otherwise.
      */
-    public static CompletionStage<Integer> insertTeam(DSLContext context, String team) {
-        return context
-                .insertInto(Teams.TEAMS)
-                .set(Teams.TEAMS.TEAM_NAME, team)
-                .onConflictDoNothing()
-                .executeAsync();
+    public static CompletionStage<Integer> insertTeam(DSLContext context, Team team) {
+        return insertTeams(context, Collections.singletonList(team));
     }
 
     /**

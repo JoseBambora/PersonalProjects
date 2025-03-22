@@ -92,7 +92,7 @@ public class GameAdd implements SlashEvent {
         int hours = (Integer) map.get("hora");
         int minutes = (Integer) map.get("minuto");
         Settings.commitTransaction(c ->
-                        Team.insertTeam(c, team)
+                        Team.insertTeam(c, new Team(team))
                                 .thenCompose(_ -> season == null ? Season.getLastSeason(c) : Season.getSeason(c, season))
                                 .thenCompose(res -> Game.insertGame(c, new Game(res, new Mode(mode), field, month, day, hours, minutes, new Team(team)))))
                 .thenApply(r -> r == 1 ? responseCommand.setTemplate("Success").setVariable("op", "Adicionar Jogo.") : responseCommand.setTemplate("500"))

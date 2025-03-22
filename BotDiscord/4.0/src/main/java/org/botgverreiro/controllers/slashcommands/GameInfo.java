@@ -28,7 +28,7 @@ public class GameInfo implements SlashEvent {
         OptionNumber optionNumber = new OptionNumber("jogo", "Jogo a consultar", true, Number.INTEGER)
                 .setAutoComplete(this::gameList);
         slashCommand
-                .setName("game-inf")
+                .setName("game-info")
                 .setSendThinking()
                 .setEphemeral()
                 .setDescription("Visualizar detalhes especificos de um certo jogo")
