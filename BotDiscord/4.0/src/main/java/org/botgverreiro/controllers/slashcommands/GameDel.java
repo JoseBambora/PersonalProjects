@@ -22,7 +22,7 @@ public class GameDel implements SlashEvent {
     private final Cache<String, Game> cacheGames;
 
     public GameDel() {
-        cacheGames = new Cache<>(s -> Settings.commitTransaction(c -> Game.selectGames(c, s, GameStatus.TO_OPEN.ordinal())));
+        cacheGames = new Cache<>(s -> Settings.commitTransaction(c -> Game.selectGames(c, s, GameStatus.TO_OPEN.getStatus())));
     }
 
     @Override

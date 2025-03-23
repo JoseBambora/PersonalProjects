@@ -39,11 +39,11 @@ public class GameOpen implements OnReadyEvent {
 
     public void call() {
         LocalDate today = LocalDate.now();
-        CompletionStage<List<Game>> gamesToOpen = Settings.commitTransaction(Game::selectGamesNotOpened)
+        CompletionStage<List<Game>> gamesToOpen = Settings.commitTransaction(c -> Game.selectGamesByStatus(c,GameStatus.TO_OPEN.getStatus()))
                 .thenApply(Collection::stream)
                 .thenApply(l -> l.filter(g -> g.getDateTime().toLocalDate().equals(today)))
                 .thenApply(Stream::toList);
-        gamesToOpen.thenApply(l -> Settings.commitTransaction(c -> Game.updateStatus(c, l, GameStatus.OPEN.ordinal())));
+        gamesToOpen.thenApply(l -> Settings.commitTransaction(c -> Game.updateStatus(c, l, GameStatus.OPEN.getStatus())));
         gamesToOpen.thenAccept(games -> {
             MainService.getInstance().addServiceScheduled(() -> GameClose.getInstance().call(), games.stream().map(Game::getStartTime).toList());
             openGameSend(games);

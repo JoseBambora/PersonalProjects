@@ -7,8 +7,11 @@ import java.util.List;
 
 public class ListUtils {
     public static <T> List<T> subList(List<T> list, int to) {
-        System.out.println(list);
-        return list.size() < to ? list : list.subList(0, to);
+        return subList(list,0,to);
+    }
+
+    public static <T> List<T> subList(List<T> list, int from, int to) {
+        return list.size() < to ? list : list.subList(from, to);
     }
 
     public static List<String> extractStrings(Elements elements, int removeFstChars) {

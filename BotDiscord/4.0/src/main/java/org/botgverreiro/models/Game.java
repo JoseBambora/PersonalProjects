@@ -186,7 +186,7 @@ public class Game {
                 .set(Games.GAMES.GOALS_SUFFERED, game.gameGoalsSuffered)
                 .set(Games.GAMES.PREDICTIONS, game.gamePredictions)
                 .set(Games.GAMES.WINNERS, game.gameWinners)
-                .set(Games.GAMES.GAME_STATUS, GameStatus.FINISHED.ordinal())
+                .set(Games.GAMES.GAME_STATUS, GameStatus.FINISHED.getStatus())
                 .where(Games.GAMES.GAME_ID.eq(game.gameId))
                 .executeAsync();
     }
@@ -219,7 +219,7 @@ public class Game {
      */
     public static CompletionStage<Game> selectLastGame(DSLContext context, Mode mode) {
         return selectQuery(context)
-                .where(Games.GAMES.GAME_STATUS.eq(GameStatus.CLOSE.ordinal()), Games.GAMES.MODE_NAME.eq(mode.getModeId()))
+                .where(Games.GAMES.GAME_STATUS.eq(GameStatus.CLOSE.getStatus()), Games.GAMES.MODE_NAME.eq(mode.getModeId()))
                 .fetchAsync()
                 .thenApply(r -> r.isEmpty() ? null : Wrappers.toGame(r.getFirst()));
     }
@@ -256,9 +256,10 @@ public class Game {
      * @param context Database context.
      * @return A list of games objects that are not opened.
      */
-    public static CompletionStage<List<Game>> selectGamesNotOpened(DSLContext context) {
+    public static CompletionStage<List<Game>> selectGamesByStatus(DSLContext context, int gameStatus) {
         return selectQuery(context)
-                .where(Games.GAMES.GAME_STATUS.eq(GameStatus.TO_OPEN.ordinal()))
+                .where(Games.GAMES.GAME_STATUS.eq(gameStatus))
+                .orderBy(Games.GAMES.GAME_ID.desc())
                 .fetchAsync()
                 .thenApply(l -> Wrappers.converter(l, Wrappers::toGame));
     }
@@ -285,7 +286,7 @@ public class Game {
     @Override
     public String toString() {
         String gameStr = gameField == 1 ? gameOpponent.getTeamName() + " x SC Braga" : "SC Braga x " + gameOpponent.getTeamName();
-        return gameStr + ", " + gameDay;
+        return "[" + gameId + "] " + gameStr + ", " + gameDay;
     }
 
     public Command.Choice toChoice() {
