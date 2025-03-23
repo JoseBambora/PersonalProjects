@@ -20,19 +20,13 @@ public class Team {
         this.teamName = teamName;
     }
 
-    /**
-     * Get all the available teams whose names contains a certain string.
-     *
-     * @param context Database context.
-     * @param name    Team name.
-     * @return A list containing all the teams that are similar to a certain name.
+    /*
+     * ===================
+     * Repository Methods
+     * ===================
      */
-    public static CompletionStage<List<Team>> getSimilarTeams(DSLContext context, String name) {
-        return context.selectFrom(Teams.TEAMS)
-                .where(Teams.TEAMS.TEAM_NAME.contains(name))
-                .fetchAsync()
-                .thenApply(r -> r.into(Team.class));
-    }
+
+    /* =================== Inserts =================== */
 
     /**
      * Inserts a new team.
@@ -60,11 +54,26 @@ public class Team {
                 .executeAsync();
     }
 
-    /*
-     * ===================
-     * Repository Methods
-     * ===================
+    /* =================== Updates =================== */
+
+    /* =================== Selects =================== */
+
+
+    /**
+     * Get all the available teams whose names contains a certain string.
+     *
+     * @param context Database context.
+     * @param name    Team name.
+     * @return A list containing all the teams that are similar to a certain name.
      */
+    public static CompletionStage<List<Team>> selectSimilarTeams(DSLContext context, String name) {
+        return context.selectFrom(Teams.TEAMS)
+                .where(Teams.TEAMS.TEAM_NAME.contains(name))
+                .fetchAsync()
+                .thenApply(r -> r.into(Team.class));
+    }
+
+    /* =================== Deletes =================== */
 
     @Override
     public String toString() {

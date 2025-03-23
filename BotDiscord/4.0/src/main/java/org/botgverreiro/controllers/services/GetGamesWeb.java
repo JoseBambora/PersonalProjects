@@ -46,7 +46,7 @@ public class GetGamesWeb {
                     List<String> getTime = times.stream().map(s -> s.substring(0, 5)).toList();
                     Settings.commitTransaction(c -> {
                                 Team.insertTeams(c, teamsList);
-                                return Season.getLastSeason(c);
+                                return Season.selectLastSeason(c);
                             })
                             .thenApply(s -> {
                                 List<Game> games = new ArrayList<>(teamsList.size());

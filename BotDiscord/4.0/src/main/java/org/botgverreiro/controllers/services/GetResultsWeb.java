@@ -49,42 +49,36 @@ public class GetResultsWeb implements OnReadyEvent {
 
                     int homeGoals = result.getFirst();
                     int awayGoals = result.getLast();
-                    System.out.println(homeGoals);
-                    System.out.println(awayGoals);
-
-                    int goalsScored = awayTeam.equals("SC Braga") ? awayGoals : homeGoals;
-                    int goalsSuffered = awayTeam.equals("SC Braga") ? homeGoals : awayGoals;
 
                     CompletionStage<Game> game = Settings.commitTransaction(c -> Game.selectLastGame(c, mode));
-                    game.thenAccept(System.out::println);
-                    CompletionStage<List<Prediction>> predictions = game.thenCompose(g -> Settings.commitTransaction(c -> Prediction.getPredictionsGame(c, g.getGameId())));
+                    CompletionStage<List<Prediction>> predictions = game.thenCompose(g -> Settings.commitTransaction(c -> Prediction.selectPredictionsGame(c, g.getGameId())));
                     CompletionStage<List<User>> winners = predictions.thenApply(predictionsList -> predictionsList.stream().filter(p -> p.isWinner(homeGoals, awayGoals)).map(Prediction::getUser).toList());
                     CompletionStage<List<User>> losers = predictions.thenApply(predictionsList -> predictionsList.stream().filter(p -> !p.isWinner(homeGoals, awayGoals)).map(Prediction::getUser).toList());
                     CompletionStage<Integer> addPointsWinners = winners.thenCompose(l -> Settings.commitTransaction(c -> User.updatePoints(c, l, true)));
                     CompletionStage<Integer> addPointsLosers = losers.thenCompose(l -> Settings.commitTransaction(c -> User.updatePoints(c, l, false)));
                     CompletionStage<Integer> deletePredictions = predictions.thenCompose(_ -> game.thenCompose(g -> Settings.commitTransaction(c -> Prediction.deletePredictionsGame(c, g.getGameId()))));
                     CompletionStage<Integer> updateGame = game
-                            .thenApply(g -> g.setGameGoalsScored(goalsScored))
-                            .thenApply(g -> g.setGameGoalsSuffered(goalsSuffered))
+                            .thenApply(g -> g.setGameGoalsScored(g.isHome() ? homeGoals : awayGoals))
+                            .thenApply(g -> g.setGameGoalsSuffered(g.isHome() ? awayGoals : homeGoals))
                             .thenCompose(g -> addPointsWinners.thenApply(g::setGameWinners))
                             .thenCompose(g -> deletePredictions.thenApply(g::setGamePredictions))
                             .thenCompose(g -> Settings.commitTransaction(c -> Game.updateFinishedGame(c, g)));
 
-                    // ResponseTextChannel responseTextChannel = new ResponseTextChannel(textChannel);
-                    // responseTextChannel.setTemplate("games/GameWinners");
-                    // game.thenApply(g -> responseTextChannel.setVariable("opponent", g.getGameOpponent().getTeamName()));
-                    // addPointsWinners.thenApply(s -> responseTextChannel.setVariable("winnersSize", s));
-                    // deletePredictions.thenApply(s -> responseTextChannel.setVariable("predictions", s));
-                    // winners.thenApply(w -> responseTextChannel.setVariable("winners", w.stream().map(User::getUserId)));
+                    ResponseTextChannel responseTextChannel = new ResponseTextChannel(textChannel);
+                    responseTextChannel.setTemplate("games/GameWinners");
+                    game.thenApply(g -> responseTextChannel.setVariable("opponent", g.getGameOpponent().getTeamName()));
+                    addPointsWinners.thenApply(s -> responseTextChannel.setVariable("winnersSize", s));
+                    deletePredictions.thenApply(s -> responseTextChannel.setVariable("predictions", s));
+                    winners.thenApply(w -> responseTextChannel.setVariable("winners", w.stream().map(User::getUserId)));
 
-                    // game.thenCompose(_ -> predictions)
-                    //         .thenCompose(_ -> winners)
-                    //         .thenCompose(_ -> losers)
-                    //         .thenCompose(_ -> addPointsWinners)
-                    //         .thenCompose(_ -> addPointsLosers)
-                    //         .thenCompose(_ -> deletePredictions)
-                    //         .thenCompose(_ -> updateGame)
-                    //         .thenAccept(_ -> responseTextChannel.send());
+                    game.thenCompose(_ -> predictions)
+                            .thenCompose(_ -> winners)
+                            .thenCompose(_ -> losers)
+                            .thenCompose(_ -> addPointsWinners)
+                            .thenCompose(_ -> addPointsLosers)
+                            .thenCompose(_ -> deletePredictions)
+                            .thenCompose(_ -> updateGame)
+                            .thenAccept(_ -> responseTextChannel.send());
                 }
             }
 

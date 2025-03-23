@@ -33,6 +33,9 @@ public class Main {
         configuration.addCommand(new GameDel());
         configuration.addCommand(new GameList());
         configuration.addCommand(new GameInfo());
+        configuration.addCommand(new SeasonAdd());
+        configuration.addCommand(new SeasonDel());
+        configuration.addCommand(new SeasonInfo());
         configuration.addMessageReceiver(new Bet());
         setUpService(configuration);
 

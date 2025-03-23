@@ -1,14 +1,10 @@
 package org.botgverreiro.controllers.slashcommands;
 
 import com.github.josebambora.configuration.SlashCommand;
-import com.github.josebambora.configuration.option.Number;
-import com.github.josebambora.configuration.option.OptionNumber;
 import com.github.josebambora.configuration.option.OptionString;
 import com.github.josebambora.generic.SlashEvent;
-import com.github.josebambora.responses.ResponseButton;
 import com.github.josebambora.responses.ResponseCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.botgverreiro.models.Game;
 import org.botgverreiro.models.Settings;
 import org.botgverreiro.utils.ExceptionsHandler;
@@ -28,9 +24,8 @@ public class GameList implements SlashEvent {
                 .addChoice(GameStatus.FINISHED.toString(), GameStatus.FINISHED.name());
         slashCommand.setName("game-list")
                 .setDescription("Últimos " + numberGames + " jogos do bot para um certo estado.")
-                .setEphemeral()
-                .addOption(optionNumber)
-                .setSendThinking();
+                .setSendThinking()
+                .addOption(optionNumber);
     }
 
     @Override

@@ -119,11 +119,7 @@ public class Game {
                 .join(Seasons.SEASONS).on(Seasons.SEASONS.SEASON_ID.eq(Games.GAMES.SEASON_ID));
     }
 
-    /*
-     * ===================
-     * Inserts
-     * ===================
-     */
+    /* =================== Inserts =================== */
 
     /**
      * Inserts a single game into GAMES table.
@@ -150,12 +146,7 @@ public class Game {
                 .set(Games.GAMES.GAME_DAY, DSL.excluded(Games.GAMES.GAME_DAY))
                 .executeAsync();
     }
-
-    /*
-     * ===================
-     * Updates
-     * ===================
-     */
+    /* =================== Updates =================== */
 
     /**
      * Updates the game status to 1 when games are being closed.
@@ -191,11 +182,7 @@ public class Game {
                 .executeAsync();
     }
 
-    /*
-     * ===================
-     * Selects
-     * ===================
-     */
+    /* =================== Selects =================== */
 
     /**
      * Gets a game with a specific id.
@@ -239,7 +226,7 @@ public class Game {
     }
 
     /**
-     * Get games with a specific opponent.
+     * Get games with a specific opponent and status.
      * @param context Database context.
      * @param opponent Opponent to filter games.
      * @return A list of games objects after filter.
@@ -264,11 +251,20 @@ public class Game {
                 .thenApply(l -> Wrappers.converter(l, Wrappers::toGame));
     }
 
-    /*
-     * ===================
-     * Deletes
-     * ===================
+    /**
+     * Selects the games from one season.
+     * @param context Database context.
+     * @param season Season id.
+     * @return A list of games of specified season.
      */
+    public static CompletionStage<List<Game>> selectGamesBySeason(DSLContext context, int season) {
+        return selectQuery(context)
+                .where(Games.GAMES.SEASON_ID.eq(season))
+                .fetchAsync()
+                .thenApply(l -> Wrappers.converter(l, Wrappers::toGame));
+    }
+
+    /* =================== Deletes =================== */
 
     /**
      * Deletes a specified game.
@@ -286,7 +282,7 @@ public class Game {
     @Override
     public String toString() {
         String gameStr = gameField == 1 ? gameOpponent.getTeamName() + " x SC Braga" : "SC Braga x " + gameOpponent.getTeamName();
-        return "[" + gameId + "] " + gameStr + ", " + gameDay;
+        return gameStr + ", " + gameDay;
     }
 
     public Command.Choice toChoice() {
@@ -393,5 +389,9 @@ public class Game {
     public Game setMode(Mode mode) {
         this.mode = mode;
         return this;
+    }
+
+    public boolean isHome() {
+        return gameField != 1;
     }
 }

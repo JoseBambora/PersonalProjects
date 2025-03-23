@@ -5,7 +5,6 @@ import org.botgverreiro.tables.Modes;
 import org.botgverreiro.tables.Seasons;
 import org.botgverreiro.tables.Users;
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.jooq.Record3;
 
 import java.util.Collection;
@@ -25,41 +24,18 @@ public class User {
     @Column(name = "PREDICTIONS")
     private int userPredictions;
 
-    private static User fromRecordToUser(Record record) {
-        return record.into(User.class)
-                .setSeason(record.into(Season.class))
-                .setMode(record.into(Mode.class));
-    }
-
-    /**
-     * Get classification for a specific Season for all Modes.
-     *
-     * @param context Database context.
-     * @param season  Season in question.
-     * @return Sorted list of users by points.
+    /*
+     * ===================
+     * Repository Methods
+     * ===================
      */
-    public static CompletionStage<List<User>> getClassificationSeason(DSLContext context, int season) {
-        return context
-                .select()
-                .from(Users.USERS)
-                .join(Modes.MODES).on(Users.USERS.MODE_NAME.eq(Modes.MODES.MODE_NAME))
-                .join(Seasons.SEASONS).on(Users.USERS.SEASON_ID.eq(Seasons.SEASONS.SEASON_ID))
-                .where(Users.USERS.SEASON_ID.eq(season))
-                .orderBy(Users.USERS.MODE_NAME, Users.USERS.POINTS.desc())
-                .fetchAsync()
-                .thenApply(Collection::stream)
-                .thenApply(r -> r.map(User::fromRecordToUser))
-                .thenApply(Stream::toList);
-
-    }
 
     /**
      * Auxiliary function to update the points, by combining a list of users for the same season and mode.
      *
      * @param context Database context.
-     * @param users   Users to update points.
-     * @param season  Season to update points.
-     * @param mode    The associated mode.
+     * @param userId  User id to update points.
+     * @param games  List of games.
      * @return A list containing the association of users-season-mode.
      */
     private static List<Record3<String, Integer, String>> combineValues(DSLContext context, String userId, List<Game> games) {
@@ -68,21 +44,31 @@ public class User {
                 .toList();
     }
 
-    /*
-     * ===================
-     * Repository Methods
-     * ===================
+    /* =================== Inserts =================== */
+
+    /**
+     * Insert a new user for a list of game modes.
+     * @param context Database context.
+     * @param userId User id.
+     * @param games List of games to insert.
+     * @return Number of inserted rows.
      */
+    public static CompletionStage<Integer> insertUser(DSLContext context, String userId, List<Game> games) {
+        return context
+                .insertInto(Users.USERS)
+                .set(combineValues(context, userId, games))
+                .onConflictDoNothing()
+                .executeAsync();
+    }
+
+    /* =================== Updates =================== */
 
     /**
      * Method that updates the classification points.
      *
      * @param context     Database context.
      * @param users       Users to update points.
-     * @param season      Season in the context.
-     * @param mode        Mode in the context.
-     * @param points      Points to increment.
-     * @param predictions Predictions to increment.
+     * @param areWinners  Boolean that identifies if the list users provided are winners.
      * @return An integer containing the number of affected rows.
      */
     public static CompletionStage<Integer> updatePoints(DSLContext context, List<User> users, boolean areWinners) {
@@ -95,12 +81,28 @@ public class User {
                 .executeAsync();
     }
 
-    public static CompletionStage<Integer> insertUser(DSLContext context, String userId, List<Game> games) {
+    /* =================== Selects =================== */
+
+    /**
+     * Get classification for a specific Season for all Modes.
+     *
+     * @param context Database context.
+     * @param season  Season in question.
+     * @return Sorted list of users by points.
+     */
+    public static CompletionStage<List<User>> selectClassificationSeason(DSLContext context, int season) {
         return context
-                .insertInto(Users.USERS)
-                .set(combineValues(context, userId, games))
-                .onConflictDoNothing()
-                .executeAsync();
+                .select()
+                .from(Users.USERS)
+                .join(Modes.MODES).on(Users.USERS.MODE_NAME.eq(Modes.MODES.MODE_NAME))
+                .join(Seasons.SEASONS).on(Users.USERS.SEASON_ID.eq(Seasons.SEASONS.SEASON_ID))
+                .where(Users.USERS.SEASON_ID.eq(season))
+                .orderBy(Users.USERS.MODE_NAME, Users.USERS.POINTS.desc())
+                .fetchAsync()
+                .thenApply(Collection::stream)
+                .thenApply(r -> r.map(Wrappers::toUser))
+                .thenApply(Stream::toList);
+
     }
 
     /**
@@ -110,7 +112,7 @@ public class User {
      * @param user    User to see their stats.
      * @return User statistics.
      */
-    public static CompletionStage<User> getUserStats(DSLContext context, String user) {
+    public static CompletionStage<User> selectUserStats(DSLContext context, String user) {
         return context
                 .select().from(Users.USERS)
                 .join(Modes.MODES).on(Users.USERS.MODE_NAME.eq(Modes.MODES.MODE_NAME))
@@ -118,8 +120,10 @@ public class User {
                 .where(Users.USERS.USER_ID.eq(user))
                 .fetchAsync()
                 .thenApply(List::getFirst)
-                .thenApply(User::fromRecordToUser);
+                .thenApply(Wrappers::toUser);
     }
+
+    /* =================== Deletes =================== */
 
     /**
      * Delete information of a user.

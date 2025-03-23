@@ -2,8 +2,7 @@
     # Jogos
 
     {{#if games}}
-        Estes são os jogos últimos 15 jogos para o estado `{{status}}`.
-        {{#if finished}}O horário de certos jogos poderá não estar definido, mas irá ser atualizado.{{/if}}
+        Estes são os últimos 15 jogos para o estado `{{status}}`. {{#if finished}}O horário de certos jogos poderá não estar definido, mas irá ser atualizado.{{/if}}
         {{#each games}}
             - {{this}}{{/each}}
     {{else}}

@@ -29,6 +29,23 @@ public class Prediction {
                 .toList();
     }
 
+    /*
+     * ===================
+     * Repository Methods
+     * ===================
+     */
+
+    /* =================== Inserts =================== */
+
+    /**
+     * Inserts predictions realized by a user.
+     * @param context Database context.
+     * @param user User ID.
+     * @param games List of games to add predictions.
+     * @param homeGoals Home goals user predictions.
+     * @param awayGoals Away goals user predictions.
+     * @return Number of inserted rows.
+     */
     public static CompletionStage<Integer> insertPredictions(DSLContext context, String user, List<Game> games, List<Integer> homeGoals, List<Integer> awayGoals) {
         return context
                 .insertInto(Predictions.PREDICTIONS)
@@ -38,7 +55,17 @@ public class Prediction {
                 .executeAsync();
     }
 
-    public static CompletionStage<List<Prediction>> getPredictionsGame(DSLContext context, int game) {
+    /* =================== Updates =================== */
+
+    /* =================== Selects =================== */
+
+    /**
+     * Gets the predictions for one game.
+     * @param context Database context.
+     * @param game Game to get predictions.
+     * @return A list with all the prediction for a specified game.
+     */
+    public static CompletionStage<List<Prediction>> selectPredictionsGame(DSLContext context, int game) {
         return context
                 .select()
                 .from(Predictions.PREDICTIONS)
@@ -49,6 +76,14 @@ public class Prediction {
                 .thenApply(l -> Wrappers.converter(l, Wrappers::toPrediction));
     }
 
+    /* =================== Deletes =================== */
+
+    /**
+     * Deletes all the predictions for one specific game.
+     * @param context Database context.
+     * @param game Game ID to delete predictions.
+     * @return Number of deleted rows.
+     */
     public static CompletionStage<Integer> deletePredictionsGame(DSLContext context, int game) {
         return context
                 .deleteFrom(Predictions.PREDICTIONS)
@@ -56,11 +91,6 @@ public class Prediction {
                 .executeAsync();
     }
 
-    /*
-     * ===================
-     * Repository Methods
-     * ===================
-     */
 
     public Prediction setInfo(Game game, User user) {
         this.game = game;

@@ -2,6 +2,8 @@ package org.botgverreiro.controllers.services;
 
 import com.github.josebambora.generic.OnReadyEvent;
 import com.github.josebambora.responses.ResponseTextChannel;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import org.botgverreiro.models.Game;
@@ -9,6 +11,7 @@ import org.botgverreiro.models.Settings;
 import org.botgverreiro.utils.ExceptionsHandler;
 import org.botgverreiro.utils.GameStatus;
 import org.botgverreiro.utils.GamesOpenedCache;
+import org.botgverreiro.utils.PermissionsManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,6 +48,11 @@ public class GameClose implements OnReadyEvent {
                     MainService.getInstance().addServiceScheduled(() -> GetResultsWeb.getInstance().call(), gamesFinished.stream().map(Game::getFinishTime).toList());
                     GamesOpenedCache.getInstance().removeOpenGames(gamesFinished);
                     closeGamesSend(gamesFinished);
+                })
+                .thenAccept(_ -> {
+                    if(GamesOpenedCache.getInstance().getOpenGames().isEmpty()) {
+                        PermissionsManager.close(textChannel);
+                    }
                 })
                 .exceptionally(ExceptionsHandler::storeException);
     }

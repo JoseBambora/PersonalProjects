@@ -5,34 +5,24 @@ import com.github.josebambora.configuration.option.Number;
 import com.github.josebambora.configuration.option.OptionNumber;
 import com.github.josebambora.configuration.option.OptionString;
 import com.github.josebambora.generic.SlashEvent;
-import com.github.josebambora.responses.ResponseAutoComplete;
 import com.github.josebambora.responses.ResponseCommand;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.botgverreiro.controllers.autocompleters.SeasonList;
+import org.botgverreiro.controllers.autocompleters.TeamList;
 import org.botgverreiro.models.*;
-import org.botgverreiro.utils.Cache;
 import org.botgverreiro.utils.ExceptionsHandler;
 
 import java.util.Map;
 
 public class GameAdd implements SlashEvent {
 
-    // Cache Results from AutoCompleteOptions
-    private final Cache<String, Team> cacheTeams;
-    private final Cache<Integer, Season> cacheSeason;
-
-    public GameAdd() {
-        cacheTeams = new Cache<>(s -> Settings.commitTransaction(c -> Team.getSimilarTeams(c, s)));
-        cacheSeason = new Cache<>(s -> Settings.commitTransaction(c -> Season.getSimilarSeasons(c, s)));
-    }
-
     @Override
     public void configure(SlashCommand slashCommand) {
         OptionString optionMode = new OptionString("modo", "Modalidade do jogo", true);
-        Settings.commitTransactionNoResult(c -> Mode.getAllModesSync(c).forEach(m -> optionMode.addChoice(m.toString(), m.toString())));
+        Settings.commitTransactionNoResult(c -> Mode.selectAllModesSync(c).forEach(m -> optionMode.addChoice(m.toString(), m.toString())));
         OptionNumber optionSeason = new OptionNumber("epoca", "Temporada do jogo", false, Number.INTEGER)
-                .setAutoComplete(this::seasonList);
+                .setAutoComplete(SeasonList::seasonList);
         OptionNumber optionField = new OptionNumber("campo", "Campo do jogo", true, Number.INTEGER)
                 .addChoice("Casa", 0)
                 .addChoice("Fora", 1)
@@ -54,7 +44,7 @@ public class GameAdd implements SlashEvent {
         OptionNumber optionHour = new OptionNumber("hora", "Hora do jogo", true, Number.INTEGER);
         OptionNumber optionMinute = new OptionNumber("minuto", "Minutos do jogo", true, Number.INTEGER);
         OptionString optionTeam = new OptionString("adversario", "Adversário", true)
-                .setAutoComplete(this::teamsList);
+                .setAutoComplete(TeamList::teamsList);
 
         slashCommand.setName("game-add")
                 .setDescription("Calendarizar um jogo")
@@ -62,23 +52,6 @@ public class GameAdd implements SlashEvent {
                 .setEphemeral()
                 .addOptions(optionMonth, optionDay, optionHour, optionMinute, optionTeam, optionSeason, optionMode, optionField)
                 .addPermission(Permission.KICK_MEMBERS);
-    }
-
-    private void teamsList(CommandAutoCompleteInteractionEvent event, String input, ResponseAutoComplete responseAutoComplete) {
-        cacheTeams.get(input)
-                .thenApply(l -> responseAutoComplete.addChoice(l.stream().map(Team::toChoice).toList()))
-                .thenAccept(ResponseAutoComplete::send);
-    }
-
-    private void seasonList(CommandAutoCompleteInteractionEvent event, String input, ResponseAutoComplete responseAutoComplete) {
-        try {
-            int season = Integer.parseInt(input);
-            cacheSeason.get(season)
-                    .thenApply(l -> responseAutoComplete.addChoice(l.stream().map(Season::toChoice).toList()))
-                    .thenAccept(ResponseAutoComplete::send);
-        } catch (NumberFormatException e) {
-            responseAutoComplete.send();
-        }
     }
 
     @Override
@@ -93,7 +66,7 @@ public class GameAdd implements SlashEvent {
         int minutes = (Integer) map.get("minuto");
         Settings.commitTransaction(c ->
                         Team.insertTeam(c, new Team(team))
-                                .thenCompose(_ -> season == null ? Season.getLastSeason(c) : Season.getSeason(c, season))
+                                .thenCompose(_ -> season == null ? Season.selectLastSeason(c) : Season.selectSeason(c, season))
                                 .thenCompose(res -> Game.insertGame(c, new Game(res, new Mode(mode), field, month, day, hours, minutes, new Team(team)))))
                 .thenApply(r -> r == 1 ? responseCommand.setTemplate("Success").setVariable("op", "Adicionar Jogo.") : responseCommand.setTemplate("500"))
                 .thenAccept(ResponseCommand::send)

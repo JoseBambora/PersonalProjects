@@ -4,8 +4,6 @@ import jakarta.persistence.Column;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import org.botgverreiro.tables.Seasons;
 import org.jooq.DSLContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +11,6 @@ import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;
 
 public class Season {
-    private static final Logger log = LoggerFactory.getLogger(Season.class);
 
     @Column(name = "SEASON_ID")
     private int seasonId;
@@ -26,33 +23,24 @@ public class Season {
         this.seasonId = seasonId;
     }
 
+    /*
+     * ===================
+     * Repository Methods
+     * ===================
+     */
+
     /**
      * Get all the season from the database and stores them into a stream.
      *
      * @param context Database context.
      * @return A stream with all the season within the database.
      */
-    private static CompletionStage<Stream<Season>> getAllSeasonStream(DSLContext context) {
+    private static CompletionStage<Stream<Season>> selectAllSeasonStream(DSLContext context) {
         return context
                 .selectFrom(Seasons.SEASONS)
                 .fetchAsync()
                 .thenApply(Collection::stream)
                 .thenApply(r -> r.map(record -> record.into(Season.class)));
-    }
-
-    /**
-     * Returns a list containing seasons in which season name is similar to the string given.
-     *
-     * @param context Database context.
-     * @param season  Season name that we want to get the similar.
-     * @return A list of similar seasons.
-     */
-    public static CompletionStage<List<Season>> getSimilarSeasons(DSLContext context, int season) {
-        return context
-                .selectFrom(Seasons.SEASONS)
-                .where(Seasons.SEASONS.SEASON_ID.contains(season))
-                .fetchAsync()
-                .thenApply(r -> r.into(Season.class));
     }
 
     /**
@@ -69,21 +57,49 @@ public class Season {
                 .executeAsync();
     }
 
+    /* =================== Inserts =================== */
+
+    /**
+     * Adds a new season to the database.
+     *
+     * @param context Database context.
+     * @return The number of inserted rows.
+     */
+    public static CompletionStage<Integer> insertNewSeason(DSLContext context) {
+        return selectLastSeason(context)
+                .thenApply(s -> s != null ? s.nextSeason() : new Season(Integer.parseInt(System.getenv("SEASON"))))
+                .thenCompose(ns -> Season.insertSeason(context, ns));
+    }
+    /* =================== Updates =================== */
+
+    /* =================== Selects =================== */
+
+    /**
+     * Returns a list containing seasons in which season name is similar to the string given.
+     *
+     * @param context Database context.
+     * @param season  Season name that we want to get the similar.
+     * @return A list of similar seasons.
+     */
+    public static CompletionStage<List<Season>> selectSimilarSeasons(DSLContext context, int season) {
+        return context
+                .selectFrom(Seasons.SEASONS)
+                .where(Seasons.SEASONS.SEASON_ID.contains(season))
+                .fetchAsync()
+                .thenApply(r -> r.into(Season.class));
+    }
+
     /**
      * Return a list of all seasons within the database.
      *
      * @param context Database context.
      * @return A list containing all the stored seasons.
      */
-    public static CompletionStage<List<Season>> getAllSeason(DSLContext context) {
-        return getAllSeasonStream(context).thenApply(Stream::toList);
+    public static CompletionStage<List<Season>> selectAllSeasons(DSLContext context) {
+        return selectAllSeasonStream(context).thenApply(Stream::toList);
     }
 
-    /*
-     * ===================
-     * Repository Methods
-     * ===================
-     */
+
 
     /**
      * Get the latest season.
@@ -91,13 +107,13 @@ public class Season {
      * @param context Database context.
      * @return The latest season.
      */
-    public static CompletionStage<Season> getLastSeason(DSLContext context) {
-        return getAllSeasonStream(context)
+    public static CompletionStage<Season> selectLastSeason(DSLContext context) {
+        return selectAllSeasonStream(context)
                 .thenApply(l -> l.sorted((s1, s2) -> s2.seasonId - s1.seasonId).toList())
                 .thenApply(l -> l.isEmpty() ? null : l.getFirst());
     }
 
-    public static CompletionStage<Season> getSeason(DSLContext context, int seasonId) {
+    public static CompletionStage<Season> selectSeason(DSLContext context, int seasonId) {
         return context
                 .selectFrom(Seasons.SEASONS)
                 .where(Seasons.SEASONS.SEASON_ID.eq(seasonId))
@@ -105,18 +121,7 @@ public class Season {
                 .thenApply(r -> r.isEmpty() ? null : r.getFirst().into(Season.class));
     }
 
-    /**
-     * Adds a new season to the database.
-     *
-     * @param context Database context.
-     * @return The new season stored.
-     */
-    public static CompletionStage<Season> newSeason(DSLContext context) {
-        return getLastSeason(context)
-                .thenApply(s -> s != null ? s.nextSeason() : new Season(Integer.parseInt(System.getenv("SEASON"))))
-                .thenCompose(ns -> Season.insertSeason(context, ns))
-                .thenCompose(_ -> getLastSeason(context));
-    }
+    /* =================== Deletes =================== */
 
     /**
      * Deletes a specific season from the database.
@@ -144,9 +149,7 @@ public class Season {
     }
 
     public Season nextSeason() {
-        int y2 = (seasonId % 100) + 1;
-        int y1 = (seasonId / 100) + 1;
-        return new Season(y1 + y2);
+        return new Season(seasonId + 101);
     }
 
     public int getSeasonId() {

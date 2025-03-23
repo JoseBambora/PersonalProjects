@@ -4,41 +4,26 @@ import com.github.josebambora.configuration.SlashCommand;
 import com.github.josebambora.configuration.option.Number;
 import com.github.josebambora.configuration.option.OptionNumber;
 import com.github.josebambora.generic.SlashEvent;
-import com.github.josebambora.responses.ResponseAutoComplete;
 import com.github.josebambora.responses.ResponseCommand;
-import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.botgverreiro.controllers.autocompleters.GameList;
 import org.botgverreiro.models.Game;
 import org.botgverreiro.models.Settings;
-import org.botgverreiro.utils.Cache;
 import org.botgverreiro.utils.ExceptionsHandler;
 
 import java.util.Map;
 
 public class GameInfo implements SlashEvent {
 
-    private final Cache<String, Game> cacheGames;
-
-    public GameInfo() {
-        cacheGames = new Cache<>(s -> Settings.commitTransaction(c -> Game.selectGames(c, s)));
-    }
-
     @Override
     public void configure(SlashCommand slashCommand) {
         OptionNumber optionNumber = new OptionNumber("jogo", "Jogo a consultar", true, Number.INTEGER)
-                .setAutoComplete(this::gameList);
+                .setAutoComplete(GameList::gameList);
         slashCommand
                 .setName("game-info")
                 .setSendThinking()
-                .setEphemeral()
                 .setDescription("Visualizar detalhes especificos de um certo jogo")
                 .addOption(optionNumber);
-    }
-
-    private void gameList(CommandAutoCompleteInteractionEvent event, String input, ResponseAutoComplete responseAutoComplete) {
-        cacheGames.get(input)
-                .thenAccept(l -> l.forEach(g -> responseAutoComplete.addChoice(g.toChoice())))
-                .thenAccept(_ -> responseAutoComplete.send());
     }
 
     @Override

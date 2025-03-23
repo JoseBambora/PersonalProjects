@@ -15,6 +15,12 @@ public class Wrappers {
         return p.into(Prediction.class).setInfo(p.into(Game.class), p.into(User.class));
     }
 
+    public static User toUser(Record record) {
+        return record.into(User.class)
+                .setSeason(record.into(Season.class))
+                .setMode(record.into(Mode.class));
+    }
+
     public static <T> List<T> converter(List<Record> recordList, Function<Record, T> converter) {
         return recordList.stream().map(converter).toList();
     }

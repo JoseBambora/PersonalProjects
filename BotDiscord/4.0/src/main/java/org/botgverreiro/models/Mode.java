@@ -19,39 +19,13 @@ public class Mode {
         this.modeName = modeName;
     }
 
-    /**
-     * Get all the available modes.
-     *
-     * @param context Database context.
-     * @return A list containing all the modes.
-     */
-    public static CompletionStage<List<Mode>> getAllModes(DSLContext context) {
-        return context
-                .selectFrom(Modes.MODES)
-                .fetchAsync()
-                .thenApply(r -> r.into(Mode.class));
-    }
-
-    /**
-     * Get all the available modes but not Async. It is only when the bot starts.
-     *
-     * @param context Database context.
-     * @return A list containing all the modes.
-     */
-    public static List<Mode> getAllModesSync(DSLContext context) {
-        return context
-                .selectFrom(Modes.MODES)
-                .fetch()
-                .into(Mode.class);
-    }
-
-
-
     /*
      * ===================
      * Repository Methods
      * ===================
      */
+
+    /* =================== Inserts =================== */
 
     /**
      * Inserts a new mode.
@@ -67,6 +41,38 @@ public class Mode {
                 .onConflictDoNothing()
                 .executeAsync();
     }
+
+    /* =================== Updates =================== */
+
+    /* =================== Selects =================== */
+
+    /**
+     * Get all the available modes.
+     *
+     * @param context Database context.
+     * @return A list containing all the modes.
+     */
+    public static CompletionStage<List<Mode>> selectAllModes(DSLContext context) {
+        return context
+                .selectFrom(Modes.MODES)
+                .fetchAsync()
+                .thenApply(r -> r.into(Mode.class));
+    }
+
+    /**
+     * Get all the available modes but not Async. It is only when the bot starts.
+     *
+     * @param context Database context.
+     * @return A list containing all the modes.
+     */
+    public static List<Mode> selectAllModesSync(DSLContext context) {
+        return context
+                .selectFrom(Modes.MODES)
+                .fetch()
+                .into(Mode.class);
+    }
+
+    /* =================== Deletes =================== */
 
     public String getModeId() {
         return modeName;

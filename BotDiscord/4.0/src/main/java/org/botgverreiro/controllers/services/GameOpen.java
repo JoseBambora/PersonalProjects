@@ -9,6 +9,7 @@ import org.botgverreiro.models.Settings;
 import org.botgverreiro.utils.ExceptionsHandler;
 import org.botgverreiro.utils.GameStatus;
 import org.botgverreiro.utils.GamesOpenedCache;
+import org.botgverreiro.utils.PermissionsManager;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -48,6 +49,7 @@ public class GameOpen implements OnReadyEvent {
             MainService.getInstance().addServiceScheduled(() -> GameClose.getInstance().call(), games.stream().map(Game::getStartTime).toList());
             openGameSend(games);
             GamesOpenedCache.getInstance().addOpenGames(games);
+            PermissionsManager.open(textChannel);
         }).exceptionally(ExceptionsHandler::storeException);
     }
 
