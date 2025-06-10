@@ -29,17 +29,17 @@ public class GameInfo implements SlashEvent {
     public void onCall(SlashCommandInteractionEvent slashCommandInteractionEvent, Map<String, Object> map, ResponseCommand responseCommand) {
         Integer gameId = (Integer) map.get("jogo");
         Settings.commitTransaction(c -> Game.selectGame(c, gameId))
-                .thenApply(g -> g != null ?
+                .thenApply(g -> g.isPresent() ?
                         responseCommand.setVariable("gameExists", true)
-                                .setVariable("opponent", g.getGameOpponent().getTeamName())
-                                .setVariable("dateTime", g.getGameDay())
-                                .setVariable("status", g.getGameStatus())
-                                .setVariable("mode", g.getMode().toString())
-                                .setVariable("field", g.getGameField())
-                                .setVariable("scored", g.getGameGoalsScored())
-                                .setVariable("suffered", g.getGameGoalsSuffered())
-                                .setVariable("predictions", g.getGamePredictions())
-                                .setVariable("correct", g.getGameWinners())
+                                .setVariable("opponent", g.get().getGameOpponent().getTeamName())
+                                .setVariable("dateTime", g.get().getGameDay())
+                                .setVariable("status", g.get().getGameStatus())
+                                .setVariable("mode", g.get().getMode().toString())
+                                .setVariable("field", g.get().getGameField())
+                                .setVariable("scored", g.get().getGameGoalsScored())
+                                .setVariable("suffered", g.get().getGameGoalsSuffered())
+                                .setVariable("predictions", g.get().getGamePredictions())
+                                .setVariable("correct", g.get().getGameWinners())
                         : responseCommand.setVariable("gameExists", false))
                 .thenApply(r -> r.setTemplate("games/GameInfo"))
                 .thenAccept(ResponseCommand::send)

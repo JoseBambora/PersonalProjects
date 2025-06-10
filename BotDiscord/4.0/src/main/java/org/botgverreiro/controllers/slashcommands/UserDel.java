@@ -21,7 +21,7 @@ public class UserDel implements SlashEvent {
     @Override
     public void onCall(SlashCommandInteractionEvent slashCommandInteractionEvent, Map<String, Object> map, ResponseCommand responseCommand) {
         Settings.commitTransaction(c -> User.deleteUser(c,slashCommandInteractionEvent.getUser().getId()))
-                .thenApply(n -> n == 1 ? responseCommand.setTemplate("seasons/UserDel") : responseCommand.setTemplate("500"))
+                .thenApply(n -> responseCommand.setTemplate("seasons/UserDel").setVariable("userExists",n == 1))
                 .thenAccept(ResponseCommand::send);
     }
 }

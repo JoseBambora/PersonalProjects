@@ -9,6 +9,7 @@ import org.jooq.Record3;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;
 
@@ -114,7 +115,7 @@ public class User {
      * @param user    User to see their stats.
      * @return User statistics.
      */
-    public static CompletionStage<User> selectUserStats(DSLContext context, String user) {
+    public static CompletionStage<Optional<User>> selectUserStats(DSLContext context, String user) {
         return context
                 .select().from(Users.USERS)
                 .join(Modes.MODES).on(Users.USERS.MODE_NAME.eq(Modes.MODES.MODE_NAME))
@@ -122,8 +123,8 @@ public class User {
                 .where(Users.USERS.USER_ID.eq(user))
                 .limit(1)
                 .fetchAsync()
-                .thenApply(List::getFirst)
-                .thenApply(Wrappers::toUser);
+                .thenApply(l -> l.stream().map(Wrappers::toUser))
+                .thenApply(Stream::findFirst);
     }
 
     /* =================== Deletes =================== */

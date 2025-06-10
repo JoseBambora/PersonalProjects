@@ -1,6 +1,11 @@
 <main>
-    # Estatísticas de {{name}}
+    {{#if userExists}}
+        # Estatísticas de {{name}}
 
-    - Total de previsões: {{predictions}}
-    - Total de pontos: {{correct}}
+        - Total de previsões: {{predictions}}
+        - Total de pontos: {{correct}}
+
+    {{else}}
+        ⚠️ Sem dados deste utilizador.
+    {{/if}}
 </main>

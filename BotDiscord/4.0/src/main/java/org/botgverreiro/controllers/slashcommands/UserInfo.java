@@ -20,10 +20,12 @@ public class UserInfo implements SlashEvent {
     @Override
     public void onCall(SlashCommandInteractionEvent slashCommandInteractionEvent, Map<String, Object> map, ResponseCommand responseCommand) {
         Settings.commitTransaction(c -> User.selectUserStats(c,slashCommandInteractionEvent.getUser().getId()))
-                .thenApply(u -> responseCommand.setVariable("name",u.getUserId())
-                        .setVariable("points",u.getUserPoints())
-                        .setVariable("predictions",u.getUserPredictions())
-                )
+                .thenApply(u -> {
+                    u.ifPresent(user -> responseCommand.setVariable("name", user.getUserId())
+                            .setVariable("points", user.getUserPoints())
+                            .setVariable("predictions", user.getUserPredictions()));
+                    return responseCommand.setVariable("userExists",u.isPresent());
+                })
                 .thenApply(r -> r.setTemplate("users/UserInfo"))
                 .thenAccept(ResponseCommand::send);
     }

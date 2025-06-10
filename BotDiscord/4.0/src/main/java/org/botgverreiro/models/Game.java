@@ -15,10 +15,7 @@ import org.jooq.impl.DSL;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
@@ -190,12 +187,12 @@ public class Game {
      * @param gameId Game id.
      * @return Game object.
      */
-    public static CompletionStage<Game> selectGame(DSLContext context, int gameId) {
+    public static CompletionStage<Optional<Game>> selectGame(DSLContext context, int gameId) {
         return selectQuery(context)
                 .where(Games.GAMES.GAME_ID.eq(gameId))
                 .limit(1)
                 .fetchAsync()
-                .thenApply(r -> r.isEmpty() ? null : Wrappers.toGame(r.getFirst()));
+                .thenApply(r -> r.stream().map(Wrappers::toGame).findFirst());
 
     }
 

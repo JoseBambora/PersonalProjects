@@ -1,3 +1,7 @@
 <main>
-    Dados eliminados com sucesso
+    {{#if userExists}}
+        Dados eliminados com sucesso
+    {{else}}
+        ⚠️ Sem dados deste utilizador.
+    {{/if}}
 </main>

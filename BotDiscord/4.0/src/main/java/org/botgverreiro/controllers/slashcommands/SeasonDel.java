@@ -31,7 +31,7 @@ public class SeasonDel implements SlashEvent {
     public void onCall(SlashCommandInteractionEvent slashCommandInteractionEvent, Map<String, Object> map, ResponseCommand responseCommand) {
         Integer seasonId = (Integer) map.get("temporada");
         Settings.commitTransaction(c -> Season.deleteSeason(c,seasonId))
-                .thenApply(n -> n == 1 ? responseCommand.setTemplate("seasons/SeasonDel") : responseCommand.setTemplate("500"))
+                .thenApply(n -> responseCommand.setTemplate("seasons/SeasonDel").setVariable("seasonExists",n == 1))
                 .thenAccept(ResponseCommand::send);
     }
 }

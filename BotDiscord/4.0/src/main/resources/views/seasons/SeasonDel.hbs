@@ -1,3 +1,7 @@
 <main>
-    Temporada removida com sucesso.
+    {{#if seasonExists}}
+        Temporada removida com sucesso.
+    {{else}}
+        ⚠️ Esta temporada não existe.
+    {{/if}}
 </main>
