@@ -24,7 +24,6 @@ public class GameList implements SlashEvent {
                 .addChoice(GameStatus.FINISHED.toString(), GameStatus.FINISHED.name());
         slashCommand.setName("game-list")
                 .setDescription("Últimos " + numberGames + " jogos do bot para um certo estado.")
-                .setSendThinking()
                 .addOption(optionNumber);
     }
 

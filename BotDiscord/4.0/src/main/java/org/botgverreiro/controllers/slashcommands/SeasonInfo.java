@@ -22,7 +22,6 @@ public class SeasonInfo implements SlashEvent {
         slashCommand
                 .setName("season-info")
                 .setDescription("Consultar dados de uma temporada")
-                .setSendThinking()
                 .addOption(optionNumber);
     }
 

@@ -37,7 +37,9 @@ public class Season {
      */
     private static CompletionStage<Stream<Season>> selectAllSeasonStream(DSLContext context) {
         return context
-                .selectFrom(Seasons.SEASONS)
+                .select()
+                .from(Seasons.SEASONS)
+                .orderBy(Seasons.SEASONS.SEASON_ID.desc())
                 .fetchAsync()
                 .thenApply(Collection::stream)
                 .thenApply(r -> r.map(record -> record.into(Season.class)));
@@ -109,14 +111,14 @@ public class Season {
      */
     public static CompletionStage<Season> selectLastSeason(DSLContext context) {
         return selectAllSeasonStream(context)
-                .thenApply(l -> l.sorted((s1, s2) -> s2.seasonId - s1.seasonId).toList())
-                .thenApply(l -> l.isEmpty() ? null : l.getFirst());
+                .thenApply(l -> l.findFirst().orElse(new Season()));
     }
 
     public static CompletionStage<Season> selectSeason(DSLContext context, int seasonId) {
         return context
                 .selectFrom(Seasons.SEASONS)
                 .where(Seasons.SEASONS.SEASON_ID.eq(seasonId))
+                .limit(1)
                 .fetchAsync()
                 .thenApply(r -> r.isEmpty() ? null : r.getFirst().into(Season.class));
     }

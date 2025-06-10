@@ -25,7 +25,8 @@ public class GameWin implements SlashEvent {
         slashCommand
                 .setName("game-win")
                 .setDescription("Definir um resultado de um jogo")
-                .addOptions(optionMode,optionGoalsHome,optionGoalsAway);
+                .addOptions(optionMode,optionGoalsHome,optionGoalsAway)
+                .setSendThinking();
     }
 
     @Override

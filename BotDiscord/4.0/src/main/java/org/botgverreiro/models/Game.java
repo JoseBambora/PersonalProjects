@@ -193,6 +193,7 @@ public class Game {
     public static CompletionStage<Game> selectGame(DSLContext context, int gameId) {
         return selectQuery(context)
                 .where(Games.GAMES.GAME_ID.eq(gameId))
+                .limit(1)
                 .fetchAsync()
                 .thenApply(r -> r.isEmpty() ? null : Wrappers.toGame(r.getFirst()));
 
@@ -207,6 +208,7 @@ public class Game {
     public static CompletionStage<Game> selectLastGame(DSLContext context, Mode mode) {
         return selectQuery(context)
                 .where(Games.GAMES.GAME_STATUS.eq(GameStatus.CLOSE.getStatus()), Games.GAMES.MODE_NAME.eq(mode.getModeId()))
+                .limit(1)
                 .fetchAsync()
                 .thenApply(r -> r.isEmpty() ? null : Wrappers.toGame(r.getFirst()));
     }

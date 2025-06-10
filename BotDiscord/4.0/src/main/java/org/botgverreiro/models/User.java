@@ -87,17 +87,19 @@ public class User {
      * Get classification for a specific Season for all Modes.
      *
      * @param context Database context.
-     * @param season  Season in question.
+     * @param season  Season filter.
+     * @param mode    Mode filter.
      * @return Sorted list of users by points.
      */
-    public static CompletionStage<List<User>> selectClassificationSeason(DSLContext context, int season) {
+    public static CompletionStage<List<User>> selectClassificationSeason(DSLContext context, int season, String mode) {
         return context
                 .select()
                 .from(Users.USERS)
                 .join(Modes.MODES).on(Users.USERS.MODE_NAME.eq(Modes.MODES.MODE_NAME))
                 .join(Seasons.SEASONS).on(Users.USERS.SEASON_ID.eq(Seasons.SEASONS.SEASON_ID))
                 .where(Users.USERS.SEASON_ID.eq(season))
-                .orderBy(Users.USERS.MODE_NAME, Users.USERS.POINTS.desc())
+                .and(Users.USERS.MODE_NAME.eq(mode))
+                .orderBy(Users.USERS.POINTS.desc())
                 .fetchAsync()
                 .thenApply(Collection::stream)
                 .thenApply(r -> r.map(Wrappers::toUser))
@@ -118,6 +120,7 @@ public class User {
                 .join(Modes.MODES).on(Users.USERS.MODE_NAME.eq(Modes.MODES.MODE_NAME))
                 .join(Seasons.SEASONS).on(Users.USERS.SEASON_ID.eq(Seasons.SEASONS.SEASON_ID))
                 .where(Users.USERS.USER_ID.eq(user))
+                .limit(1)
                 .fetchAsync()
                 .thenApply(List::getFirst)
                 .thenApply(Wrappers::toUser);
@@ -151,5 +154,18 @@ public class User {
 
     public String getUserId() {
         return userId;
+    }
+
+    public int getUserPoints() {
+        return userPoints;
+    }
+
+    public int getUserPredictions() {
+        return userPredictions;
+    }
+
+    @Override
+    public String toString() {
+        return this.userId;
     }
 }
