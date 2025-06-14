@@ -57,9 +57,22 @@ you can just use what you want. More examples can be found at [Tests Templates](
     <footer>Embed Footer</footer>
 </embed>
 <button id="button id" class="primary, secondary or danger">Button</button>
+<button id="next_page" class="primary, secondary or danger">Next</button> <!--  for pageable slash commands -->
+<button id="previous_page" class="primary, secondary or danger">Previous</button> <!--  for pageable slash commands -->
 <a href="link">button link types</a>
 <file src="file name"/>
 ```
+
+This files must be places inside resources folder. Within this folder, there must a folder called "views" where you will
+write your own hbs. The only hbs files that you must do are:
+
+- 400
+- 403
+- 404
+- 429
+- 500
+
+That will are associated with http error codes that this extension already handles (like handle some exception, send 500, ...).
 
 ### 2. Register a slash command
 

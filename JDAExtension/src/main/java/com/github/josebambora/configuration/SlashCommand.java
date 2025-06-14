@@ -1,7 +1,10 @@
 package com.github.josebambora.configuration;
 
+import com.github.josebambora.generic.SlashEventPageable;
+import com.github.josebambora.responses.ResponseButton;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -17,6 +20,8 @@ import java.util.*;
 public class SlashCommand extends Command<SlashCommand> {
     private final Map<String, Option<?>> options;
     private final SlashEvent controller;
+    private final SlashEventPageable controllerPageable;
+    private final Map<String, Pageable> pageableMap;
     private String description;
 
     protected SlashCommand(SlashEvent controller) {
@@ -24,6 +29,17 @@ public class SlashCommand extends Command<SlashCommand> {
         this.description = "";
         this.options = new HashMap<>();
         this.controller = controller;
+        this.pageableMap = null;
+        this.controllerPageable = null;
+    }
+
+    protected SlashCommand(SlashEventPageable controller) {
+        super();
+        this.description = "";
+        this.options = new HashMap<>();
+        this.controllerPageable = controller;
+        this.controller = null;
+        this.pageableMap = new HashMap<>();
     }
 
     public SlashCommand setDescription(String description) {
@@ -65,10 +81,21 @@ public class SlashCommand extends Command<SlashCommand> {
                 errorArgs.add(optionEntry.getKey());
         }
         ResponseCommand responseSlashCommand = new ResponseCommand(event, "command", isSendThinking(), isEphemeral());
-        if (errorArgs.isEmpty())
-            controller.onCall((SlashCommandInteractionEvent) event, variables, responseSlashCommand);
+        if (errorArgs.isEmpty()) {
+            if(this.controller != null)
+                controller.onCall((SlashCommandInteractionEvent) event, variables, responseSlashCommand);
+            else if (pageableMap != null && controllerPageable != null) {
+                this.pageableMap.entrySet()
+                        .stream()
+                        .filter(e -> !e.getValue().isOver())
+                        .map(Map.Entry::getKey)
+                        .forEach(this.pageableMap::remove);
+                pageableMap.put(event.getUser().getId(),new Pageable());
+                controllerPageable.onCall((SlashCommandInteractionEvent) event, variables, responseSlashCommand);
+            }
+        }
         else
-            responseSlashCommand.setTemplate("400").setVariable("errors", errorArgs.stream().sorted().map(s -> "Argument `" + s + "` is missing").toList()).send();
+            responseSlashCommand.setTemplate("400").setVariable("message", errorArgs.stream().sorted().map(s -> "Argument `" + s + "` is missing").toList()).send();
     }
 
     protected void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
@@ -78,5 +105,24 @@ public class SlashCommand extends Command<SlashCommand> {
     @Override
     protected GenericEvents getController() {
         return controller;
+    }
+
+    @Override
+    public void onButtonClicked(ButtonInteractionEvent event, String id) {
+        if((id.equals("next_page") || id.equals("previous_page")) && pageableMap != null && controllerPageable != null) {
+            ResponseButton responseButton = new ResponseButton(event);
+            if(this.pageableMap.containsKey(event.getUser().getId())) {
+                if (id.equals("next_page"))
+                    this.pageableMap.get(event.getUser().getId()).next();
+                else
+                    this.pageableMap.get(event.getUser().getId()).previous();
+                controllerPageable.onCall(event, id, pageableMap.get(event.getUser().getId()), responseButton);
+            }
+            else {
+                responseButton.setTemplate("429").setVariable("message","This interaction has expired").send();
+            }
+        }
+        else
+            super.onButtonClicked(event, id);
     }
 }
