@@ -104,15 +104,15 @@ public class SlashCommand extends Command<SlashCommand> {
 
     @Override
     protected GenericEvents getController() {
-        return controller;
+        return controller != null ? controller : controllerPageable;
     }
 
     @Override
     public void onButtonClicked(ButtonInteractionEvent event, String id) {
-        if((id.equals("next_page") || id.equals("previous_page")) && pageableMap != null && controllerPageable != null) {
+        if((id.equals("next-page") || id.equals("previous-page")) && pageableMap != null && controllerPageable != null) {
             ResponseButton responseButton = new ResponseButton(event);
             if(this.pageableMap.containsKey(event.getUser().getId())) {
-                if (id.equals("next_page"))
+                if (id.equals("next-page"))
                     this.pageableMap.get(event.getUser().getId()).next();
                 else
                     this.pageableMap.get(event.getUser().getId()).previous();

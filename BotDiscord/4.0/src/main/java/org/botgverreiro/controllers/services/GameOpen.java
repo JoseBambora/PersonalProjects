@@ -40,7 +40,7 @@ public class GameOpen implements OnReadyEvent {
 
     public void call() {
         LocalDate today = LocalDate.now();
-        CompletionStage<List<Game>> gamesToOpen = Settings.commitTransaction(c -> Game.selectGamesByStatus(c,GameStatus.TO_OPEN.getStatus()))
+        CompletionStage<List<Game>> gamesToOpen = Settings.commitTransaction(c -> Game.selectGamesByStatus(c,GameStatus.TO_OPEN.getStatus(), 0))
                 .thenApply(Collection::stream)
                 .thenApply(l -> l.filter(g -> g.getDateTime().toLocalDate().equals(today)))
                 .thenApply(Stream::toList);

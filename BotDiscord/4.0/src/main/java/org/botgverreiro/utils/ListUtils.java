@@ -6,6 +6,7 @@ import org.jsoup.select.Elements;
 import java.util.List;
 
 public class ListUtils {
+    public static int page_size = 3;
     public static <T> List<T> subList(List<T> list, int to) {
         return subList(list,0,to);
     }

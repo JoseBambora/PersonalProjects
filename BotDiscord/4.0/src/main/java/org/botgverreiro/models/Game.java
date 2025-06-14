@@ -1,5 +1,6 @@
 package org.botgverreiro.models;
 
+import com.github.josebambora.configuration.Pageable;
 import jakarta.persistence.Column;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import org.botgverreiro.tables.Games;
@@ -7,6 +8,7 @@ import org.botgverreiro.tables.Modes;
 import org.botgverreiro.tables.Seasons;
 import org.botgverreiro.tables.Teams;
 import org.botgverreiro.utils.GameStatus;
+import org.botgverreiro.utils.ListUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record5;
@@ -242,10 +244,12 @@ public class Game {
      * @param context Database context.
      * @return A list of games objects that are not opened.
      */
-    public static CompletionStage<List<Game>> selectGamesByStatus(DSLContext context, int gameStatus) {
+    public static CompletionStage<List<Game>> selectGamesByStatus(DSLContext context, int gameStatus, int page) {
         return selectQuery(context)
                 .where(Games.GAMES.GAME_STATUS.eq(gameStatus))
                 .orderBy(Games.GAMES.GAME_ID.desc())
+                .limit(ListUtils.page_size)
+                .offset(page)
                 .fetchAsync()
                 .thenApply(l -> Wrappers.converter(l, Wrappers::toGame));
     }

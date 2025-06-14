@@ -59,6 +59,12 @@ public class Configuration extends ListenerAdapter {
         slashCommands.put(slashCommand.getName(), slashCommand);
     }
 
+    public void addCommand(SlashEventPageable slashCommandClass) {
+        SlashCommand slashCommand = new SlashCommand(slashCommandClass);
+        slashCommandClass.configure(slashCommand);
+        slashCommands.put(slashCommand.getName(), slashCommand);
+    }
+
     public void addCommand(UserContextEvent userCommandClass) {
         UserCommand userCommand = new UserCommand(userCommandClass);
         userCommandClass.configure(userCommand);
